@@ -5,6 +5,9 @@ FROM eclipse-temurin:17-jdk
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
+# Instalar Maven
+RUN apt-get update && apt-get install -y maven
+
 # Establecer el directorio de trabajo
 WORKDIR /app
 
@@ -14,12 +17,13 @@ COPY . .
 # Dar permisos de ejecución a Maven Wrapper
 RUN chmod +x mvnw
 
-# Verificar Java
+# Verificar Java y Maven
 RUN echo "JAVA_HOME is set to $JAVA_HOME"
 RUN java -version
+RUN mvn -version
 
-# Forzar Maven a usar JAVA_HOME correctamente
-RUN $JAVA_HOME/bin/java -version && ./mvnw clean package -DskipTests
+# Construir la aplicación usando Maven sin `mvnw`
+RUN mvn clean package -DskipTests
 
 # Exponer el puerto de la aplicación
 EXPOSE 8080
