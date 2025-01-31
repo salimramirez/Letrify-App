@@ -102,8 +102,12 @@
 	                <target>17</target>
 	            </configuration>
 	        </plugin>
+			<!-- Plugin para generar un JAR ejecutable -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 	    </plugins>
 	</build>
-
 
 </project>
