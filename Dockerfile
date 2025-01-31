@@ -10,10 +10,7 @@ COPY . .
 # Dar permisos de ejecución a Maven Wrapper
 RUN chmod +x mvnw
 
-# Resolver dependencias ANTES de la compilación
-RUN ./mvnw dependency:resolve
-
-# Construir la aplicación
+# Construir la aplicación (ahora sin dependency:resolve)
 RUN ./mvnw clean package -DskipTests
 
 # Exponer el puerto de la aplicación
