@@ -14,9 +14,12 @@ COPY . .
 # Dar permisos de ejecución a Maven Wrapper
 RUN chmod +x mvnw
 
-# Construir la aplicación
-RUN $JAVA_HOME/bin/java -version
-RUN ./mvnw clean package -DskipTests
+# Verificar Java
+RUN echo "JAVA_HOME is set to $JAVA_HOME"
+RUN java -version
+
+# Forzar Maven a usar JAVA_HOME correctamente
+RUN $JAVA_HOME/bin/java -version && ./mvnw clean package -DskipTests
 
 # Exponer el puerto de la aplicación
 EXPOSE 8080
