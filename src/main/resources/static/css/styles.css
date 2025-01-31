@@ -1,0 +1,904 @@
+/* ======================= */
+/* COLORES Y FUENTES       */
+/* ======================= */
+:root {
+    --primary-color: #0044cc; /* Azul oscuro refinado (Color principal) */
+    --primary-hover: #0084ff; /* Azul vibrante para efectos hover */
+    --secondary-color: #f5f7fa; /* Gris azulado claro para fondos */
+    --tertiary-color: #60eaff; /* Azul aqua brillante como color terciario */
+    --background-alt-color: #dbeafe; /* Azul pastel claro para fondos secundarios */
+    --text-color: #222222; /* Negro suave para mejor legibilidad */
+    --link-color: #00a3ff; /* Azul cielo brillante para enlaces */
+    --accent-color: #ff8c00; /* Naranja profesional para resaltar acciones clave */
+    --accent-color-gradient: #facc15; /* Naranja dorado suave para degradados */
+
+    /* Colores adicionales */
+    --success-color: #22c55e; /* Verde moderno (éxito, confirmaciones) */
+    --warning-color: #facc15; /* Amarillo dorado (advertencias) */
+    --error-color: #ff3b30; /* Rojo vibrante (errores, problemas críticos) */
+
+    /* Fuentes principales */
+    --primary-font: 'Montserrat', sans-serif; /* Fuente para títulos y encabezados */
+    --secondary-font: 'Lato', sans-serif; /* Fuente para el cuerpo del texto */
+}
+
+/* ============================= */
+/* TIPOGRAFÍA Y ESTILOS GLOBALES */
+/* ============================= */
+
+/* Fuente principal para el cuerpo del texto */
+body {
+    font-family: var(--secondary-font);
+    font-weight: 400; /* Peso normal */
+    line-height: 1.6; /* Mejora la legibilidad */
+    color: var(--text-color); /* Color principal */
+    background-color: var(--secondary-color); /* Fondo suave */
+}
+
+/* Fuente principal para títulos */
+h1, h2, h3 {
+    font-family: var(--primary-font);
+    font-weight: 700; /* Peso negrita */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Tamaños de títulos adaptables */
+h1 {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+}
+
+h2 {
+    font-size: clamp(1.6rem, 4.5vw, 2rem);
+}
+
+h3 {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+}
+
+/* Texto del cuerpo */
+p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1rem; /* Espaciado entre párrafos */
+    max-width: 65ch; /* Máximo ancho de línea para mejor legibilidad */
+}
+
+/* Fuente para enlaces y navegación */
+.nav-link {
+    font-family: var(--secondary-font);
+    font-weight: 500; /* Peso medio */
+    text-transform: capitalize; /* Opcional */
+    font-size: 1rem; /* Tamaño estándar */
+    letter-spacing: 0.3px; /* Un toque de espaciado */
+    font-weight: 600; /* Un poco más de peso */
+}
+
+/* ======================= */
+/* FONDOS                  */
+/* ======================= */
+
+.bg-light-custom {
+    background-color: var(--secondary-color) !important;
+}
+
+/* ======================= */
+/* BARRA DE NAVEGACIÓN     */
+/* ======================= */
+.bg-custom {
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil debajo de la barra */
+    border-bottom: 1px solid #eaeaea; /* Línea de separación */
+}
+
+/* .bg-custom {
+    background-color: #ffffff; Fondo blanco
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); Sombra más grande y notoria
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); Línea sutil para separar
+} */
+
+.navbar.bg-custom {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    height: auto; /* Asegura que se ajuste automáticamente */
+}
+
+/* Estilos del logo y texto */
+.navbar-brand {
+    position: relative; /* Necesario para posicionar el subrayado */
+    display: flex; /* Para alinear el texto e imagen */
+    align-items: center; /* Centrar verticalmente */
+    gap: 0.5rem; /* Espacio entre el logo y el texto */
+    text-decoration: none; /* Evita subrayados */
+    padding-bottom: 5px; /* Evita que la línea se solape con el texto */
+}
+
+.navbar-brand img {
+    border-radius: 5px; /* Redondea ligeramente las esquinas del logo */
+    max-width: 40px; /* Ajusta el tamaño máximo */
+    height: auto; /* Mantén la proporción */
+    transition: transform 0.3s ease; /* Agrega la transición */
+}
+
+.navbar-title {
+    font-family: var(--primary-font); /* Misma fuente del hero */
+    font-weight: bold; /* Hace el texto más destacado */
+    font-size: 1.5rem; /* Ajusta el tamaño del texto */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Mismo degradado del hero */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* Compatibilidad para navegadores */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Línea decorativa debajo de toda la marca */
+.navbar-brand::after {
+    content: "";
+    position: absolute;
+    bottom: -3px; /* Espaciado debajo del logo + texto */
+    left: 50%;
+    width: 0%;
+    height: 2px;
+    background: var(--primary-hover);
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navbar-brand:hover::after {
+    width: 100%; /* Extiende la línea */
+    left: 0%; /* Alinear con el texto */
+    background: var(--link-color);
+}
+
+.navbar-title:hover {
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño */
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño del logo */
+}
+
+/* Estilo base para los enlaces de la barra */
+.navbar-dark .navbar-nav .nav-link {
+    color: #333333; /* Texto oscuro */
+    font-weight: 500; /* Peso medio para que destaque */
+    position: relative; /* Necesario para efectos decorativos */
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    transition: color 0.3s ease, transform 0.3s ease; /* Transiciones suaves */
+}
+
+/* Efecto al pasar el mouse */
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--link-color); /* Cambia al color principal */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+}
+
+/* Línea decorativa al pasar el mouse */
+.navbar-dark .navbar-nav .nav-link::after {
+    content: ""; /* Línea decorativa */
+    position: absolute;
+    bottom: 0; /* Ubicada en la parte inferior del enlace */
+    left: 50%;
+    width: 0%; /* Comienza sin ancho */
+    height: 2px; /* Grosor de la línea */
+    background: var(--primary-color); /* Color principal */
+    transition: width 0.3s ease, left 0.3s ease; /* Animación suave */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover::after {
+    width: 100%; /* Línea completa */
+    left: 0%; /* Se alinea con el enlace */
+    background: var(--link-color);
+}
+
+/* Estilo del botón navbar-toggler */
+.navbar-toggler {
+    position: relative;
+    background-color: transparent; /* Fondo transparente */
+    border: none; /* Eliminamos el borde predeterminado */
+    border-radius: 20px; /* Misma curvatura que el botón de "Iniciar Sesión" */
+    padding: 10px 12px; /* Espaciado interno */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Animaciones suaves */
+}
+
+/* Borde degradado */
+.navbar-toggler::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1.5px; /* Grosor del borde */
+    border-radius: 20px; /* Misma curvatura */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Borde degradado */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Ícono del menú hamburguesa con degradado */
+.navbar-toggler-icon {
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Degradado */
+    -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='black' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='black' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    transition: all 0.3s ease-in-out;
+}
+
+/* "Press" al hacer clic: */
+.navbar-toggler:active {
+    transform: scale(0.92); /* Se reduce ligeramente al presionar */
+    box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* Evitar que el efecto se mantenga */
+.navbar-toggler:focus {
+    outline: none;
+}
+
+/* Barra de búsqueda */
+.navbar .form-control {
+    border-radius: 30px; /* Bordes más redondeados */
+    border: 1px solid #ccc; /* Borde gris claro */
+    background-color: #e6e6e6; /* Fondo gris más oscuro para mayor contraste */
+    color: #333; /* Color del texto */
+    max-width: 200px; /* Reduce el ancho */
+    height: 32px; /* Reduce la altura */
+    transition: all 0.3s ease-in-out; /* Transición suave */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Barra de búsqueda en foco */
+.navbar .form-control:focus {
+    border: 1px solid var(--primary-color); /* Cambia el borde al color principal */
+    background-color: #ffffff; /* Fondo blanco al enfocar */
+    box-shadow: 0 0 8px rgba(0, 97, 255, 0.5); /* Efecto de luz */
+    outline: none; /* Elimina el borde azul por defecto */
+    color: #000; /* Texto negro para mejor contraste */
+}
+
+/* Botón de búsqueda */
+.navbar .btn-outline-primary {
+    width: 32px; /* Reduce el ancho */
+    height: 32px; /* Reduce la altura */
+    min-width: 32px; /* Evita que se deforme en pantallas pequeñas */
+    min-height: 32px;
+    border-radius: 50%; /* Forma circular */
+    padding: 0; /* Sin padding interno */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Degradado actualizado */
+    border: none; /* Sin bordes */
+    color: white; /* Icono en blanco */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación */
+    box-sizing: border-box; /* Asegura que las dimensiones no sean alteradas */
+}
+
+/* Hover del botón */
+.navbar .btn-outline-primary:hover {
+    transform: scale(1.025); /* Aumenta ligeramente el tamaño */
+    box-shadow: 0 4px 10px rgba(0, 97, 255, 0.4); /* Sombra al pasar el mouse */
+    cursor: pointer; /* Cambia el cursor a pointer */
+}
+
+/* La barra de búsqueda se mantiene dentro del navbar sin desbordarse */
+.search-container {
+    display: flex; /* Asegura alineación horizontal */
+    align-items: center; /* Centra elementos verticalmente */
+    gap: 0.5rem; /* Espaciado entre input y botón */
+}
+
+/* 🔹 */
+
+/* Botón de "Iniciar Sesión" (Navbar) */
+.btn-login-navbar {
+    position: relative;
+    font-weight: bold; /* Texto más destacado */
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 0.6rem 1.6rem; /* Aumenta el espaciado interno */
+    display: flex; /* Para alinear íconos y texto */
+    align-items: center; /* Centra verticalmente */
+    gap: 0.5rem; /* Espacio entre ícono y texto */
+    font-size: 1rem; /* Tamaño del texto */
+    text-transform: capitalize;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animaciones suaves */
+    background-color: transparent; /* Fondo transparente */
+    text-decoration: none; /* Quitar subrayado */
+    border: none; /* Quitamos el borde predeterminado para evitar inconsistencias */
+
+    /* Aplicamos degradado al texto */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent; /* Hace el texto degradado */
+    
+    /* Sombra más sutil */
+    box-shadow: 0 4px 10px rgba(0, 97, 255, 0.15);
+}
+
+/* Borde degradado con curvatura */
+.btn-login-navbar::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* Ocupa todo el tamaño del botón */
+    padding: 1.5px; /* Grosor del borde */
+    border-radius: 20px; /* Misma curvatura que el botón */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Borde degradado */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none; /* Evita que interfiera con clics */
+    transition: opacity 0.3s ease; /* Animación para desaparecer */
+}
+
+/* Hover: Cambio de color de fondo y texto */
+.btn-login-navbar:hover {
+    transform: scale(1.025); /* Aumenta ligeramente el tamaño */
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color)); /* Fondo con degradado más vibrante */
+    color: black; /* Hace el texto blanco */
+    box-shadow: 0 6px 14px rgba(0, 97, 255, 0.3); /* Sombra más intensa */
+    -webkit-background-clip: unset; /* Quita el degradado del texto */
+    background-clip: unset;
+}
+
+/* Hover: Oculta el borde degradado en hover */
+.btn-login-navbar:hover::before {
+    opacity: 0;
+}
+
+/* Efecto "press" al hacer clic */
+.btn-login-navbar:active {
+    transform: scale(0.98); /* Simula una presión al hacer clic */
+    box-shadow: 0 3px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* Asegurar que el ícono también tenga el degradado */
+.btn-login-navbar i {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Gradiente aplicado */
+    background-clip: text; /* Estándar */
+    -webkit-background-clip: text; /* Compatibilidad con WebKit */
+    color: transparent; /* Hace el ícono transparente con gradiente */
+    font-size: 1rem; /* Tamaño del ícono */
+    transition: color 0.3s ease-in-out;
+}
+
+/* Hover: Hace que el ícono también se vuelva negro */
+.btn-login-navbar:hover i {
+    color: black;
+}
+
+/* Botón de "Registrarse" (Navbar) */
+.btn-register-navbar {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Degradado actualizado */
+    color: white; /* Texto en blanco */
+    font-weight: bold; /* Resaltar texto */
+    border: none; /* Sin bordes */
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 0.6rem 1.6rem; /* Tamaño adecuado */
+    font-size: 1rem; /* Tamaño del texto */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; /* Animaciones suaves */
+    box-shadow: 0 3px 6px rgba(0, 97, 255, 0.2); /* Sombra ligera */
+}
+
+/* Hover: hace que el botón sea más vibrante */
+.btn-register-navbar:hover {
+    transform: scale(1.025); /* Aumenta ligeramente el tamaño */
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color)); /* Degradado más vibrante */
+    box-shadow: 0 5px 12px rgba(0, 97, 255, 0.3); /* Sombra más intensa */
+}
+
+/* Efecto "press" al hacer clic */
+.btn-register-navbar:active {
+    transform: scale(0.98); /* Simula una presión al hacer clic */
+    box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* === [ EVITAR QUE SE DESORGANICE ] === */
+
+/* Evita que los elementos del navbar se desorganicen */
+.navbar-collapse {
+    display: flex;
+    flex-wrap: nowrap; /* Evita que los elementos se apilen en pantallas grandes */
+    justify-content: space-between; /* Mantiene una distribución adecuada */
+    align-items: center;
+    overflow: hidden; /* Evita que los elementos sobresalgan */
+}
+
+/* Asegura que los enlaces del navbar no ocupen demasiado espacio */
+.navbar-nav {
+    flex-wrap: wrap; /* Permite que los enlaces se ajusten si hay muchos */
+    max-width: 50%; /* Limita el espacio que pueden ocupar los enlaces */
+}
+
+/* ======================= */
+/* HERO SECTION            */
+/* ======================= */
+.hero-section {
+    background-color: white; /* Fondo blanco para camuflar con la navbar */
+    padding: 60px 0; /* Espaciado superior e inferior */
+    position: relative;
+    min-height: 65vh; /* Ajuste dinámico de la altura total */
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Evita que elementos internos desborden */
+}
+
+/* .hero-text {
+    text-align: left;
+} */
+
+.hero-text {
+    width: 100%; /* Asegura que ocupe todo el ancho de su columna */
+    max-width: 550px; /* Limita el ancho de los textos */
+    margin: 0 auto; /* Mantiene centrado dentro de la columna */
+    text-align: left; /* Asegura que el texto siga alineado a la izquierda */
+    min-width: 300px; /* Asegura que no se haga demasiado angosto en pantallas pequeñas */
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #0061ff, #60eaff); /* Mismo degradado del hero */
+    background-clip: text; /* Propiedad estándar */
+    -webkit-background-clip: text; /* Para compatibilidad con WebKit */
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* Para navegadores que no soportan webkit-text-fill-color */
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(-135deg, #000000, #7a7a7a); /* Degradado negro a gris oscuro */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    line-height: 1.2;
+}
+
+.hero-title span {
+    background: linear-gradient(135deg, #0061ff, #60eaff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.hero-description {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Contenedor de la imagen */
+.hero-image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Fondo degradado detrás de la imagen (más grande y extendido a la derecha) */
+.hero-gradient {
+    position: absolute;
+    width: 90%; /* Hace que el degradado sobresalga más allá de la imagen */
+    height: 90%;
+    max-height: 500px; /* Limita la altura máxima */
+    inset: 0; /* Centra automáticamente */
+    margin: auto;
+    background: linear-gradient(135deg, rgba(0, 97, 255, 0.7), rgba(96, 234, 255, 0.7)), 
+                url('/img/hero-bg.jpg'); /* Imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    border-radius: 150px 0 0 150px; /* Solo redondeamos la parte izquierda */
+    z-index: 1;
+    transition: all 0.5s ease-in-out;
+    box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.15); /* Sombra sutil para dar profundidad */
+    /* **Agregamos un efecto de desvanecimiento en el lado derecho** */
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Agregamos un efecto AFTER con líneas diagonales */
+.hero-gradient::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 150px 0 0 150px;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, 
+                                      transparent 50%, rgba(255, 255, 255, 0.1) 50%, 
+                                      rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
+    pointer-events: none; /* Para que no interfiera con otros elementos */
+}
+
+/* Imagen superpuesta */
+.hero-image {
+    position: relative;
+    z-index: 2;
+    max-width: 70%; /* Ajustamos para mantener mejor proporción */
+    height: auto; /* Mantiene la proporción */
+    border-radius: 60px; /* Redondeado más llamativo */
+    transform: scale(1); /* Mueve más a la izquierda, sube y agranda */
+    filter: drop-shadow(10px 10px 30px rgba(0, 0, 0, 0.3)); /* Aplica sombra al contorno */
+}
+
+/* Botón de "Crea una cuenta gratis" en el Hero */
+.btn-hero-start {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Degradado azul */
+    color: white; /* Texto en blanco */
+    font-weight: bold; /* Texto más destacado */
+    border: none; /* Sin bordes */
+    border-radius: 30px; /* Bordes redondeados */
+    padding: 0.8rem 2rem; /* Ajusta el espaciado */
+    font-size: 1.1rem; /* Tamaño del texto */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; /* Animaciones suaves */
+    display: inline-block; /* Mantiene su tamaño */
+    text-align: center;
+    text-decoration: none; /* Evita subrayado */
+    box-shadow: 0 4px 10px rgba(0, 97, 255, 0.2); /* Sombra ligera */
+}
+
+/* Hover: hace que el botón sea más vibrante */
+.btn-hero-start:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color)); /* Degradado más vibrante */
+    box-shadow: 0 5px 12px rgba(0, 97, 255, 0.3); /* Sombra más intensa */
+}
+
+/* Efecto "press" al hacer clic */
+.btn-hero-start:active {
+    transform: scale(0.98); /* Simula una presión al hacer clic */
+    box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* ======================= */
+/* SECCIÓN CARACTERÍSTICAS */
+/* ======================= */
+
+#features {
+    max-width: 75rem; /* Aproximadamente 880px, pero escalable */
+    margin: 0 auto; /* Centra la sección */
+    padding: 3rem 1.5rem; /* Espaciado interno para mayor comodidad */
+}
+
+#features h2 {
+    font-size: 2.2rem; /* Aumentamos el tamaño */
+    font-weight: 700; /* Negrita para mayor impacto */
+    background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color)); /* Degradado */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Hace que el degradado afecte solo al texto */
+    margin-bottom: 2rem; /* Más espacio debajo */
+}
+
+/* Títulos de las tarjetas (h3) */
+.card h3 {
+    font-size: 1rem; /* Aumentamos el tamaño */
+    font-weight: 600; /* Más peso para destacar */
+    color: var(--text-color); /* Color principal */
+    margin-bottom: 1rem; /* Espaciado con el texto */
+}
+
+/* Párrafos dentro de las tarjetas */
+.card p {
+    font-size: 0.9rem; /* Un poco más grande */
+    color: var(--text-color); /* Mantiene buena legibilidad */
+    line-height: 1.6; /* Mejora el espaciado */
+    text-align: left; /* Asegura alineación */
+}
+
+.card {
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 12px; /* Bordes redondeados */
+    border: 1px solid rgba(0, 0, 0, 0.08); /* Borde más sutil y elegante */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    padding: 1.8rem; /* Más espacio interno */
+    min-height: 10rem; /* Tamaño uniforme para todas las tarjetas */
+    display: flex;
+    align-items: center; /* Asegura que el contenido esté bien alineado */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12); /* Sombra más pronunciada */
+}
+
+.card:hover {
+    transform: scale(1.03); /* Efecto de leve ampliación */
+    background-color: rgba(245, 245, 245, 0.4); /* Sutil cambio de color */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Espaciado entre el texto y el icono */
+.icon-content {
+    margin-left: 3rem; /* Ajusta la distancia entre el ícono y el texto */
+    width: 70px; /* Tamaño del círculo */
+    height: 70px;
+    flex-shrink: 0; /* Evita que el flexbox de la tarjeta lo deforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Hace que sea un círculo */
+    background: linear-gradient(135deg, var(--background-alt-color), rgba(255, 255, 255, 0)); /* Sutil desvanecido */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    aspect-ratio: 1/1; /* Opcional para navegadores modernos */
+}
+
+/* Ajuste de tamaño de iconos dentro del círculo */
+.icon-content i {
+    font-size: 2rem; /* Ajusta el tamaño del ícono dentro del círculo */
+}
+
+/* Asegura que el contenido de texto no se estire */
+.text-content {
+    flex-grow: 1;
+}
+
+.icon-primary {
+    color: var(--primary-color); /* Azul principal */
+}
+
+.icon-accent {
+    color: var(--accent-color); /* Naranja énfasis */
+}
+
+.icon-success {
+    color: var(--success-color); /* Verde optimización */
+}
+
+/* ======================= */
+/* CONSULTAS DE MEDIOS     */
+/* ======================= */
+
+/* Pantallas grandes */
+@media (min-width: 768px) {
+    .navbar-collapse .btn-login-navbar {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+    }
+
+    .navbar .form-control {
+        width: 300px; /* Aumenta la anchura */
+    }
+}
+
+@media (min-width: 1024px) {
+    h1 {
+        font-size: 2.5rem; /* Resalta más los títulos principales */
+    }
+    h2 {
+        font-size: 2rem; /* Títulos secundarios más visibles */
+    }
+}
+
+/* Pantallas móviles */
+@media (max-width: 768px) {
+    
+    /* .navbar {
+        justify-content: space-between !important;
+    } */
+
+    .navbar-brand {
+        margin-left: 1rem; /* Aumenta el margen izquierdo */
+    }
+
+    .navbar-toggler {
+        margin-right: 1rem; /* Aumenta el margen derecho */
+    }
+
+    /* Centrar enlaces */
+    .navbar-nav {
+        text-align: center; /* Centra el texto de los enlaces */
+        margin: 1rem auto; /* Espaciado superior e inferior */
+    }
+
+    .navbar-nav .nav-link {
+        position: static; /* Elimina efectos relativos */
+        color: #333333; /* Color original */
+        padding: 0.5rem 1rem; /* Espaciado adecuado */
+        text-decoration: none; /* Sin subrayado */
+        transition: none; /* Elimina transiciones */
+        background: none; /* Asegura que no haya efectos de fondo */
+        box-shadow: none; /* Sin sombras */
+    }
+
+    .navbar-nav .nav-link:active {
+        color: var(--primary-color); /* Cambia al color azul al hacer click */
+        background: none; /* Asegura que no haya fondo al hacer click */
+    }
+    
+    .navbar-nav .nav-link:focus {
+        outline: none; /* Elimina bordes azules automáticos */
+    }
+
+    /* Elimina hover en móviles */
+    .navbar-nav .nav-link:hover {
+        color: #333333; /* Mantén el color original al pasar el mouse */
+    }
+
+    /* Contenedor de la barra de navegación en móviles */
+    .navbar-collapse {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Asegura que el formulario tenga más espacio abajo */
+    .search-container {
+        margin-bottom: 2rem;
+    }
+
+    /* Asegura que el formulario de búsqueda esté centrado */
+    .navbar-collapse form {
+        width: 100%; /* Ocupar todo el ancho */
+        padding: 0 10px; /* Espaciado horizontal */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Formulario de búsqueda centrado */
+    .navbar-collapse .form-control {
+        flex: 1; /* Ocupa el espacio disponible */
+        max-width: 100%; /* Se ajusta al contenedor */
+        padding: 0.5rem; /* Ajusta el padding interno */
+    }
+
+    /* Botón de búsqueda alineado */
+    .navbar-collapse .btn-outline-primary {
+        flex-shrink: 0; /* Evita que el botón cambie de tamaño */
+    }
+
+    /* Contenedor de los botones */
+    .navbar-collapse .d-flex {
+        flex-direction: row !important; /* Mantiene los botones en una fila */
+        justify-content: center !important; /* Centra los botones en móviles */
+        width: 100%; /* Asegura que ocupe el ancho completo */
+        margin: 0 auto; /* Centrado */
+        gap: 0.5rem; /* Espaciado entre los botones */
+    }
+
+    /* Asegurar que los botones no sean demasiado anchos */
+    .navbar-collapse .btn-login-navbar,
+    .navbar-collapse .btn-register-navbar {
+        width: auto; /* Mantiene el tamaño natural */
+        max-width: 180px; /* Evita que se expandan demasiado */
+        text-align: center; /* Centra el texto dentro del botón */
+        justify-content: center; /* Asegura alineación de texto e ícono */
+        display: flex; /* Mantiene la alineación */
+        padding: 0.5rem 1.2rem; /* Ajusta el padding para evitar botones gigantes */
+    }
+
+    /* Espaciado reducido para enlaces en móviles */
+    .navbar-dark .navbar-nav .nav-link {
+        padding: 0.3rem 0.5rem; /* Reduce el espaciado en móviles */
+    }
+
+
+    /* ===== [ SECCIÓN DEL HERO ] ===== */
+    .hero-section {
+        text-align: center; /* Centrar el texto en móviles */
+        padding: 50px 20px; /* Reducir padding */
+        padding-top: 20px; /* Reduce el espacio superior */
+        padding-bottom: 40px; /* Mantiene buen espaciado inferior */
+    }
+
+    /* .hero-text {
+        text-align: center; Centra el texto
+    } */
+
+    /* .hero-text {
+        max-width: 100%; Permite que los textos se expandan en pantallas pequeñas
+    } */
+
+    .hero-title {
+        font-size: 2rem; /* Reducir tamaño del título */
+    }
+
+    .hero-description {
+        font-size: 0.95rem; /* Ajustar el tamaño del texto */
+    }
+
+    /* Ajuste del fondo degradado */
+    .hero-gradient {
+        position: absolute;
+        width: 90%; /* Ajustar para que no sobresalga */
+        height: 90%;
+        max-width: 100%;
+        min-height: 150px; /* Ajusta según necesidad */
+        max-height: 280px; /* Reduce la altura máxima */
+        border-radius: 80 0 0 80px; /* Redondeado más pequeño */
+    }
+
+    /* Ajuste de la imagen en móviles */
+    .hero-image {
+        max-width: 55%; /* Asegurar que no sea demasiado grande */
+        margin: auto; /* Centra mejor la imagen */
+        filter: drop-shadow(10px 10px 30px rgba(0, 0, 0, 0.1)); /* Aplica sombra al contorno */
+    }
+
+    /* Asegurar que la imagen y texto estén en columnas separadas */
+    .hero-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px; /* Espacio entre texto e imagen */
+    }
+
+    .btn-hero-start {
+        display: flex;
+        justify-content: center;
+        margin: 0 auto; /* Centra horizontalmente */
+        width: 100%; /* Ocupará todo el ancho disponible */
+        max-width: 250px; /* Evita que sea demasiado ancho */
+        
+    }
+
+    /* === [ SECCIÓN CARACTERÍSTICAS ] === */
+
+    #features {
+        max-width: 90%; /* Hace que ocupe más espacio en móviles sin verse muy ancha */
+        padding: 2rem 1rem; /* Reduce el padding */
+    }
+
+    #features h2 {
+        font-size: 1.5rem; /* Reduce el tamaño del título */
+        margin-bottom: 1.5rem; /* Ajusta el espaciado inferior */
+    }
+
+    /* Ajustar el espaciado entre las tarjetas en móviles */
+    .card {
+        margin-bottom: 1.5rem; /* Aumenta el espacio entre tarjetas */
+        padding: 1.5rem; /* Reduce el padding interno */
+        min-height: auto; /* Permite que las tarjetas se adapten sin ocupar demasiado espacio */
+    }
+
+    /* Eliminar cualquier cambio visual en móviles */
+    .card,
+    .card:hover,
+    .card:active,
+    .card:focus,
+    .card:focus-visible {
+        transform: none !important;
+        background-color: #ffffff !important; /* Forzar el color original */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12) !important; /* Forzar la sombra original */
+        border: 1px solid rgba(0, 0, 0, 0.08) !important; /* Forzar el borde original */
+        transition: none !important; /* Evita cualquier animación */
+        -webkit-tap-highlight-color: transparent !important; /* Evita el resaltado azul */
+        touch-action: manipulation !important; /* Previene cambios inesperados */
+        pointer-events: auto !important; /* Asegura que no haya bloqueos */
+        user-select: none !important; /* Previene selecciones accidentales */
+    }
+
+    /* Reducir el tamaño de los títulos h3 en móviles */
+    .card h3 {
+        font-size: 1rem; /* Reduce el tamaño del título */
+        margin-top: 0.5rem; /* Reduce margen superior */
+        margin-bottom: 0.5rem; /* Reduce margen inferior */
+    }
+
+    .card p {
+        margin-top: 0.5rem; /* Reduce margen superior */
+        margin-bottom: 0.5rem; /* Reduce margen inferior */
+    }
+
+    .icon-content {
+        width: 60px;
+        height: 60px;
+        margin-left: 2rem; /* Reduce el margen en móviles */
+    }
+
+    .icon-content i {
+        font-size: 2.5rem; /* Reduce el tamaño del icono en móviles */
+    }
+
+}
