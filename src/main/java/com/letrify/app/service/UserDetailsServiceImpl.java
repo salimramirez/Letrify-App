@@ -1,4 +1,7 @@
-package com.example.basic_web_app;
+package com.letrify.app.service;
+
+import com.letrify.app.model.User;
+import com.letrify.app.repository.UserRepository;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,7 @@
-package com.example.basic_web_app;
+package com.letrify.app.controller;
+
+import com.letrify.app.model.User;
+import com.letrify.app.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,10 +77,10 @@ public class HomeController {
         return "redirect:/login";
     }
     
-    @GetMapping("/dashboard")
-    public String showDashboardPage() {
-        return "dashboard"; // Cargar la nueva plantilla dashboard.html
-    }
+    // @GetMapping("/dashboard")
+    // public String showDashboardPage() {
+    //     return "dashboard"; // Cargar la nueva plantilla dashboard.html
+    // }
     
 
 }

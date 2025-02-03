@@ -1,4 +1,4 @@
-package com.example.basic_web_app;
+package com.letrify.app.exception;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

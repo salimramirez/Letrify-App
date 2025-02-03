@@ -654,6 +654,189 @@ p {
 }
 
 /* ======================= */
+/* SECCIÓN OPTIMIZACIÓN FINANCIERA */
+/* ======================= */
+
+#financial-optimization {
+    max-width: 75rem; /* Limitar el ancho para mejor legibilidad */
+    margin: 0 auto; /* Centrar la sección */
+    padding: 3rem 1.5rem; /* Espaciado interno */
+}
+
+#financial-optimization h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+    background-clip: text; /* Propiedad estándar para compatibilidad */
+    -webkit-background-clip: text; /* Compatibilidad para navegadores WebKit */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
+
+#financial-optimization p.lead {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+/* Estilo de la imagen */
+#financial-optimization img {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Aplicar el estilo del botón del Hero al botón "Lo quiero" */
+#financial-optimization .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color));
+    color: white; /* Color del texto por defecto */
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease; /* Incluimos la transición del color */
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 97, 255, 0.2);
+}
+
+#financial-optimization .btn-primary:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color));
+    box-shadow: 0 5px 12px rgba(0, 97, 255, 0.3);
+    color: #000000; /* Cambia el texto a negro en hover */
+}
+
+#financial-optimization .btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2);
+}
+
+#financial-optimization a {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: underline; /* Subrayado permanente */
+    transition: color 0.3s ease;
+}
+
+#financial-optimization a:hover {
+    color: var(--link-color); /* Cambia el color al pasar el mouse */
+}
+
+/* ======================= */
+/* SECCIÓN ABOUT US     */
+/* ======================= */
+
+/* Fondo y separación de la sección */
+#about-us {
+    background-color: var(--secondary-color); /* Fondo suave como el resto de las secciones */
+    border-radius: 12px; /* Bordes redondeados suaves */
+    overflow: hidden; /* Asegura que el contenido no se corte */
+    padding-bottom: 3rem; /* Espacio extra en la parte inferior si es necesario */
+    max-width: 75rem; /* Limitar el ancho para mejor legibilidad */
+    margin: 0 auto; /* Centrar la sección */
+    padding: 3rem 1.5rem; /* Espaciado interno */
+}
+
+/* #about-us .carousel-inner {
+    padding: 20px 0;   Este padding puedes mantenerlo si quieres más espacio vertical
+} */
+
+/* Asegurando espacio alrededor de las tarjetas */
+#about-us .card {
+    margin: 10px 0; /* Añade margen vertical para que las sombras tengan espacio */
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Título de la sección */
+#about-us h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+    background-clip: text; /* Compatibilidad estándar */
+    -webkit-background-clip: text; /* Compatibilidad para navegadores WebKit */
+    -webkit-text-fill-color: transparent; /* Hace el texto transparente para mostrar el degradado */
+    margin-bottom: 1.5rem;
+}
+
+/* Descripción del equipo */
+#about-us p {
+    font-family: var(--secondary-font);
+    font-size: 1rem;
+    color: var(--text-color);
+    /* max-width: 50ch; Control de ancho para mejor legibilidad */
+    line-height: 1.8;
+}
+
+/* Tarjetas del carrusel */
+#about-us .card {
+    border-radius: 16px; /* Bordes redondeados */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+/* Efecto hover en tarjetas */
+#about-us .card:hover {
+    transform: translateY(-10px); /* Efecto de elevación */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Imagen del integrante */
+#about-us img {
+    border: 4px solid var(--link-color); /* Borde azul vibrante */
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Nombre del integrante */
+#about-us h3 {
+    background: linear-gradient(-135deg, #000000, #7a7a7a); /* Degradado de negro a gris oscuro */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* Asegura que el color del texto sea transparente para mostrar el degradado */
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Descripción del integrante */
+#about-us .text-muted {
+    font-family: var(--secondary-font);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+#about-us .carousel-control-prev,
+#about-us .carousel-control-next {
+    width: -2rem; /* Evita que ocupen un espacio innecesario */
+}
+
+/* Estilo para el círculo del control */
+#about-us .custom-arrow {
+    background-color: var(--link-color); /* Color del círculo */
+    border-radius: 50%; /* Hace el círculo perfecto */
+    width: 40px; 
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tamaño del ícono de flecha */
+#about-us .custom-arrow i {
+    font-size: 25px; /* Reduce el tamaño del ícono */
+    color: white; /* Color del ícono */
+}
+
+/* ======================= */
 /* CONSULTAS DE MEDIOS     */
 /* ======================= */
 
@@ -847,11 +1030,11 @@ p {
 
     #features {
         max-width: 90%; /* Hace que ocupe más espacio en móviles sin verse muy ancha */
-        padding: 2rem 1rem; /* Reduce el padding */
+        padding: 0em 1rem; /* Reduce el padding */
     }
 
     #features h2 {
-        font-size: 1.5rem; /* Reduce el tamaño del título */
+        font-size: 1.8rem; /* Reduce el tamaño del título */
         margin-bottom: 1.5rem; /* Ajusta el espaciado inferior */
     }
 
@@ -899,6 +1082,79 @@ p {
 
     .icon-content i {
         font-size: 2.5rem; /* Reduce el tamaño del icono en móviles */
+    }
+
+    /* === [ SECCIÓN OPTIMIZACIÓN FINANCIERA ] === */
+
+    #financial-optimization {
+        max-width: 90%; /* Hace que ocupe más espacio en móviles sin verse muy ancha */
+        padding: 0rem 1rem; /* Reduce el padding */
+    }
+
+    #financial-optimization h2 {
+        font-size: 1.8rem;
+    }
+
+    #financial-optimization p.lead {
+        font-size: 0.95rem;
+    }
+
+    #financial-optimization .btn-primary {
+        width: 100%; /* El botón ocupará todo el ancho disponible */
+        max-width: 250px; /* Limitar el ancho máximo para hacerlo más pequeño */
+        margin: 0 auto; /* Centrar el botón horizontalmente */
+        display: flex;
+        justify-content: center; /* Asegura que el texto esté centrado dentro del botón */
+        text-align: center;
+    }
+
+    #financial-optimization .d-flex {
+        flex-direction: column; /* Botón y texto en columna en móviles */
+    }
+
+    /* 🔹 Agregar más espacio entre la imagen y el título en móviles */
+    #financial-optimization img {
+        margin-bottom: 2rem; /* Aumenta el espacio debajo de la imagen */
+    }
+
+    /* === [ SECCIÓN ABOUT US ] === */
+
+    #about-us {
+        max-width: 90%; /* Hace que ocupe más espacio en móviles sin verse muy ancha */
+        padding: 0em 1rem; /* Reduce el padding */
+    }
+
+    #about-us h2 {
+        text-align: left; /* Alinea el título "Conócenos" a la izquierda */
+    }
+
+    /* Reducir el tamaño del título de las tarjetas en móviles */
+    #about-us h3 {
+        font-size: 1.2rem; /* Título de las tarjetas más pequeño en vista móvil */
+    }
+
+     #about-us p {
+        text-align: left; /* Alinea el párrafo a la izquierda */
+        margin: 0; /* Elimina el margen automático si lo había */
+    }
+
+    #about-us .carousel-control-prev {
+        left: 10px; /* Mueve el control hacia la izquierda, alejándolo del borde de la tarjeta */
+    }
+
+    #about-us .carousel-control-next {
+        right: 10px; /* Mueve el control hacia la derecha, alejándolo del borde de la tarjeta */
+    }
+
+    /* Opcional: reducir el tamaño del círculo en móviles para mayor espacio */
+    #about-us .custom-arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Reducir un poco más el ícono para mantener proporción */
+    #about-us .custom-arrow i {
+        font-size: 24px;
     }
 
 }

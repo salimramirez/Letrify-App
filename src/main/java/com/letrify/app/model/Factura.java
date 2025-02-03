@@ -1,4 +1,4 @@
-package com.example.basic_web_app;
+package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import java.util.Date;

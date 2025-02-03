@@ -1,4 +1,6 @@
-package com.example.basic_web_app;
+package com.letrify.app.config;
+
+import com.letrify.app.service.UserDetailsServiceImpl;
 
 import java.util.List;
 import org.springframework.context.annotation.Bean;
