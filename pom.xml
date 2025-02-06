@@ -8,11 +8,11 @@
 		<version>3.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>basic-web-app</artifactId>
+	<groupId>com.letrify</groupId>
+	<artifactId>letrify-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>BasicWebApp</name>
-	<description>Demo project for Spring Boot</description>
+	<name>LetrifyApplication</name>
+	<description>Aplicación para la gestión de letras y facturas</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -79,9 +79,9 @@
 		</dependency>
 		<!-- MySQL -->
 		<dependency>
-    		<groupId>mysql</groupId>
-    		<artifactId>mysql-connector-java</artifactId>
-    		<version>8.0.33</version>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 		<!-- Swagger -->
 		<dependency>

@@ -1,0 +1,13 @@
+/* ======================= */
+/* ESTILOS AUTH            */
+/* ======================= */
+
+/* Asegurar que el input tenga suficiente espacio para el ícono */
+/* .form-control {
+    padding-right: 2.5rem;
+} */
+
+/* Estilo para centrar el ícono verticalmente */
+.bi {
+    font-size: 1.2rem;  /* Ajusta el tamaño del ícono si es necesario */
+}

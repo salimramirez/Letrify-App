@@ -1,0 +1,182 @@
+/* ======================= */
+/* COLORES Y FUENTES       */
+/* ======================= */
+:root {
+    --primary-color: #0044cc; /* Azul oscuro refinado (Color principal) */
+    --primary-hover: #0084ff; /* Azul vibrante para efectos hover */
+    --secondary-color: #f5f7fa; /* Gris azulado claro para fondos */
+    --tertiary-color: #60eaff; /* Azul aqua brillante como color terciario */
+    --background-alt-color: #dbeafe; /* Azul pastel claro para fondos secundarios */
+    --text-color: #222222; /* Negro suave para mejor legibilidad */
+    --link-color: #00a3ff; /* Azul cielo brillante para enlaces */
+    --accent-color: #ff8c00; /* Naranja profesional para resaltar acciones clave */
+    --accent-color-gradient: #facc15; /* Naranja dorado suave para degradados */
+
+    /* Colores adicionales */
+    --success-color: #22c55e; /* Verde moderno (éxito, confirmaciones) */
+    --warning-color: #facc15; /* Amarillo dorado (advertencias) */
+    --error-color: #ff3b30; /* Rojo vibrante (errores, problemas críticos) */
+
+    /* Fuentes principales */
+    --primary-font: 'Montserrat', sans-serif; /* Fuente para títulos y encabezados */
+    --secondary-font: 'Lato', sans-serif; /* Fuente para el cuerpo del texto */
+}
+
+/* ============================= */
+/* TIPOGRAFÍA Y ESTILOS GLOBALES */
+/* ============================= */
+
+/* Fuente principal para el cuerpo del texto */
+body {
+    font-family: var(--secondary-font);
+    font-weight: 400; /* Peso normal */
+    line-height: 1.6; /* Mejora la legibilidad */
+    color: var(--text-color); /* Color principal */
+    background-color: var(--secondary-color); /* Fondo suave */
+}
+
+/* Fuente principal para títulos */
+h1, h2, h3 {
+    font-family: var(--primary-font);
+    font-weight: 700; /* Peso negrita */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Tamaños de títulos adaptables */
+h1 {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+}
+
+h2 {
+    font-size: clamp(1.6rem, 4.5vw, 2rem);
+}
+
+h3 {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+}
+
+/* Texto del cuerpo */
+p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1rem; /* Espaciado entre párrafos */
+    max-width: 65ch; /* Máximo ancho de línea para mejor legibilidad */
+}
+
+/* ======================= */
+/* FONDOS GLOBALES         */
+/* ======================= */
+
+/* .bg-light-custom {
+    background-color: var(--secondary-color) !important;
+} */
+
+
+/* ======================= */
+/* BOTONES GLOBALES        */
+/* ======================= */
+
+/* Botón de "Iniciar Sesión" (Navbar) */
+.btn-secondary-action {
+    position: relative;
+    font-weight: bold; /* Texto más destacado */
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 0.6rem 1.6rem; /* Aumenta el espaciado interno */
+    display: flex; /* Para alinear íconos y texto */
+    align-items: center; /* Centra verticalmente */
+    gap: 0.5rem; /* Espacio entre ícono y texto */
+    font-size: 1rem; /* Tamaño del texto */
+    text-transform: capitalize;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animaciones suaves */
+    background-color: transparent; /* Fondo transparente */
+    text-decoration: none; /* Quitar subrayado */
+    border: none; /* Quitamos el borde predeterminado para evitar inconsistencias */
+
+    /* Aplicamos degradado al texto */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent; /* Hace el texto degradado */
+    
+    /* Sombra más sutil */
+    box-shadow: 0 4px 10px rgba(0, 97, 255, 0.15);
+}
+
+/* Borde degradado con curvatura */
+.btn-secondary-action::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* Ocupa todo el tamaño del botón */
+    padding: 1.5px; /* Grosor del borde */
+    border-radius: 20px; /* Misma curvatura que el botón */
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Borde degradado */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none; /* Evita que interfiera con clics */
+    transition: opacity 0.3s ease; /* Animación para desaparecer */
+}
+
+/* Hover: Cambio de color de fondo y texto */
+.btn-secondary-action:hover {
+    transform: scale(1.025); /* Aumenta ligeramente el tamaño */
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color)); /* Fondo con degradado más vibrante */
+    color: black; /* Hace el texto blanco */
+    box-shadow: 0 6px 14px rgba(0, 97, 255, 0.3); /* Sombra más intensa */
+    -webkit-background-clip: unset; /* Quita el degradado del texto */
+    background-clip: unset;
+}
+
+/* Hover: Oculta el borde degradado en hover */
+.btn-secondary-action:hover::before {
+    opacity: 0;
+}
+
+/* Efecto "press" al hacer clic */
+.btn-secondary-action:active {
+    transform: scale(0.98); /* Simula una presión al hacer clic */
+    box-shadow: 0 3px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* Asegurar que el ícono también tenga el degradado */
+.btn-secondary-action i {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Gradiente aplicado */
+    background-clip: text; /* Estándar */
+    -webkit-background-clip: text; /* Compatibilidad con WebKit */
+    color: transparent; /* Hace el ícono transparente con gradiente */
+    font-size: 1rem; /* Tamaño del ícono */
+    transition: color 0.3s ease-in-out;
+}
+
+/* Hover: Hace que el ícono también se vuelva negro */
+.btn-secondary-action:hover i {
+    color: black;
+}
+
+/* Botón de "Registrarse" (Navbar) */
+.btn-primary-action {
+    background: linear-gradient(135deg, var(--primary-color), var(--tertiary-color)); /* Degradado actualizado */
+    color: white; /* Texto en blanco */
+    font-weight: bold; /* Resaltar texto */
+    border: none; /* Sin bordes */
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 0.6rem 1.6rem; /* Tamaño adecuado */
+    font-size: 1rem; /* Tamaño del texto */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; /* Animaciones suaves */
+    box-shadow: 0 3px 6px rgba(0, 97, 255, 0.2); /* Sombra ligera */
+}
+
+/* Hover: hace que el botón sea más vibrante */
+.btn-primary-action:hover {
+    transform: scale(1.025); /* Aumenta ligeramente el tamaño */
+    background: linear-gradient(135deg, var(--primary-hover), var(--tertiary-color)); /* Degradado más vibrante */
+    box-shadow: 0 5px 12px rgba(0, 97, 255, 0.3); /* Sombra más intensa */
+}
+
+/* Efecto "press" al hacer clic */
+.btn-primary-action:active {
+    transform: scale(0.98); /* Simula una presión al hacer clic */
+    box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
