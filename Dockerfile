@@ -29,4 +29,4 @@ RUN mvn clean package -DskipTests
 EXPOSE 8080
 
 # Ejecutar la aplicación con el JAR generado
-CMD ["java", "-jar", "target/basic-web-app-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/letrify-application-0.0.1-SNAPSHOT.jar"]
