@@ -184,13 +184,6 @@ p {
 /* VALIDACIONES DE ERROR */
 /* ===================== */
 
-/* Borde rojo cuando hay error */
-.input-error {
-    border: 2px solid #dc3545 !important; /* Rojo Bootstrap */
-    box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); /* Efecto de sombra */
-    transition: border 0.2s ease-in-out;
-}
-
 .error-tooltip {
     background: #f8d7da; /* Rojo claro */
     color: #721c24; /* Rojo oscuro */
@@ -237,3 +230,46 @@ p {
     /* border-top: 1px solid #dc3545; */
 }
 
+/* Estilo del globo flotante */
+.password-tooltip {
+    background: #fff; /* Fondo blanco */
+    color: #333; /* Texto oscuro */
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    position: absolute;
+    left: 10px;
+    bottom: -50px; /* Ajuste para posicionarlo debajo del input */
+    width: max-content;
+    white-space: nowrap;
+    display: inline-block;
+    z-index: 10;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Sombra flotante */
+    border: 1px solid #ccc; /* Borde ligero */
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: translateY(-5px);
+}
+
+/* Cuando se muestra */
+.password-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Flecha del tooltip */
+.password-tooltip::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 15px;
+    width: 12px;
+    height: 12px;
+    background: #fff; /* Mismo color del fondo */
+    transform: rotate(45deg);
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}

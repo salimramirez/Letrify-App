@@ -108,9 +108,114 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validación del correo electrónico (Empresas)
     document.getElementById('emailEmpresa').addEventListener('input', function () {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        validateField(this, 'emailEmpresaValidIcon', 'emailEmpresaInvalidIcon', emailPattern);
+        const emailInput = this; // Referencia al input
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar correos
+        const isValid = emailPattern.test(emailInput.value);
+    
+        // Obtener el tooltip de error
+        const errorTooltip = document.getElementById('emailEmpresaError');
+    
+        // Manejar tooltip de error con fade-in/out
+        errorTooltip.classList.toggle('visible', !isValid && emailInput.value.trim() !== "");
+    
+        // Aplicar clases de Bootstrap para validación
+        emailInput.classList.toggle('is-valid', isValid);
+        emailInput.classList.toggle('is-invalid', !isValid && emailInput.value.trim() !== "");
     });
+
+    // Validación del Número de Teléfono (Empresas)
+    document.getElementById('phoneEmpresa').addEventListener('input', function () {
+        const phoneInput = this; // Referencia al input
+        const phonePattern = /^\d{9}$/; // Solo 9 dígitos exactos
+        const countryCodePattern = /^\+\d+/; // Detecta si hay un código de país (ej: +51, +34)
+    
+        const errorTooltip = document.getElementById('phoneEmpresaError');
+    
+        if (countryCodePattern.test(phoneInput.value)) {
+            // Si el usuario ingresa un código de país, mostrar mensaje especial
+            errorTooltip.textContent = "No hace falta código de país.";
+            errorTooltip.classList.add('visible');
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else {
+            // Validar solo si son 9 dígitos
+            const isValid = phonePattern.test(phoneInput.value);
+            errorTooltip.textContent = "Debe tener 9 dígitos."; // Mensaje normal
+    
+            // Mostrar u ocultar el tooltip según la validez
+            errorTooltip.classList.toggle('visible', !isValid && phoneInput.value.trim() !== "");
+    
+            // Aplicar clases de Bootstrap para borde verde/rojo
+            this.classList.toggle('is-valid', isValid);
+            this.classList.toggle('is-invalid', !isValid && phoneInput.value.trim() !== "");
+        }
+    });
+
+    // Validación de la Dirección Fiscal
+    document.getElementById('fiscal_address').addEventListener('input', function () {
+        const addressInput = this; // Referencia al input
+        const minLength = 5; // Longitud mínima requerida
+        const isValid = addressInput.value.trim().length >= minLength;
+
+        // Manejar tooltip de error con fade-in/out
+        const errorTooltip = document.getElementById('fiscalAddressError');
+        errorTooltip.classList.toggle('visible', !isValid && addressInput.value.trim() !== "");
+
+        // Aplicar clases de Bootstrap para el borde de validación
+        this.classList.toggle('is-valid', isValid);
+        this.classList.toggle('is-invalid', !isValid && this.value.trim() !== "");
+    });
+
+    // ###
+    // Validación del sector
+    // ###
+
+    // Seleccionar elementos
+    const industrySelect = document.getElementById('industry'); // Select de sectores
+    const otherIndustryContainer = document.getElementById('otherIndustryContainer'); // Contenedor del input "Otro"
+    const otherIndustryInput = document.getElementById('otherIndustry'); // Input de "Otro"
+
+    // Agregar evento de cambio al selector
+    industrySelect.addEventListener('change', function () {
+        if (this.value === 'Otro') {
+            otherIndustryContainer.classList.remove('d-none'); // Mostrar input
+            otherIndustryContainer.classList.add('d-flex'); // Mantener la estructura
+            otherIndustryInput.setAttribute('required', 'true'); // Hacerlo obligatorio
+
+            // No marcar el select como válido o inválido
+            this.classList.remove('is-valid', 'is-invalid');
+        } else {
+            otherIndustryContainer.classList.remove('d-flex'); // Evitar que afecte el diseño
+            otherIndustryContainer.classList.add('d-none'); // Ocultar input
+            otherIndustryInput.removeAttribute('required'); // Quitar requerimiento
+            otherIndustryInput.value = ''; // Limpiar input
+            otherIndustryInput.classList.remove('is-valid', 'is-invalid'); // Resetear validación del input
+
+            // Validación del select (Solo si elige algo distinto de "Otro")
+            if (this.value === "") { // Si está en "Selecciona un sector"
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        }
+    });
+
+    // Validación del input "Otro"
+    otherIndustryInput.addEventListener('input', function () {
+        if (this.value.trim() === "") {
+            this.classList.remove('is-valid');
+            if (this.hasAttribute('required')) { // Solo mostrar inválido si es obligatorio
+                this.classList.add('is-invalid');
+            }
+        } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+
+    // ###
 
     // Validación del correo electrónico (Personas)
     document.getElementById('emailPersona').addEventListener('input', function () {
@@ -120,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validación de contraseñas (Empresas)
     document.getElementById('passwordEmpresa').addEventListener('input', function () {
-        handlePasswordValidation(this, 'passwordStrengthBarEmpresa', 'passwordStrengthTextEmpresa');
+        handlePasswordValidation(this, 'passwordStrengthBarEmpresa', 'passwordStrengthTextEmpresa', 'passwordTooltipEmpresa');
     });
 
     document.getElementById('confirmPasswordEmpresa').addEventListener('input', function () {
@@ -160,22 +265,41 @@ document.addEventListener('DOMContentLoaded', function () {
         invalidIcon.classList.toggle('d-none', isValid);
     }
 
-    function handlePasswordValidation(passwordElement, strengthBarId, strengthTextId) {
+    function handlePasswordValidation(passwordElement, strengthBarId, strengthTextId, tooltipId) {
         const password = passwordElement.value;
         const strengthBar = document.getElementById(strengthBarId);
         const strengthText = document.getElementById(strengthTextId);
-
+        const tooltip = document.getElementById(tooltipId);
+    
         if (password === '') {
             strengthBar.style.width = '0%';
             strengthBar.className = 'progress-bar';
-            strengthText.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+            strengthText.textContent = 'Mínimo 6 caracteres';
+    
+            // Ocultar tooltip
+            tooltip.classList.add('d-none');
+            tooltip.classList.remove('visible');
+    
+            // No marcar inválido si está vacío
+            passwordElement.classList.remove('is-valid', 'is-invalid');
             return;
         }
-
+    
+        // Mostrar el tooltip eliminando d-none
+        tooltip.classList.remove('d-none');
+        tooltip.classList.add('visible');
+    
+        // Evaluar la fuerza de la contraseña
         const strength = evaluatePasswordStrength(password);
         strengthBar.style.width = strength.percent + '%';
         strengthBar.className = 'progress-bar ' + strength.colorClass;
         strengthText.textContent = strength.message;
+    
+        // Validar la contraseña como válida solo si tiene 6+ caracteres y es media o fuerte
+        const isValid = password.length >= 6 && (strength.message === 'Contraseña media' || strength.message === 'Contraseña fuerte');
+    
+        passwordElement.classList.toggle('is-valid', isValid);
+        passwordElement.classList.toggle('is-invalid', !isValid);
     }
 
     function handleConfirmPasswordValidation(passwordId, confirmPasswordId, validIconId, invalidIconId) {

@@ -73,41 +73,77 @@
                                     </div> -->
                                 </div>
                                 <!-- Correo Electrónico -->
-                                <div class="form-floating mb-3 position-relative">
-                                    <input type="email" class="form-control pe-5" id="emailEmpresa" name="email" placeholder="Correo Electrónico" th:value="${email}" required>
-                                    <label for="emailEmpresa">Correo Electrónico</label>
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="email" class="form-control pe-5" id="emailEmpresa" name="email" placeholder="Correo Electrónico" th:value="${email}" required aria-describedby="emailEmpresaError">
+                                        <label for="emailEmpresa">Correo Electrónico</label>
+                                    </div>
                                 
-                                    <!-- Íconos alineados correctamente -->
-                                    <i class="bi bi-check-circle text-success position-absolute end-0 top-50 translate-middle-y me-3 d-none" id="emailEmpresaValidIcon"></i>
-                                    <i class="bi bi-x-circle text-danger position-absolute end-0 top-50 translate-middle-y me-3 d-none" id="emailEmpresaInvalidIcon"></i>
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="emailEmpresaError" class="error-tooltip" role="alert">
+                                        Ingresa un correo válido.
+                                    </div>
                                 </div>
                                 <!-- Número de Teléfono -->
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="phoneEmpresa" name="phone_number" placeholder="Número de Teléfono">
-                                    <label for="phoneEmpresa">Número de Teléfono</label>
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control pe-5" id="phoneEmpresa" name="phone_number" placeholder="Número de Teléfono" aria-describedby="phoneEmpresaError">
+                                        <label for="phoneEmpresa">Número de Teléfono</label>
+                                    </div>
+                                
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="phoneEmpresaError" class="error-tooltip" role="alert">Debe tener 9 dígitos.</div>
                                 </div>
                             </div>
                             <!-- Segunda Columna -->
                             <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="fiscal_address" class="form-label">Dirección Fiscal</label>
-                                    <input type="text" id="fiscal_address" name="fiscal_address" class="form-control" placeholder="Ingresa la dirección fiscal">
+                                <!-- Dirección Fiscal -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control pe-5" id="fiscal_address" name="fiscal_address" placeholder="Dirección Fiscal" aria-describedby="fiscalAddressError">
+                                        <label for="fiscal_address">Dirección Fiscal</label>
+                                    </div>
+
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="fiscalAddressError" class="error-tooltip" role="alert">Al menos 5 caracteres.</div>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="industry" class="form-label">Sector</label>
-                                    <input type="text" id="industry" name="industry" class="form-control" placeholder="Ingresa el sector">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="passwordEmpresa" class="form-label">Contraseña</label>
-                                    <div class="d-flex align-items-center position-relative">
+                                <!-- Sector (Menú desplegable) -->
+                                <div class="mb-3 d-flex gap-2 align-items-center">
+                                    <!-- Select de sectores -->
+                                    <div class="form-floating flex-grow-1">
+                                        <select class="form-select" id="industry" name="industry" aria-describedby="industryError">
+                                            <option value="" selected>Selecciona un sector</option>
+                                            <option value="Tecnología">Tecnología</option>
+                                            <option value="Finanzas">Finanzas</option>
+                                            <option value="Salud">Salud</option>
+                                            <option value="Educación">Educación</option>
+                                            <option value="Retail">Retail</option>
+                                            <option value="Manufactura">Manufactura</option>
+                                            <option value="Otro">Otro...</option>
+                                        </select>
+                                        <label for="industry">Sector</label>
+                                    </div>
+                                
+                                    <!-- Input "Otro" oculto al inicio -->
+                                    <div class="form-floating w-60 d-none" id="otherIndustryContainer">
+                                        <input type="text" class="form-control" id="otherIndustry" name="other_industry" placeholder="Especifica tu sector">
+                                        <label for="otherIndustry">Especifica</label>
+                                    </div>
+                                </div>                                
+                                <!-- Contraseña -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
                                         <input type="password" id="passwordEmpresa" name="password" class="form-control pe-5" placeholder="Crea una contraseña" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="passwordValidIconEmpresa"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="passwordInvalidIconEmpresa"></i>
+                                        <label for="passwordEmpresa">Contraseña</label>
                                     </div>
-                                    <div class="progress mt-2" style="height: 4px;">
-                                        <div class="progress-bar" id="passwordStrengthBarEmpresa" role="progressbar" style="width: 0%;"></div>
+                                
+                                    <!-- Globo flotante para la barra de fuerza y el texto -->
+                                    <div id="passwordTooltipEmpresa" class="password-tooltip">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" id="passwordStrengthBarEmpresa" role="progressbar" style="width: 0%;"></div>
+                                        </div>
+                                        <small id="passwordStrengthTextEmpresa" class="form-text text-muted">Mínimo 6 caracteres</small>
                                     </div>
-                                    <small id="passwordStrengthTextEmpresa" class="form-text text-muted">La contraseña debe tener al menos 6 caracteres.</small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="confirmPasswordEmpresa" class="form-label">Confirmar Contraseña</label>
