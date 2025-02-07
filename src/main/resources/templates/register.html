@@ -59,20 +59,18 @@
                                     <label for="business_name">Razón Social</label>
                                 </div>
                                 <!-- RUC -->
-                                <div class="mb-3">
+                                <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
-                                        <input type="text" class="form-control pe-5" id="ruc" name="ruc" placeholder="RUC">
+                                        <input type="text" class="form-control pe-5" id="ruc" name="ruc" placeholder="RUC" aria-describedby="rucError">
                                         <label for="ruc">RUC</label>
-                                
-                                        <!-- Contenedor de íconos alineados correctamente -->
-                                        <div class="position-absolute end-0 top-50 translate-middle-y me-3">
-                                            <i class="bi bi-check-circle text-success d-none" id="rucValidIcon"></i>
-                                            <i class="bi bi-x-circle text-danger d-none" id="rucInvalidIcon"></i>
-                                        </div>
                                     </div>
-                                    
-                                    <!-- Mensaje de error con espacio fijo -->
-                                    <small id="rucError" class="text-danger d-none">Deben ser 11 dígitos.</small>
+                                
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="rucError" class="error-tooltip" role="alert">Deben ser 11 dígitos.</div>
+
+                                    <!-- <div id="rucError" class="invalid-feedback">
+                                        Deben ser 11 dígitos.
+                                    </div> -->
                                 </div>
                                 <!-- Correo Electrónico -->
                                 <div class="form-floating mb-3 position-relative">

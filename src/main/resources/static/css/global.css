@@ -97,7 +97,7 @@ p {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent; /* Hace el texto degradado */
-    
+
     /* Sombra más sutil */
     box-shadow: 0 4px 10px rgba(0, 97, 255, 0.15);
 }
@@ -178,5 +178,62 @@ p {
 .btn-primary-action:active {
     transform: scale(0.98); /* Simula una presión al hacer clic */
     box-shadow: 0 2px 6px rgba(0, 97, 255, 0.2); /* Reduce la sombra */
+}
+
+/* ===================== */
+/* VALIDACIONES DE ERROR */
+/* ===================== */
+
+/* Borde rojo cuando hay error */
+.input-error {
+    border: 2px solid #dc3545 !important; /* Rojo Bootstrap */
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); /* Efecto de sombra */
+    transition: border 0.2s ease-in-out;
+}
+
+.error-tooltip {
+    background: #f8d7da; /* Rojo claro */
+    color: #721c24; /* Rojo oscuro */
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    position: absolute;
+    left: 10px;
+    bottom: -35px; /* Ajuste para evitar solapamientos */
+    max-width: 250px; /* Nueva mejora: Limita el ancho máximo */
+    word-wrap: break-word; /* Nueva mejora: Evita desbordes de texto */
+    white-space: nowrap;  /* Con "normal;" permite saltos de línea */
+    display: inline-block;
+    z-index: 10;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Sombra flotante */
+    /* border: 1px solid #dc3545; */
+
+    opacity: 0; /* Inicialmente oculto */
+    visibility: hidden; /* No ocupa espacio */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: translateY(-5px); /* Se eleva un poco */
+}
+
+/* Cuando se muestra el error */
+.error-tooltip.visible {
+    opacity: 1;
+    visibility: visible; /* Se vuelve visible */
+    transform: translateY(0); /* Baja suavemente */
+}
+
+/* Nueva flecha en forma de triángulo con bordes redondeados */
+.error-tooltip::before {
+    content: "";
+    position: absolute;
+    top: -6.5px; /* Ajusta para que la base se fusione con el tooltip */
+    left: 15px; /* Centra la flecha */
+    /* left: 50%;
+    transform: translateX(-50%) rotate(45deg); */
+    width: 12px;
+    height: 12px;
+    background: #f8d7da; /* Mismo color que el fondo del tooltip */
+    transform: rotate(45deg); /* Gira el cuadrado para formar un triángulo */
+    /* border-left: 1px solid #dc3545; */
+    /* border-top: 1px solid #dc3545; */
 }
 

@@ -75,9 +75,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validación del RUC (Empresas)
     document.getElementById('ruc').addEventListener('input', function () {
+        const rucInput = this; // Referencia al input
         const rucPattern = /^\d{11}$/; // Solo 11 dígitos exactos
-        validateFieldWithMessage(this, 'rucValidIcon', 'rucInvalidIcon', 'rucError', rucPattern);
+        const isValid = rucPattern.test(rucInput.value);
+
+        // Manejar tooltip de error con fade-in/out
+        const errorTooltip = document.getElementById('rucError');
+        errorTooltip.classList.toggle('visible', !isValid && rucInput.value.trim() !== "");
+
+        // Agregar o quitar borde rojo en el input
+        this.classList.toggle('is-valid', isValid);
+        this.classList.toggle('is-invalid', !isValid && this.value.trim() !== "");
     });
+
+    // document.getElementById('ruc').addEventListener('input', function () {
+    //     const rucInput = this; // Referencia al input
+    //     const rucPattern = /^\d{11}$/; // Solo 11 dígitos exactos
+    //     const isValid = rucPattern.test(rucInput.value);
+    
+    //     // Aplicar clases de Bootstrap
+    //     this.classList.toggle('is-valid', isValid);
+    //     this.classList.toggle('is-invalid', !isValid && this.value.trim() !== "");
+    
+    //     // Mostrar/ocultar el mensaje de error manualmente
+    //     const errorTooltip = document.getElementById('rucError');
+    //     if (!isValid && rucInput.value.trim() !== "") {
+    //         errorTooltip.style.display = "block"; // Mostrar mensaje
+    //     } else {
+    //         errorTooltip.style.display = "none"; // Ocultar mensaje
+    //     }
+    // });
 
     // Validación del correo electrónico (Empresas)
     document.getElementById('emailEmpresa').addEventListener('input', function () {
@@ -113,26 +140,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // FUNCIONES DE VALIDACIÓN
     // ==========================
 
-    // Función para Validar Campos
-    function validateField(inputElement, validIconId, invalidIconId, pattern = /.+/) {
-        const value = inputElement.value;
+    // Función para validar un campo con un patrón y opcionalmente mostrar un mensaje de error
+    function validateField(inputElement, validIcon, invalidIcon, errorElement = null, pattern = /.+/) {
+        const value = inputElement.value.trim();
         const isValid = pattern.test(value);
-        toggleIcons(validIconId, invalidIconId, isValid);
-    }
-
-    // Función para Validar con Mensaje
-    function validateFieldWithMessage(inputElement, validIconId, invalidIconId, errorId, pattern) {
-        const value = inputElement.value;
-        const isValid = pattern.test(value);
-
-        toggleIcons(validIconId, invalidIconId, isValid);
-        document.getElementById(errorId).classList.toggle('d-none', isValid);
+    
+        // Actualizar íconos de validación
+        toggleIcons(validIcon, invalidIcon, isValid);
+    
+        // Manejar visibilidad del mensaje de error si se proporciona
+        if (errorElement) {
+            errorElement.classList.toggle('visible', !isValid);
+        }
     }
 
     // Mostrar o Ocultar Íconos según sea válido o no
-    function toggleIcons(validIconId, invalidIconId, isValid) {
-        document.getElementById(validIconId).classList.toggle('d-none', !isValid);
-        document.getElementById(invalidIconId).classList.toggle('d-none', isValid);
+    function toggleIcons(validIcon, invalidIcon, isValid) {
+        validIcon.classList.toggle('d-none', !isValid);
+        invalidIcon.classList.toggle('d-none', isValid);
     }
 
     function handlePasswordValidation(passwordElement, strengthBarId, strengthTextId) {
