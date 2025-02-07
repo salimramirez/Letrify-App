@@ -84,6 +84,7 @@ public class HomeController {
                             @RequestParam(required = false) String ruc,
                             @RequestParam(required = false) String fiscal_address,
                             @RequestParam(required = false) String industry,
+                            @RequestParam(required = false) String other_industry, // Capturamos el input adicional
                             @RequestParam(required = false) String full_name,
                             @RequestParam(required = false) String dni,
                             @RequestParam(required = false) String birth_date,
@@ -91,6 +92,12 @@ public class HomeController {
                             RedirectAttributes redirectAttributes) {
 
         logger.info(AnsiColor.BLUE + "Datos recibidos: Email = {}, Tipo de Usuario = {}" + AnsiColor.RESET, email, userType);
+    
+        // Log para verificar los valores recibidos
+        logger.info(AnsiColor.RED + "[DEBUG] Sector recibido (industry): {}" + AnsiColor.RESET, industry);
+        logger.info(AnsiColor.RED + "[DEBUG] Otro sector recibido (other_industry): {}" + AnsiColor.RESET, other_industry);
+
+
 
         // Verificar si el correo electrónico ya está registrado
         if (userRepository.findByEmail(email) != null) {
@@ -119,6 +126,11 @@ public class HomeController {
             phoneNumber = "+51" + phoneNumber;
         }
 
+        // Si se ingresó un sector en "Otro", usarlo en lugar del select
+        if (industry != null && industry.equals("Otro") && other_industry != null && !other_industry.trim().isEmpty()) {
+            industry = other_industry.trim();
+        }
+        
         // Verificar si las contraseñas coinciden
         if (!password.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden. Intenta nuevamente.");
@@ -147,7 +159,7 @@ public class HomeController {
             company.setBusinessName(business_name);
             company.setRuc(ruc);
             company.setFiscalAddress(fiscal_address);
-            company.setIndustry(industry);
+            company.setIndustry(industry); // Guardar el sector final (ya sea el del select o el input)
             companyRepository.save(company);
             logger.info(AnsiColor.GREEN + "[ÉXITO] Empresa registrada: {}" + AnsiColor.RESET, business_name);
         }

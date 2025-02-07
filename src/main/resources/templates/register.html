@@ -54,9 +54,13 @@
                             <!-- Primera Columna -->
                             <div class="col-md-6">
                                 <!-- Razón Social -->
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="business_name" name="business_name" placeholder="Razón Social">
-                                    <label for="business_name">Razón Social</label>
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="business_name" name="business_name" placeholder="Razón Social">
+                                        <label for="business_name">Razón Social</label>
+                                    </div>
+                                    <!-- Globo de error -->
+                                    <div id="businessNameError" class="error-tooltip" role="alert">Debe tener al menos 5 caracteres.</div>
                                 </div>
                                 <!-- RUC -->
                                 <div class="mb-3 position-relative">
@@ -111,8 +115,8 @@
                                 <div class="mb-3 d-flex gap-2 align-items-center">
                                     <!-- Select de sectores -->
                                     <div class="form-floating flex-grow-1">
-                                        <select class="form-select" id="industry" name="industry" aria-describedby="industryError">
-                                            <option value="" selected>Selecciona un sector</option>
+                                        <select class="form-select" id="industry" name="industry" aria-describedby="industryError" required>
+                                            <option value="" disabled selected>Selecciona un sector</option> <!-- Ahora está deshabilitado -->
                                             <option value="Tecnología">Tecnología</option>
                                             <option value="Finanzas">Finanzas</option>
                                             <option value="Salud">Salud</option>
@@ -129,7 +133,7 @@
                                         <input type="text" class="form-control" id="otherIndustry" name="other_industry" placeholder="Especifica tu sector">
                                         <label for="otherIndustry">Especifica</label>
                                     </div>
-                                </div>                                
+                                </div>
                                 <!-- Contraseña -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating">
@@ -145,13 +149,16 @@
                                         <small id="passwordStrengthTextEmpresa" class="form-text text-muted">Mínimo 6 caracteres</small>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="confirmPasswordEmpresa" class="form-label">Confirmar Contraseña</label>
-                                    <div class="d-flex align-items-center position-relative">
-                                        <input type="password" id="confirmPasswordEmpresa" name="confirmPassword" class="form-control pe-5" placeholder="Repite tu contraseña" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="confirmPasswordValidIconEmpresa"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="confirmPasswordInvalidIconEmpresa"></i>
+                                <!-- Confirmar Contraseña -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
+                                        <!-- Se agrega el atributo `disabled` para que el usuario no pueda escribir hasta que ingrese una contraseña -->
+                                        <input type="password" id="confirmPasswordEmpresa" name="confirmPassword" class="form-control pe-5" placeholder="Repite tu contraseña" required disabled>
+                                        <label for="confirmPasswordEmpresa">Confirmar Contraseña</label>
                                     </div>
+                                
+                                    <!-- Globo de error para contraseñas no coincidentes -->
+                                    <div id="confirmPasswordError" class="error-tooltip" role="alert">Las contraseñas no coinciden</div>
                                 </div>
                             </div>
                         </div>
