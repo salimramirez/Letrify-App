@@ -1,16 +1,97 @@
 document.addEventListener('DOMContentLoaded', function () {
     
+    // ==========================
+    // CONFIGURACIÓN INICIAL AL CARGAR LA PÁGINA
+    // ==========================
+
+    const empresaBtn = document.getElementById('empresaBtn');
+    const personaBtn = document.getElementById('personaBtn');
+    const userTypeInput = document.getElementById('userTypeInput');
+
+    // Evento para el botón de Empresas
+    empresaBtn.addEventListener('click', () => {
+        empresaBtn.classList.add('active', 'btn-primary');
+        personaBtn.classList.remove('active', 'btn-primary');
+        personaBtn.classList.add('btn-outline-secondary');
+
+        userTypeInput.value = 'COMPANY'; // Actualiza el valor del campo oculto
+    });
+
+    // Evento para el botón de Personas
+    personaBtn.addEventListener('click', () => {
+        personaBtn.classList.add('active', 'btn-primary');
+        empresaBtn.classList.remove('active', 'btn-primary');
+        empresaBtn.classList.add('btn-outline-secondary');
+
+        userTypeInput.value = 'INDIVIDUAL'; // Actualiza el valor del campo oculto
+    });
+
+    // Asegurar que al cargar la página los campos ocultos estén deshabilitados
+    toggleFieldset('personaFields', true);
+
+    // Verifica si hay un valor en el input oculto
+    if (userTypeInput.value === 'INDIVIDUAL') {
+        document.getElementById('personaBtn').click(); // Activa la pestaña Personas
+    } else {
+        document.getElementById('empresaBtn').click(); // Activa la pestaña Empresas
+    }
+
+    // ==========================
+    // MANEJO DE SECCIONES EMPRESAS/PERSONAS
+    // ==========================
+
+    // Alternar entre Empresas y Personas y Deshabilitar Campos Ocultos
+    document.getElementById('empresaBtn').addEventListener('click', function() {
+        document.getElementById('empresaFields').classList.remove('d-none');
+        document.getElementById('personaFields').classList.add('d-none');
+        this.classList.add('active');
+        document.getElementById('personaBtn').classList.remove('active');
+
+        toggleFieldset('empresaFields', false); // Habilitar los campos de empresa
+        toggleFieldset('personaFields', true);  // Deshabilitar los campos de persona
+    });
+
+    document.getElementById('personaBtn').addEventListener('click', function() {
+        document.getElementById('personaFields').classList.remove('d-none');
+        document.getElementById('empresaFields').classList.add('d-none');
+        this.classList.add('active');
+        document.getElementById('empresaBtn').classList.remove('active');
+
+        toggleFieldset('personaFields', false); // Habilitar los campos de persona
+        toggleFieldset('empresaFields', true);  // Deshabilitar los campos de empresa
+    });
+
+    // Funcíon para habilitar o deshabilitar campos ocultos
+    function toggleFieldset(fieldsetId, disable) {
+        const fields = document.querySelectorAll(`#${fieldsetId} input`);
+        fields.forEach(field => {
+            field.disabled = disable;
+        });
+    }
+
+    // ==========================
+    // VALIDACIONES DE CAMPOS
+    // ==========================
+
+    // Validación del RUC (Empresas)
+    document.getElementById('ruc').addEventListener('input', function () {
+        const rucPattern = /^\d{11}$/; // Solo 11 dígitos exactos
+        validateFieldWithMessage(this, 'rucValidIcon', 'rucInvalidIcon', 'rucError', rucPattern);
+    });
+
+    // Validación del correo electrónico (Empresas)
     document.getElementById('emailEmpresa').addEventListener('input', function () {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         validateField(this, 'emailEmpresaValidIcon', 'emailEmpresaInvalidIcon', emailPattern);
     });
 
-    // Validar el campo de Correo Electrónico para Personas
+    // Validación del correo electrónico (Personas)
     document.getElementById('emailPersona').addEventListener('input', function () {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // Patrón para correos electrónicos válidos
         validateField(this, 'emailPersonaValidIcon', 'emailPersonaInvalidIcon', emailPattern);
     });
 
+    // Validación de contraseñas (Empresas)
     document.getElementById('passwordEmpresa').addEventListener('input', function () {
         handlePasswordValidation(this, 'passwordStrengthBarEmpresa', 'passwordStrengthTextEmpresa');
     });
@@ -19,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         handleConfirmPasswordValidation('passwordEmpresa', 'confirmPasswordEmpresa', 'confirmPasswordValidIconEmpresa', 'confirmPasswordInvalidIconEmpresa');
     });
 
+    // Validación de contraseñas (Personas)
     document.getElementById('passwordPersona').addEventListener('input', function () {
         handlePasswordValidation(this, 'passwordStrengthBarPersona', 'passwordStrengthTextPersona');
     });
@@ -27,11 +109,24 @@ document.addEventListener('DOMContentLoaded', function () {
         handleConfirmPasswordValidation('passwordPersona', 'confirmPasswordPersona', 'confirmPasswordValidIconPersona', 'confirmPasswordInvalidIconPersona');
     });
 
+    // ==========================
+    // FUNCIONES DE VALIDACIÓN
+    // ==========================
+
     // Función para Validar Campos
     function validateField(inputElement, validIconId, invalidIconId, pattern = /.+/) {
         const value = inputElement.value;
         const isValid = pattern.test(value);
         toggleIcons(validIconId, invalidIconId, isValid);
+    }
+
+    // Función para Validar con Mensaje
+    function validateFieldWithMessage(inputElement, validIconId, invalidIconId, errorId, pattern) {
+        const value = inputElement.value;
+        const isValid = pattern.test(value);
+
+        toggleIcons(validIconId, invalidIconId, isValid);
+        document.getElementById(errorId).classList.toggle('d-none', isValid);
     }
 
     // Mostrar o Ocultar Íconos según sea válido o no
@@ -82,56 +177,5 @@ document.addEventListener('DOMContentLoaded', function () {
             return { percent: 100, colorClass: 'bg-success', message: 'Contraseña fuerte' };
         }
     }
-
-    // Alternar entre Empresas y Personas y Deshabilitar Campos Ocultos
-    document.getElementById('empresaBtn').addEventListener('click', function() {
-        document.getElementById('empresaFields').classList.remove('d-none');
-        document.getElementById('personaFields').classList.add('d-none');
-        this.classList.add('active');
-        document.getElementById('personaBtn').classList.remove('active');
-
-        toggleFieldset('empresaFields', false);
-        toggleFieldset('personaFields', true);
-    });
-
-    document.getElementById('personaBtn').addEventListener('click', function() {
-        document.getElementById('personaFields').classList.remove('d-none');
-        document.getElementById('empresaFields').classList.add('d-none');
-        this.classList.add('active');
-        document.getElementById('empresaBtn').classList.remove('active');
-
-        toggleFieldset('personaFields', false);
-        toggleFieldset('empresaFields', true);
-    });
-
-    // Funcíon para habilitar o deshabilitar campos ocultos
-    function toggleFieldset(fieldsetId, disable) {
-        const fields = document.querySelectorAll(`#${fieldsetId} input`);
-        fields.forEach(field => {
-            field.disabled = disable;
-        });
-    }
-
-    const empresaBtn = document.getElementById('empresaBtn');
-    const personaBtn = document.getElementById('personaBtn');
-    const userTypeInput = document.getElementById('userTypeInput');
-
-    // Evento para el botón de Empresas
-    empresaBtn.addEventListener('click', () => {
-        empresaBtn.classList.add('active', 'btn-primary');
-        personaBtn.classList.remove('active', 'btn-primary');
-        personaBtn.classList.add('btn-outline-secondary');
-
-        userTypeInput.value = 'COMPANY'; // Actualiza el valor del campo oculto
-    });
-
-    // Evento para el botón de Personas
-    personaBtn.addEventListener('click', () => {
-        personaBtn.classList.add('active', 'btn-primary');
-        empresaBtn.classList.remove('active', 'btn-primary');
-        empresaBtn.classList.add('btn-outline-secondary');
-
-        userTypeInput.value = 'INDIVIDUAL'; // Actualiza el valor del campo oculto
-    });
 
 });

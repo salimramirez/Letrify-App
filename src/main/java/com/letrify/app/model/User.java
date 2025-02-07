@@ -16,6 +16,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email; // Correo electrónico (único)
 
+    @Column(name = "phone_number", nullable = false) // Nuevo campo de teléfono
+    private String phoneNumber;
+
     @Column(nullable = false)
     private String password; // Contraseña cifrada
 
@@ -53,6 +56,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {

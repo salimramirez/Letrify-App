@@ -51,29 +51,50 @@
                     <!-- Campos para Empresas -->
                     <div id="empresaFields">
                         <div class="row">
+                            <!-- Primera Columna -->
                             <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="business_name" class="form-label">Razón Social</label>
-                                    <input type="text" id="business_name" name="business_name" class="form-control" placeholder="Ingresa la razón social">
+                                <!-- Razón Social -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="business_name" name="business_name" placeholder="Razón Social">
+                                    <label for="business_name">Razón Social</label>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="ruc" class="form-label">RUC</label>
-                                    <input type="text" id="ruc" name="ruc" class="form-control" placeholder="Ingresa el RUC">
-                                </div>
-                                <div class="mb-2 position-relative">
-                                    <label for="emailEmpresa" class="form-label">Correo Electrónico</label>
-                                    <div class="d-flex align-items-center position-relative">
-                                        <input type="email" id="emailEmpresa" name="email" class="form-control pe-5" placeholder="Ingresa tu correo" th:value="${email}" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="emailEmpresaValidIcon"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="emailEmpresaInvalidIcon"></i>
+                                <!-- RUC -->
+                                <div class="mb-3">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control pe-5" id="ruc" name="ruc" placeholder="RUC">
+                                        <label for="ruc">RUC</label>
+                                
+                                        <!-- Contenedor de íconos alineados correctamente -->
+                                        <div class="position-absolute end-0 top-50 translate-middle-y me-3">
+                                            <i class="bi bi-check-circle text-success d-none" id="rucValidIcon"></i>
+                                            <i class="bi bi-x-circle text-danger d-none" id="rucInvalidIcon"></i>
+                                        </div>
                                     </div>
+                                    
+                                    <!-- Mensaje de error con espacio fijo -->
+                                    <small id="rucError" class="text-danger d-none">Deben ser 11 dígitos.</small>
                                 </div>
+                                <!-- Correo Electrónico -->
+                                <div class="form-floating mb-3 position-relative">
+                                    <input type="email" class="form-control pe-5" id="emailEmpresa" name="email" placeholder="Correo Electrónico" th:value="${email}" required>
+                                    <label for="emailEmpresa">Correo Electrónico</label>
+                                
+                                    <!-- Íconos alineados correctamente -->
+                                    <i class="bi bi-check-circle text-success position-absolute end-0 top-50 translate-middle-y me-3 d-none" id="emailEmpresaValidIcon"></i>
+                                    <i class="bi bi-x-circle text-danger position-absolute end-0 top-50 translate-middle-y me-3 d-none" id="emailEmpresaInvalidIcon"></i>
+                                </div>
+                                <!-- Número de Teléfono -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="phoneEmpresa" name="phone_number" placeholder="Número de Teléfono">
+                                    <label for="phoneEmpresa">Número de Teléfono</label>
+                                </div>
+                            </div>
+                            <!-- Segunda Columna -->
+                            <div class="col-md-6">
                                 <div class="mb-2">
                                     <label for="fiscal_address" class="form-label">Dirección Fiscal</label>
                                     <input type="text" id="fiscal_address" name="fiscal_address" class="form-control" placeholder="Ingresa la dirección fiscal">
                                 </div>
-                            </div>
-                            <div class="col-md-6">
                                 <div class="mb-2">
                                     <label for="industry" class="form-label">Sector</label>
                                     <input type="text" id="industry" name="industry" class="form-control" placeholder="Ingresa el sector">
@@ -105,6 +126,7 @@
                     <!-- Campos para Personas -->
                     <div id="personaFields" class="d-none">
                         <div class="row">
+                            <!-- Primera Columna -->
                             <div class="col-md-6">
                                 <div class="mb-2">
                                     <label for="full_name" class="form-label">Nombre Completo</label>
@@ -123,11 +145,16 @@
                                     </div>
                                 </div>
                                 <div class="mb-2">
+                                    <label for="phonePersona" class="form-label">Número de Teléfono</label>
+                                    <input type="text" id="phonePersona" name="phone_number" class="form-control" placeholder="Ingresa tu número de teléfono">
+                                </div>
+                            </div>
+                            <!-- Segunda Columna -->
+                            <div class="col-md-6">
+                                <div class="mb-2">
                                     <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
                                     <input type="date" id="birth_date" name="birth_date" class="form-control">
                                 </div>
-                            </div>
-                            <div class="col-md-6">
                                 <div class="mb-2">
                                     <label for="address" class="form-label">Dirección</label>
                                     <input type="text" id="address" name="address" class="form-control" placeholder="Ingresa tu dirección">
@@ -157,7 +184,7 @@
                     </div>
 
                     <!-- Campo oculto para el tipo de usuario -->
-                    <input type="hidden" name="userType" id="userTypeInput" value="COMPANY">
+                    <input type="hidden" name="userType" id="userTypeInput" th:value="${userType != null ? userType : 'COMPANY'}">
 
                     <!-- Mensajes de Error -->
                     <div th:if="${error != null and error != ''}" class="alert alert-danger text-center" th:text="${error}"></div>

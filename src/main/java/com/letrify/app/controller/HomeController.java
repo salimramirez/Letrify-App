@@ -78,6 +78,7 @@ public class HomeController {
     public String registerUser(@RequestParam("email") String email,
                             @RequestParam("password") String password,
                             @RequestParam("confirmPassword") String confirmPassword,
+                            @RequestParam("phone_number") String phoneNumber,
                             @RequestParam("userType") String userType,
                             @RequestParam(required = false) String business_name,
                             @RequestParam(required = false) String ruc,
@@ -95,13 +96,34 @@ public class HomeController {
         if (userRepository.findByEmail(email) != null) {
             redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado. Por favor, usa otro.");
             logger.warn(AnsiColor.RED + "[ERROR] El correo '{}' ya está registrado." + AnsiColor.RESET, email);
+            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
             return "redirect:/register";
+        }
+
+        // Verificar si el número de teléfono está vacío
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "El número de teléfono es obligatorio.");
+            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
+            return "redirect:/register";
+        }
+
+        // Validar que el número de teléfono contenga solo números y un posible prefijo
+        if (!phoneNumber.matches("^\\+?\\d{7,15}$")) {
+            redirectAttributes.addFlashAttribute("error", "El número de teléfono no es válido.");
+            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
+            return "redirect:/register";
+        }
+
+        // Agregar automáticamente el prefijo +51 si no está presente
+        if (!phoneNumber.startsWith("+")) {
+            phoneNumber = "+51" + phoneNumber;
         }
 
         // Verificar si las contraseñas coinciden
         if (!password.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden. Intenta nuevamente.");
             logger.warn(AnsiColor.YELLOW + "[ADVERTENCIA] Las contraseñas no coinciden para el correo '{}'" + AnsiColor.RESET, email);
+            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/register";
         }
@@ -110,6 +132,7 @@ public class HomeController {
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
+        user.setPhoneNumber(phoneNumber);
         user.setRole("USER");
         user.setEnabled(true);
         user.setUserType(User.UserType.valueOf(userType));  // Guardamos el tipo de usuario
