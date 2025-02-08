@@ -581,38 +581,206 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (businessNameInput) {
         let previousInvalidValue = businessNameInput.value.trim();
+        let previousError = false;  // Flag para saber si el valor anterior fue inválido por backend
     
         businessNameInput.addEventListener("input", function () {
             const currentValue = this.value.trim();
             let isValidLength = currentValue.length >= 5;
     
-            if (currentValue === previousInvalidValue) {
-                this.classList.add("is-invalid");
-            } else if (!isValidLength) {
+            if (currentValue === previousInvalidValue && previousError && currentValue !== "") {
+                // Mantener el mensaje "Ya está en uso"
                 this.classList.add("is-invalid");
                 this.classList.remove("is-valid");
+                errorTooltip.textContent = "Ya está en uso";
+                errorTooltip.classList.add("visible");
+            } else if (!isValidLength) {
+                // Mostrar el error "Debe tener al menos 5 caracteres"
+                this.classList.add("is-invalid");
+                this.classList.remove("is-valid");
+                errorTooltip.textContent = "Debe tener al menos 5 caracteres";
+                errorTooltip.classList.toggle("visible", currentValue !== "");
             } else {
+                // Validación exitosa
                 this.classList.remove("is-invalid");
                 this.classList.add("is-valid");
+                errorTooltip.classList.remove("visible");
+                
+                // Actualizar previousInvalidValue y resetear el flag
+                previousInvalidValue = currentValue;
+                previousError = false;
             }
-    
-            // Mostrar o ocultar el globo de error solo si el campo no está vacío y no es válido
-            errorTooltip.classList.toggle("visible", !isValidLength && currentValue !== "");
         });
     
-        // Evento focus mejorado para evitar mostrar el globo si el campo es válido
         businessNameInput.addEventListener("focus", function () {
             const currentValue = this.value.trim();
-            if (currentValue !== "" && currentValue.length < 5 && !this.classList.contains("is-valid")) {
+            if (currentValue !== "" && currentValue === previousInvalidValue && previousError) {
+                errorTooltip.textContent = "Ya está en uso";
+                errorTooltip.classList.add("visible");
+            } else if (currentValue !== "" && currentValue.length < 5) {
+                errorTooltip.textContent = "Debe tener al menos 5 caracteres";
                 errorTooltip.classList.add("visible");
             } else {
                 errorTooltip.classList.remove("visible");
             }
         });
     
-        // Ocultar el globo de error cuando el usuario pierde el foco
         businessNameInput.addEventListener("blur", function () {
             errorTooltip.classList.remove("visible");
+        });
+    }
+
+    // Validación del RUC
+    const rucInput = document.getElementById('ruc');
+    const rucErrorTooltip = document.getElementById('rucError');
+    
+    if (rucInput) {
+        let previousInvalidValue = rucInput.value.trim();  // Almacena el valor inválido inicial
+        let isErrorFromBackend = rucInput.classList.contains('is-invalid');  // Detecta si el error viene del backend
+    
+        rucInput.addEventListener('input', function () {
+            const currentValue = this.value.trim();
+            const rucPattern = /^\d{11}$/;  // Validación para 11 dígitos exactos
+            let isValidLength = rucPattern.test(currentValue);
+    
+            if (currentValue === previousInvalidValue && isErrorFromBackend && currentValue !== "") {
+                // Si el valor actual es igual al valor inválido anterior, mantener el error de "Ya está en uso"
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                rucErrorTooltip.textContent = "Ya está en uso";
+                rucErrorTooltip.classList.add('visible');
+            } else if (!isValidLength) {
+                // Si no cumple la regla de 11 dígitos, mostrar el error correspondiente
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                rucErrorTooltip.textContent = "Deben ser 11 dígitos";
+                rucErrorTooltip.classList.toggle('visible', currentValue !== "");
+            } else {
+                // Si es válido, marcar como válido y resetear el flag de error
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+                rucErrorTooltip.classList.remove('visible');
+                isErrorFromBackend = false;  // Resetear el flag solo si el valor es válido
+            }
+        });
+    
+        // Evento focus mejorado para mostrar el mensaje adecuado
+        rucInput.addEventListener('focus', function () {
+            const currentValue = this.value.trim();
+            if (currentValue === previousInvalidValue && isErrorFromBackend && currentValue !== "") {
+                rucErrorTooltip.textContent = "Ya está en uso";
+                rucErrorTooltip.classList.add('visible');
+            } else if (currentValue !== "" && currentValue.length < 11) {
+                rucErrorTooltip.textContent = "Deben ser 11 dígitos";
+                rucErrorTooltip.classList.add('visible');
+            } else {
+                rucErrorTooltip.classList.remove('visible');
+            }
+        });
+    
+        // Ocultar el globo de error cuando el usuario pierde el foco
+        rucInput.addEventListener('blur', function () {
+            rucErrorTooltip.classList.remove('visible');
+        });
+    }
+
+    // Validación del correo (Empresas)
+    const emailInput = document.getElementById('emailEmpresa');
+    const emailErrorTooltip = document.getElementById('emailEmpresaError');
+    
+    // Solo asignar previousInvalidValue si el backend lo marcó como inválido
+    let previousInvalidValue = emailInput.classList.contains('is-invalid') ? emailInput.value.trim() : "";
+    
+    if (emailInput) {
+        emailInput.addEventListener('input', function () {
+            const currentValue = this.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let isValidFormat = emailPattern.test(currentValue);
+    
+            if (currentValue === "") {
+                this.classList.remove('is-valid', 'is-invalid');
+                emailErrorTooltip.classList.remove('visible');
+                previousInvalidValue = "";
+            } else if (currentValue === previousInvalidValue) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                emailErrorTooltip.textContent = "Correo ya registrado. Por favor, usa otro.";
+                emailErrorTooltip.classList.add('visible');
+            } else if (!isValidFormat) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                emailErrorTooltip.textContent = "Ingresa un correo válido.";
+                emailErrorTooltip.classList.add('visible');
+            } else {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+                emailErrorTooltip.classList.remove('visible');
+            }
+        });
+    
+        emailInput.addEventListener('focus', function () {
+            const currentValue = this.value.trim();
+            if (currentValue === previousInvalidValue && currentValue !== "") {
+                this.classList.add('is-invalid');
+                emailErrorTooltip.textContent = "Correo ya registrado. Por favor, usa otro.";
+                emailErrorTooltip.classList.add('visible');
+            }
+        });
+    
+        emailInput.addEventListener('blur', function () {
+            emailErrorTooltip.classList.remove('visible');
+        });
+    }
+
+    // Validación del Número de Teléfono
+    const phoneInput = document.getElementById('phoneEmpresa');
+    const phoneErrorTooltip = document.getElementById('phoneEmpresaError');
+    
+    if (phoneInput) {
+        let previousInvalidValue = phoneInput.classList.contains('is-invalid') ? phoneInput.getAttribute("value") : "";  // Guardar solo si es inválido
+    
+        phoneInput.addEventListener('input', function () {
+            const currentValue = this.value.trim();
+            const phonePattern = /^\d{9}$/;
+            let isValidFormat = phonePattern.test(currentValue);
+    
+            if (currentValue === "") {
+                // Si el campo está vacío, quitar las clases de validación
+                this.classList.remove('is-valid', 'is-invalid');
+                phoneErrorTooltip.classList.remove('visible');
+            } else if (currentValue === previousInvalidValue) {
+                // Mostrar "Número ya registrado"
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                phoneErrorTooltip.textContent = "Número ya registrado. Por favor, usa otro.";
+                phoneErrorTooltip.classList.add('visible');
+            } else if (!isValidFormat) {
+                // Mostrar "Debe tener 9 dígitos"
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                phoneErrorTooltip.textContent = "Debe tener 9 dígitos.";
+                phoneErrorTooltip.classList.add('visible');
+            } else {
+                // El número es válido
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+                phoneErrorTooltip.classList.remove('visible');
+            }
+        });
+    
+        phoneInput.addEventListener('focus', function () {
+            const currentValue = this.value.trim();
+            if (currentValue === previousInvalidValue && currentValue !== "") {
+                this.classList.add('is-invalid');
+                phoneErrorTooltip.textContent = "Número ya registrado. Por favor, usa otro.";
+                phoneErrorTooltip.classList.add('visible');
+            } else if (!this.classList.contains('is-valid') && currentValue !== "" && currentValue.length < 9) {
+                phoneErrorTooltip.textContent = "Debe tener 9 dígitos.";
+                phoneErrorTooltip.classList.add('visible');
+            }
+        });
+    
+        phoneInput.addEventListener('blur', function () {
+            phoneErrorTooltip.classList.remove('visible');
         });
     }
 

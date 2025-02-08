@@ -155,6 +155,11 @@ public class HomeController {
         if (!phoneNumber.startsWith("+")) {
             phoneNumber = "+51" + phoneNumber;
         }
+
+        // Agregar automáticamente el prefijo +51 si no está presente
+        // if (!phoneNumber.startsWith("+")) {
+        //     phoneNumber = "+51" + phoneNumber;
+        // }
         
         // Verificar si el número de teléfono ya está registrado
         if (userRepository.findByPhoneNumber(phoneNumber) != null) {
@@ -185,10 +190,7 @@ public class HomeController {
             return "redirect:/register";
         }
 
-        // Agregar automáticamente el prefijo +51 si no está presente
-        if (!phoneNumber.startsWith("+")) {
-            phoneNumber = "+51" + phoneNumber;
-        }
+
 
         // Si se ingresó un sector en "Otro", usarlo en lugar del select
         if (industry != null && industry.equals("Otro") && other_industry != null && !other_industry.trim().isEmpty()) {
