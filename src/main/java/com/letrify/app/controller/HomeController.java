@@ -78,11 +78,13 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam("email") String email,
-                            @RequestParam("password") String password,
+    public String registerUser(@RequestParam("password") String password,
                             @RequestParam("confirmPassword") String confirmPassword,
-                            @RequestParam("phone_number") String phoneNumber,
                             @RequestParam("userType") String userType,
+                            @RequestParam(required = false) String emailEmpresa,
+                            @RequestParam(required = false) String emailPersona,
+                            @RequestParam(required = false) String phoneEmpresa,
+                            @RequestParam(required = false) String phonePersona,
                             @RequestParam(required = false) String business_name,
                             @RequestParam(required = false) String ruc,
                             @RequestParam(required = false) String fiscal_address,
@@ -93,6 +95,38 @@ public class HomeController {
                             @RequestParam(required = false) String birth_date,
                             @RequestParam(required = false) String address,
                             RedirectAttributes redirectAttributes) {
+        
+        // Determinar el email y teléfono según el tipo de usuario
+        String email = "COMPANY".equals(userType) ? emailEmpresa : emailPersona;
+        String phoneNumber = "COMPANY".equals(userType) ? phoneEmpresa : phonePersona;
+
+        // Validar correo
+        if (!isValidEmail(email)) {
+            redirectAttributes.addFlashAttribute("error", "Correo electrónico no válido.");
+            redirectAttributes.addFlashAttribute("userType", userType);
+            
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+            } else {
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+            }
+
+            return "redirect:/register";
+        }
+
+        // Validar número de teléfono
+        if (!isValidPhone(phoneNumber)) {
+            redirectAttributes.addFlashAttribute("error", "Número de teléfono no válido.");
+            redirectAttributes.addFlashAttribute("userType", userType);
+            
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneNumber);
+            } else {
+                redirectAttributes.addFlashAttribute("phonePersona", phoneNumber);
+            }
+
+            return "redirect:/register";
+        }
 
         logger.info(AnsiColor.BLUE + "Datos recibidos: Email = {}, Tipo de Usuario = {}" + AnsiColor.RESET, email, userType);
     
@@ -139,15 +173,17 @@ public class HomeController {
         if (userRepository.findByEmail(email) != null) {
             redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado. Por favor, usa otro.");
             
-            // Marcar el campo como inválido
-            redirectAttributes.addFlashAttribute("invalidEmail", true);
+            // Marcar el campo como inválido según el tipo de usuario
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidEmailEmpresa", true);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidEmailPersona", true);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+            }
             
-            // Conservar todos los demás datos
-            redirectAttributes.addFlashAttribute("business_name", business_name);
-            redirectAttributes.addFlashAttribute("ruc", ruc);
-            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+            // Conservar todos los demás datos necesarios
             redirectAttributes.addFlashAttribute("userType", userType);
-            redirectAttributes.addFlashAttribute("email", email);
             redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
             
             logger.warn(AnsiColor.RED + "[ERROR] El correo '{}' ya está registrado." + AnsiColor.RESET, email);
@@ -158,29 +194,23 @@ public class HomeController {
         if (!phoneNumber.startsWith("+")) {
             phoneNumber = "+51" + phoneNumber;
         }
-
-        // Agregar automáticamente el prefijo +51 si no está presente
-        // if (!phoneNumber.startsWith("+")) {
-        //     phoneNumber = "+51" + phoneNumber;
-        // }
         
         // Verificar si el número de teléfono ya está registrado
         if (userRepository.findByPhoneNumber(phoneNumber) != null) {
             redirectAttributes.addFlashAttribute("error", "El número de teléfono ya está registrado. Por favor, usa otro.");
-            
-            // Marcar el campo como inválido
-            redirectAttributes.addFlashAttribute("invalidPhone", true);
-            
-            // Quitar el prefijo +51 para mostrarlo en el formulario
-            String phoneNumberWithoutPrefix = phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber;
-            
-            // Conservar todos los demás datos
-            redirectAttributes.addFlashAttribute("business_name", business_name);
-            redirectAttributes.addFlashAttribute("ruc", ruc);
-            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+        
+            // Marcar el campo correcto como inválido
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber);
+            }
+        
+            // Conservar otros datos relevantes
             redirectAttributes.addFlashAttribute("userType", userType);
             redirectAttributes.addFlashAttribute("email", email);
-            redirectAttributes.addFlashAttribute("phone_number", phoneNumberWithoutPrefix);  // Usamos el número sin prefijo
             
             logger.warn(AnsiColor.RED + "[ERROR] El número de teléfono '{}' ya está registrado." + AnsiColor.RESET, phoneNumber);
             return "redirect:/register";
@@ -189,10 +219,16 @@ public class HomeController {
         // Validar que el número de teléfono contenga solo números y un posible prefijo
         if (!phoneNumber.matches("^\\+?\\d{7,15}$")) {
             redirectAttributes.addFlashAttribute("error", "El número de teléfono no es válido.");
-            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
+            redirectAttributes.addFlashAttribute("userType", userType);
+        
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
+            }
+        
             return "redirect:/register";
         }
-
 
 
         // Si se ingresó un sector en "Otro", usarlo en lugar del select
@@ -372,6 +408,10 @@ public class HomeController {
             logger.info(AnsiColor.GREEN + "[ÉXITO] Persona registrada: {}" + AnsiColor.RESET, full_name);
         }
 
+        // Agregar mensaje de éxito y redirigir al login
+        redirectAttributes.addFlashAttribute("success", "Usuario registrado con éxito.");
+        logger.info(AnsiColor.GREEN + "[ÉXITO] Usuario registrado correctamente: {}" + AnsiColor.RESET, email);
+
         return "redirect:/login";
     }
 
@@ -380,6 +420,16 @@ public class HomeController {
     // public String showDashboardPage() {
     //     return "dashboard"; // Cargar la nueva plantilla dashboard.html
     // }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+        return email != null && email.matches(emailRegex);
+    }
+    
+    private boolean isValidPhone(String phone) {
+        String phoneRegex = "^\\d{9}$";
+        return phone != null && phone.matches(phoneRegex);
+    }
     
 
 }

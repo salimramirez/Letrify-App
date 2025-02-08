@@ -90,11 +90,11 @@
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
                                         <input type="email" class="form-control pe-5"
-                                               id="emailEmpresa" name="email"
+                                               id="emailEmpresa" name="emailEmpresa"
                                                placeholder="Correo Electrónico"
                                                required aria-describedby="emailEmpresaError"
-                                               th:classappend="${invalidEmail} ? 'is-invalid' : ''"
-                                               th:value="${email} ?: ''">
+                                               th:classappend="${invalidEmailEmpresa} ? 'is-invalid' : ''" 
+                                               th:value="${emailEmpresa} ?: ''">
                                         <label for="emailEmpresa">Correo Electrónico</label>
                                     </div>
                                 
@@ -102,17 +102,17 @@
                                     <div id="emailEmpresaError" class="error-tooltip" role="alert">Ingresa un correo válido.</div>
                                 
                                     <!-- Mensaje de error de Bootstrap -->
-                                    <div class="invalid-feedback" th:if="${invalidEmail}">Ingresa un correo válido.</div>
+                                    <div class="invalid-feedback" th:if="${invalidEmailEmpresa}">Ingresa un correo válido.</div>
                                 </div>
                                 <!-- Número de Teléfono -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
                                         <input type="text" class="form-control pe-5"
-                                               id="phoneEmpresa" name="phone_number"
+                                               id="phoneEmpresa" name="phoneEmpresa"
                                                placeholder="Número de Teléfono"
                                                aria-describedby="phoneEmpresaError"
-                                               th:classappend="${invalidPhone} ? 'is-invalid' : ''"
-                                               th:value="${phone_number} ?: ''">
+                                               th:classappend="${invalidPhoneEmpresa} ? 'is-invalid' : ''"
+                                               th:value="${phoneEmpresa} ?: ''">
                                         <label for="phoneEmpresa">Número de Teléfono</label>
                                     </div>
                                 
@@ -120,7 +120,7 @@
                                     <div id="phoneEmpresaError" class="error-tooltip" role="alert">Debe tener 9 dígitos.</div>
                                 
                                     <!-- Mensaje de error de Bootstrap -->
-                                    <div class="invalid-feedback" th:if="${invalidPhone}">Debe tener 9 dígitos.</div>
+                                    <div class="invalid-feedback" th:if="${invalidPhoneEmpresa}">Debe tener 9 dígitos.</div>
                                 </div>
                             </div>
                             <!-- Segunda Columna -->
@@ -234,11 +234,11 @@
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
                                         <input type="email" class="form-control pe-5"
-                                               id="emailPersona" name="email"
+                                               id="emailPersona" name="emailPersona"
                                                placeholder="Correo Electrónico"
                                                required aria-describedby="emailPersonaError"
                                                th:classappend="${invalidEmailPersona} ? 'is-invalid' : ''"
-                                               th:value="${email} ?: ''">
+                                               th:value="${emailPersona} ?: ''">
                                         <label for="emailPersona">Correo Electrónico</label>
                                     </div>
                                     
@@ -252,11 +252,11 @@
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
                                         <input type="text" class="form-control pe-5"
-                                               id="phonePersona" name="phone_number"
+                                               id="phonePersona" name="phonePersona"
                                                placeholder="Número de Teléfono"
                                                aria-describedby="phonePersonaError"
                                                th:classappend="${invalidPhonePersona} ? 'is-invalid' : ''"
-                                               th:value="${phone_number} ?: ''">
+                                               th:value="${phonePersona} ?: ''">
                                         <label for="phonePersona">Número de Teléfono</label>
                                     </div>
                                     
