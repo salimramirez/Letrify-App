@@ -7,6 +7,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const empresaBtn = document.getElementById('empresaBtn');
     const personaBtn = document.getElementById('personaBtn');
     const userTypeInput = document.getElementById('userTypeInput');
+    const passwordEmpresa = document.getElementById('passwordEmpresa');
+    const confirmPasswordEmpresa = document.getElementById('confirmPasswordEmpresa');
+    const passwordPersona = document.getElementById('passwordPersona');
+    const confirmPasswordPersona = document.getElementById('confirmPasswordPersona');
+
+    // Ejecutar la función al cargar la página
+    checkAndToggleConfirmPassword(passwordEmpresa, confirmPasswordEmpresa);
+    checkAndToggleConfirmPassword(passwordPersona, confirmPasswordPersona);
+
+
+    // Agregar eventos de input para verificar continuamente
+    passwordEmpresa.addEventListener('input', function () {
+        checkAndToggleConfirmPassword(passwordEmpresa, confirmPasswordEmpresa);
+    });
+
+    passwordPersona.addEventListener('input', function () {
+        checkAndToggleConfirmPassword(passwordPersona, confirmPasswordPersona);
+    });
 
     // Evento para el botón de Empresas
     empresaBtn.addEventListener('click', () => {
@@ -14,7 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
         personaBtn.classList.remove('active', 'btn-primary');
         personaBtn.classList.add('btn-outline-secondary');
 
-        userTypeInput.value = 'COMPANY'; // Actualiza el valor del campo oculto
+        userTypeInput.value = 'COMPANY';
+
+        // Habilitar el campo de sector
+        document.getElementById('industry').removeAttribute('disabled');
+        
+        checkAndToggleConfirmPassword(passwordEmpresa, confirmPasswordEmpresa); // Verifica nuevamente el estado
     });
 
     // Evento para el botón de Personas
@@ -23,17 +46,35 @@ document.addEventListener('DOMContentLoaded', function () {
         empresaBtn.classList.remove('active', 'btn-primary');
         empresaBtn.classList.add('btn-outline-secondary');
 
-        userTypeInput.value = 'INDIVIDUAL'; // Actualiza el valor del campo oculto
+        userTypeInput.value = 'INDIVIDUAL';
+
+        // Deshabilitar el campo de sector y limpiar su valor
+        document.getElementById('industry').setAttribute('disabled', 'true');
+        document.getElementById('industry').value = "";
+
+        checkAndToggleConfirmPassword(passwordPersona, confirmPasswordPersona); // Verifica nuevamente el estado
     });
 
+    // Verifica si hay un valor en el input oculto
+    window.addEventListener('load', function () {
+        if (userTypeInput.value === 'INDIVIDUAL') {
+            personaBtn.click();
+        } else {
+            empresaBtn.click();
+        }
+    });
+    
     // Asegurar que al cargar la página los campos ocultos estén deshabilitados
     toggleFieldset('personaFields', true);
 
-    // Verifica si hay un valor en el input oculto
-    if (userTypeInput.value === 'INDIVIDUAL') {
-        document.getElementById('personaBtn').click(); // Activa la pestaña Personas
-    } else {
-        document.getElementById('empresaBtn').click(); // Activa la pestaña Empresas
+    // Verifica el valor de la contraseña al cambiar entre vistas
+    function checkAndToggleConfirmPassword(passwordInput, confirmPasswordInput) {
+        if (passwordInput.value.trim() !== "") {
+            confirmPasswordInput.removeAttribute('disabled');
+        } else {
+            confirmPasswordInput.setAttribute('disabled', 'true');
+            confirmPasswordInput.value = "";  // Limpia el valor cuando se deshabilita
+        }
     }
 
     // ==========================
@@ -68,6 +109,17 @@ document.addEventListener('DOMContentLoaded', function () {
             field.disabled = disable;
         });
     }
+
+    // Funcíon para habilitar o deshabilitar campos ocultos
+    // function toggleFieldset(fieldsetId, disable) {
+    //     const fields = document.querySelectorAll(`#${fieldsetId} input`);
+    //     fields.forEach(field => {
+    //         if (field.id !== 'passwordPersona' && field.id !== 'confirmPasswordPersona' &&
+    //             field.id !== 'passwordEmpresa' && field.id !== 'confirmPasswordEmpresa') {
+    //             field.disabled = disable;
+    //         }
+    //     });
+    // }
 
     // ==========================
     // VALIDACIONES DE CAMPOS
@@ -290,23 +342,39 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    form.addEventListener("submit", function (event) {
+        if (userTypeInput.value === "COMPANY") {
+            // Elimina todos los campos de la sección Personas
+            document.querySelectorAll("#personaFields input, #personaFields select").forEach(field => {
+                field.remove();
+            });
+        } else if (userTypeInput.value === "INDIVIDUAL") {
+            // Elimina todos los campos de la sección Empresas
+            document.querySelectorAll("#empresaFields input, #empresaFields select").forEach(field => {
+                field.remove();
+            });
+        }
+    });
+
     // Al enviar el formulario, verificar que se haya seleccionado un sector válido
     form.addEventListener("submit", function (event) {
-        if (industrySelect.value === "") {
-            event.preventDefault(); // Evita el envío del formulario si no hay selección
-            industrySelect.classList.add("is-invalid");
-            industrySelect.focus();
-        } else if (industrySelect.value === "Otro" && otherIndustryInput.value.trim() === "") {
-            event.preventDefault(); // Evita el envío si "Otro" está vacío
-            otherIndustryInput.classList.add("is-invalid");
-            otherIndustryInput.focus();
-        } else if (industrySelect.value === "Otro") {
-            // **Solución: Crear un campo hidden para enviar el valor del sector**
-            let hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = "industry"; // Este se enviará como si fuera el select
-            hiddenInput.value = otherIndustryInput.value.trim();
-            form.appendChild(hiddenInput);
+        if (userTypeInput.value === "COMPANY") {
+            if (industrySelect.value === "") {
+                event.preventDefault(); // Evita el envío del formulario si no hay selección
+                industrySelect.classList.add("is-invalid");
+                industrySelect.focus();
+            } else if (industrySelect.value === "Otro" && otherIndustryInput.value.trim() === "") {
+                event.preventDefault(); // Evita el envío si "Otro" está vacío
+                otherIndustryInput.classList.add("is-invalid");
+                otherIndustryInput.focus();
+            } else if (industrySelect.value === "Otro" && otherIndustryInput.value.trim() !== "") {
+                // Reemplaza el valor del select por el del input "Otro"
+                let hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "industry"; // Se enviará como si fuera el select
+                hiddenInput.value = otherIndustryInput.value.trim();
+                form.appendChild(hiddenInput);
+            }
         }
     });
 
@@ -323,20 +391,194 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Al enviar el formulario, asegurarse de enviar el valor correcto del sector
-    document.querySelector("form").addEventListener("submit", function (event) {
-        if (industrySelect.value === "Otro" && otherIndustryInput.value.trim() !== "") {
-            industrySelect.value = otherIndustryInput.value.trim(); // Reemplaza el valor del select
+    // ###
+
+    // === VALIDACIONES DE PERSONA ===
+
+    // Validación del Nombre Completo (Personas)
+    document.getElementById('full_name').addEventListener('input', function () {
+        const fullNameInput = this;
+        const minLength = 8;  // Mínimo de 8 caracteres
+        const isValid = fullNameInput.value.trim().length >= minLength;
+
+        // Manejar tooltip de error
+        const errorTooltip = document.getElementById('fullNameError');
+        errorTooltip.classList.toggle('visible', !isValid && fullNameInput.value.trim() !== "");
+
+        // Aplicar Bootstrap validation
+        fullNameInput.classList.toggle('is-valid', isValid);
+        fullNameInput.classList.toggle('is-invalid', !isValid && fullNameInput.value.trim() !== "");
+    });
+
+    // Ocultar el globo de error cuando el usuario pierde el foco
+    document.getElementById('full_name').addEventListener('blur', function () {
+        document.getElementById('fullNameError').classList.remove('visible');
+    });
+
+    // Reaparecer el globo de error si el usuario vuelve al campo
+    document.getElementById('full_name').addEventListener('focus', function () {
+        if (!this.classList.contains('is-valid') && this.value.trim() !== "") {
+            document.getElementById('fullNameError').classList.add('visible');
         }
     });
 
-    // ###
+    // Validación del DNI (Personas)
+    document.getElementById('dni').addEventListener('input', function () {
+        const dniInput = this;
+        const dniPattern = /^\d{8}$/;  // Exactamente 8 dígitos
+        const isValid = dniPattern.test(dniInput.value);
+
+        // Manejar tooltip de error
+        const errorTooltip = document.getElementById('dniError');
+        errorTooltip.classList.toggle('visible', !isValid && dniInput.value.trim() !== "");
+
+        // Aplicar Bootstrap validation
+        dniInput.classList.toggle('is-valid', isValid);
+        dniInput.classList.toggle('is-invalid', !isValid && dniInput.value.trim() !== "");
+    });
+
+    // Ocultar el globo de error cuando el usuario pierde el foco
+    document.getElementById('dni').addEventListener('blur', function () {
+        document.getElementById('dniError').classList.remove('visible');
+    });
+
+    // Reaparecer el globo de error si el usuario vuelve al campo
+    document.getElementById('dni').addEventListener('focus', function () {
+        if (!this.classList.contains('is-valid') && this.value.trim() !== "") {
+            document.getElementById('dniError').classList.add('visible');
+        }
+    });
 
     // Validación del correo electrónico (Personas)
     document.getElementById('emailPersona').addEventListener('input', function () {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // Patrón para correos electrónicos válidos
-        validateField(this, 'emailPersonaValidIcon', 'emailPersonaInvalidIcon', emailPattern);
+        const emailInput = this; // Referencia al input
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar correos
+        const isValid = emailPattern.test(emailInput.value);
+    
+        // Obtener el tooltip de error
+        const errorTooltip = document.getElementById('emailPersonaError');
+    
+        // Manejar tooltip de error con fade-in/out
+        errorTooltip.classList.toggle('visible', !isValid && emailInput.value.trim() !== "");
+    
+        // Aplicar clases de Bootstrap para validación
+        emailInput.classList.toggle('is-valid', isValid);
+        emailInput.classList.toggle('is-invalid', !isValid && emailInput.value.trim() !== "");
     });
+
+    function validateEmailPersona() {
+        const emailInput = document.getElementById('emailPersona');
+        const errorTooltip = document.getElementById('emailPersonaError');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValid = emailPattern.test(emailInput.value.trim());
+    
+        errorTooltip.classList.toggle('visible', !isValid && emailInput.value.trim() !== "");
+        emailInput.classList.toggle('is-valid', isValid);
+        emailInput.classList.toggle('is-invalid', !isValid && emailInput.value.trim() !== "");
+    }
+
+    // Configurar el evento para activar la función al escribir en el input
+    toggleTooltipOnInput(document.getElementById('emailPersona'), document.getElementById('emailPersonaError'), validateEmailPersona);
+
+    // Validación del Número de Teléfono (Personas)
+    document.getElementById('phonePersona').addEventListener('input', function () {
+        const phoneInput = this;
+        const phonePattern = /^\d{9}$/;  // Exactamente 9 dígitos
+        const countryCodePattern = /^\+\d+/;  // Detecta si el usuario ingresa un código de país (ejemplo: +51, +34)
+        const errorTooltip = document.getElementById('phonePersonaError');
+
+        if (countryCodePattern.test(phoneInput.value)) {
+            // Si el usuario ingresa un código de país, mostrar un mensaje especial
+            errorTooltip.textContent = "No hace falta código de país.";
+            errorTooltip.classList.add('visible');
+            phoneInput.classList.add('is-invalid');
+            phoneInput.classList.remove('is-valid');
+        } else {
+            // Validar solo si son 9 dígitos
+            const isValid = phonePattern.test(phoneInput.value);
+            errorTooltip.textContent = "Debe tener 9 dígitos.";  // Mensaje normal
+
+            // Mostrar u ocultar el tooltip según la validez
+            errorTooltip.classList.toggle('visible', !isValid && phoneInput.value.trim() !== "");
+            
+            // Aplicar clases de Bootstrap para borde verde/rojo
+            phoneInput.classList.toggle('is-valid', isValid);
+            phoneInput.classList.toggle('is-invalid', !isValid && phoneInput.value.trim() !== "");
+        }
+    });
+
+    // Ocultar el globo de error cuando el usuario pierde el foco
+    document.getElementById('phonePersona').addEventListener('blur', function () {
+        document.getElementById('phonePersonaError').classList.remove('visible');
+    });
+
+    // Reaparecer el globo de error si el usuario vuelve al campo
+    document.getElementById('phonePersona').addEventListener('focus', function () {
+        if (!this.classList.contains('is-valid') && this.value.trim() !== "") {
+            document.getElementById('phonePersonaError').classList.add('visible');
+        }
+    });
+
+    // Validación de la Dirección (Personas)
+    document.getElementById('address').addEventListener('input', function () {
+        const addressInput = this;
+        const minLength = 5; // Longitud mínima requerida para que sea válida
+        const isValid = addressInput.value.trim().length >= minLength;
+
+        // Manejar tooltip de error con fade-in/out
+        const errorTooltip = document.getElementById('addressError');
+        errorTooltip.classList.toggle('visible', !isValid && addressInput.value.trim() !== "");
+
+        // Aplicar clases de Bootstrap para validación
+        this.classList.toggle('is-valid', isValid);
+        this.classList.toggle('is-invalid', !isValid && this.value.trim() !== "");
+    });
+
+    // Ocultar el globo de error cuando el usuario pierde el foco
+    document.getElementById('address').addEventListener('blur', function () {
+        document.getElementById('addressError').classList.remove('visible');
+    });
+
+    // Reaparecer el globo de error si el usuario vuelve al campo
+    document.getElementById('address').addEventListener('focus', function () {
+        if (!this.classList.contains('is-valid') && this.value.trim() !== "") {
+            document.getElementById('addressError').classList.add('visible');
+        }
+    });
+
+    // Validación de la Fecha de Nacimiento (Personas)
+    document.getElementById('birth_date').addEventListener('change', function () {
+        const birthDateInput = this;
+        const birthDate = new Date(birthDateInput.value);
+        const today = new Date();
+        const errorTooltip = document.getElementById('birthDateError');
+
+        let isValid = true;
+
+        // Verificar si la fecha está en el futuro
+        if (birthDate > today) {
+            isValid = false;
+            errorTooltip.textContent = "La fecha no puede estar en el futuro.";
+        }
+        
+        // Verificar si la persona tiene al menos 18 años (opcional)
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
+        
+        if (age < 18 || (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))) {
+            isValid = false;
+            errorTooltip.textContent = "Debes tener al menos 18 años.";
+        }
+
+        // Mostrar u ocultar el tooltip según la validez
+        errorTooltip.classList.toggle('visible', !isValid);
+        
+        // Aplicar clases de Bootstrap para validación
+        birthDateInput.classList.toggle('is-valid', isValid);
+        birthDateInput.classList.toggle('is-invalid', !isValid);
+    });
+
 
     // Validación de contraseñas (Empresas)
     document.getElementById('passwordEmpresa').addEventListener('input', function () {
@@ -350,10 +592,6 @@ document.addEventListener('DOMContentLoaded', function () {
         tooltip.style.visibility = "hidden";
         tooltip.style.transform = "translateY(-5px)";
     });
-
-    // Obtener elementos
-    const passwordEmpresa = document.getElementById('passwordEmpresa');
-    const confirmPasswordEmpresa = document.getElementById('confirmPasswordEmpresa');
 
     // Habilitar "Confirmar contraseña" solo cuando "Contraseña" tenga valor
     passwordEmpresa.addEventListener('input', function () {
@@ -384,11 +622,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validación de contraseñas (Personas)
     document.getElementById('passwordPersona').addEventListener('input', function () {
-        handlePasswordValidation(this, 'passwordStrengthBarPersona', 'passwordStrengthTextPersona');
+        handlePasswordValidation(this, 'passwordStrengthBarPersona', 'passwordStrengthTextPersona', 'passwordTooltipPersona');
     });
 
+    // Evento para ocultar el tooltip cuando el input pierde el foco (Personas)
+    document.getElementById('passwordPersona').addEventListener('blur', function () {
+        const tooltip = document.getElementById('passwordTooltipPersona');
+        tooltip.style.opacity = "0";
+        tooltip.style.visibility = "hidden";
+        tooltip.style.transform = "translateY(-5px)";
+    });
+
+    // Habilitar "Confirmar contraseña" solo cuando "Contraseña" tenga valor (Personas)
+    passwordPersona.addEventListener('input', function () {
+        if (this.value.trim() !== "") {
+            confirmPasswordPersona.removeAttribute('disabled'); // Habilitar
+        } else {
+            confirmPasswordPersona.setAttribute('disabled', 'true'); // Inhabilitar
+        }
+
+        // Validar "Confirmar contraseña", pero SIN mostrar el globo de error (Personas)
+        validateConfirmPasswordWithoutError('passwordPersona', 'confirmPasswordPersona', 'confirmPasswordErrorPersona');
+    });
+
+    // Validación de confirmación de contraseña (Personas)
     document.getElementById('confirmPasswordPersona').addEventListener('input', function () {
-        handleConfirmPasswordValidation('passwordPersona', 'confirmPasswordPersona', 'confirmPasswordValidIconPersona', 'confirmPasswordInvalidIconPersona');
+        validateConfirmPassword('passwordPersona', 'confirmPasswordPersona', 'confirmPasswordErrorPersona');
+    });
+
+    document.getElementById('confirmPasswordPersona').addEventListener('blur', function () {
+        document.getElementById('confirmPasswordErrorPersona').classList.remove('visible');
+    });
+
+    document.getElementById('confirmPasswordPersona').addEventListener('focus', function () {
+        validateConfirmPassword('passwordPersona', 'confirmPasswordPersona', 'confirmPasswordErrorPersona');
     });
 
     // ==========================
@@ -437,7 +704,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const strengthBar = document.getElementById(strengthBarId);
         const strengthText = document.getElementById(strengthTextId);
         const tooltip = document.getElementById(tooltipId);
-    
+
+        if (tooltip) {
+            tooltip.style.opacity = "0";
+            tooltip.style.visibility = "hidden";
+            tooltip.style.transform = "translateY(-5px)";
+        }
+        
+        // Verifica si los elementos strengthBar, strengthText y tooltip existen
+        if (!strengthBar || !strengthText || !tooltip) {
+            console.warn(`Uno de los elementos no se encontró: strengthBarId=${strengthBarId}, strengthTextId=${strengthTextId}, tooltipId=${tooltipId}`);
+            return; // Salimos de la función si no existe alguno
+        }
+
         // Definir el estado por defecto (Contraseña débil)
         let strength = {
             percent: 0,

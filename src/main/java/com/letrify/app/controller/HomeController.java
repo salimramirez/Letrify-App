@@ -8,6 +8,9 @@ import com.letrify.app.repository.IndividualRepository;
 import com.letrify.app.repository.UserRepository;
 import com.letrify.app.util.AnsiColor;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +100,7 @@ public class HomeController {
         logger.info(AnsiColor.RED + "[DEBUG] Sector recibido (industry): {}" + AnsiColor.RESET, industry);
         logger.info(AnsiColor.RED + "[DEBUG] Otro sector recibido (other_industry): {}" + AnsiColor.RESET, other_industry);
 
-        // Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
+        // EMPRESAS: Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
         if ("COMPANY".equals(userType) && companyRepository.existsByBusinessName(business_name)) {
             redirectAttributes.addFlashAttribute("error", "La Razón Social ya está registrada. Por favor, usa otra.");
         
@@ -204,6 +207,133 @@ public class HomeController {
             redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/register";
+        }
+
+        // ################
+        // ### PERSONAS ###
+        // ################
+
+        // Validación del Nombre Completo para INDIVIDUAL
+        if ("INDIVIDUAL".equals(userType)) {
+            if (full_name == null || full_name.trim().length() < 8) {
+                redirectAttributes.addFlashAttribute("error", "El nombre completo debe tener al menos 8 caracteres.");
+                
+                // Marcar el campo como inválido
+                redirectAttributes.addFlashAttribute("invalidFullName", true);
+                
+                // Conservar todos los demás datos ingresados
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("email", email);
+                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                
+                return "redirect:/register";
+            }
+        }
+
+        // Validación del DNI para INDIVIDUAL
+        if ("INDIVIDUAL".equals(userType)) {
+            if (dni == null || !dni.matches("\\d{8}")) {
+                redirectAttributes.addFlashAttribute("error", "El DNI debe contener exactamente 8 dígitos.");
+                
+                // Marcar el campo como inválido
+                redirectAttributes.addFlashAttribute("invalidDni", true);
+                
+                // Conservar todos los demás datos ingresados
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("email", email);
+                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                
+                return "redirect:/register";
+            }
+        }
+
+        // Validación de fecha de nacimiento para INDIVIDUAL
+        if ("INDIVIDUAL".equals(userType)) {
+            if (birth_date == null || birth_date.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "La fecha de nacimiento es obligatoria.");
+                
+                // Marcar el campo como inválido
+                redirectAttributes.addFlashAttribute("invalidBirthDate", true);
+                
+                // Conservar todos los demás datos ingresados
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("email", email);
+                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                
+                return "redirect:/register";
+            }
+
+            // Validación adicional: comprobar si la fecha es válida y no está en el futuro
+            LocalDate birthDateParsed;
+            try {
+                birthDateParsed = LocalDate.parse(birth_date);
+                if (birthDateParsed.isAfter(LocalDate.now())) {
+                    redirectAttributes.addFlashAttribute("error", "La fecha de nacimiento no puede ser en el futuro.");
+                    
+                    // Marcar el campo como inválido
+                    redirectAttributes.addFlashAttribute("invalidBirthDate", true);
+                    
+                    // Conservar todos los datos
+                    redirectAttributes.addFlashAttribute("full_name", full_name);
+                    redirectAttributes.addFlashAttribute("dni", dni);
+                    redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                    redirectAttributes.addFlashAttribute("address", address);
+                    redirectAttributes.addFlashAttribute("userType", userType);
+                    redirectAttributes.addFlashAttribute("email", email);
+                    redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                    
+                    return "redirect:/register";
+                }
+            } catch (DateTimeParseException e) {
+                redirectAttributes.addFlashAttribute("error", "Formato de fecha de nacimiento no válido.");
+                
+                // Marcar el campo como inválido
+                redirectAttributes.addFlashAttribute("invalidBirthDate", true);
+                
+                // Conservar los datos ingresados
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("email", email);
+                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                
+                return "redirect:/register";
+            }
+        }
+
+        // Validación de dirección para INDIVIDUAL
+        if ("INDIVIDUAL".equals(userType)) {
+            if (address == null || address.trim().length() < 5) {
+                redirectAttributes.addFlashAttribute("error", "La dirección debe tener al menos 5 caracteres.");
+                
+                // Marcar el campo como inválido
+                redirectAttributes.addFlashAttribute("invalidAddress", true);
+                
+                // Conservar todos los demás datos ingresados
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("email", email);
+                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                
+                return "redirect:/register";
+            }
         }
 
         // Guardar en la tabla 'users'

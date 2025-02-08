@@ -199,56 +199,142 @@
                         <div class="row">
                             <!-- Primera Columna -->
                             <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="full_name" class="form-label">Nombre Completo</label>
-                                    <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Ingresa tu nombre completo">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="dni" class="form-label">DNI</label>
-                                    <input type="text" id="dni" name="dni" class="form-control" placeholder="Ingresa tu DNI">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="emailPersona" class="form-label">Correo Electrónico</label>
-                                    <div class="d-flex align-items-center position-relative">
-                                        <input type="email" id="emailPersona" name="email" class="form-control pe-5" placeholder="Ingresa tu correo" th:value="${email}" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="emailPersonaValidIcon"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="emailPersonaInvalidIcon"></i>
+                                <!-- Nombre Completo -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control"
+                                               id="full_name" name="full_name"
+                                               placeholder="Nombre Completo"
+                                               th:classappend="${invalidFullName} ? 'is-invalid' : ''"
+                                               th:value="${full_name} ?: ''">
+                                        <label for="full_name">Nombre Completo</label>
                                     </div>
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidFullName}">El nombre completo es obligatorio.</div>
+                                    <!-- Globo de error flotante personalizado -->
+                                    <div id="fullNameError" class="error-tooltip" role="alert">Debe tener al menos 8 caracteres.</div>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="phonePersona" class="form-label">Número de Teléfono</label>
-                                    <input type="text" id="phonePersona" name="phone_number" class="form-control" placeholder="Ingresa tu número de teléfono">
+                                <!-- DNI -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control"
+                                               id="dni" name="dni"
+                                               placeholder="DNI"
+                                               aria-describedby="dniError"
+                                               th:classappend="${invalidDni} ? 'is-invalid' : ''"
+                                               th:value="${dni} ?: ''">
+                                        <label for="dni">DNI</label>
+                                    </div>
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="dniError" class="error-tooltip" role="alert">Debe tener 8 dígitos.</div>
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidDni}">El DNI ya está registrado.</div>
+                                </div>
+                                <!-- Correo Electrónico -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="email" class="form-control pe-5"
+                                               id="emailPersona" name="email"
+                                               placeholder="Correo Electrónico"
+                                               required aria-describedby="emailPersonaError"
+                                               th:classappend="${invalidEmailPersona} ? 'is-invalid' : ''"
+                                               th:value="${email} ?: ''">
+                                        <label for="emailPersona">Correo Electrónico</label>
+                                    </div>
+                                    
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="emailPersonaError" class="error-tooltip" role="alert">Ingresa un correo válido.</div>
+                                    
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidEmailPersona}">El correo electrónico ya está registrado.</div>
+                                </div>
+                                <!-- Número de Teléfono -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control pe-5"
+                                               id="phonePersona" name="phone_number"
+                                               placeholder="Número de Teléfono"
+                                               aria-describedby="phonePersonaError"
+                                               th:classappend="${invalidPhonePersona} ? 'is-invalid' : ''"
+                                               th:value="${phone_number} ?: ''">
+                                        <label for="phonePersona">Número de Teléfono</label>
+                                    </div>
+                                    
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="phonePersonaError" class="error-tooltip" role="alert">Debe tener 9 dígitos.</div>
+                                    
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidPhonePersona}">El número de teléfono ya está registrado.</div>
                                 </div>
                             </div>
                             <!-- Segunda Columna -->
                             <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
-                                    <input type="date" id="birth_date" name="birth_date" class="form-control">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="address" class="form-label">Dirección</label>
-                                    <input type="text" id="address" name="address" class="form-control" placeholder="Ingresa tu dirección">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="passwordPersona" class="form-label">Contraseña</label>
-                                    <div class="d-flex align-items-center position-relative">
-                                        <input type="password" id="passwordPersona" name="password" class="form-control pe-5" placeholder="Crea una contraseña" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="passwordValidIconPersona"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="passwordInvalidIconPersona"></i>
+                                <!-- Fecha de Nacimiento -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="date" class="form-control pe-5"
+                                               id="birth_date" name="birth_date"
+                                               placeholder="Fecha de Nacimiento"
+                                               aria-describedby="birthDateError"
+                                               th:classappend="${invalidBirthDate} ? 'is-invalid' : ''"
+                                               th:value="${birth_date} ?: ''">
+                                        <label for="birth_date">Fecha de Nacimiento</label>
                                     </div>
-                                    <div class="progress mt-2" style="height: 4px;">
-                                        <div class="progress-bar" id="passwordStrengthBarPersona" role="progressbar" style="width: 0%;"></div>
-                                    </div>
-                                    <small id="passwordStrengthTextPersona" class="form-text text-muted">La contraseña debe tener al menos 6 caracteres.</small>
+                                
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="birthDateError" class="error-tooltip" role="alert">La fecha no es válida o no puede estar en el futuro.</div>
+                                
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidBirthDate}">La fecha ingresada no es válida.</div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="confirmPasswordPersona" class="form-label">Confirmar Contraseña</label>
-                                    <div class="d-flex align-items-center position-relative">
-                                        <input type="password" id="confirmPasswordPersona" name="confirmPassword" class="form-control pe-5" placeholder="Repite tu contraseña" required>
-                                        <i class="bi bi-check-circle text-success position-absolute end-0 me-3 d-none" id="confirmPasswordValidIconPersona"></i>
-                                        <i class="bi bi-x-circle text-danger position-absolute end-0 me-3 d-none" id="confirmPasswordInvalidIconPersona"></i>
+                                <!-- Dirección -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating position-relative">
+                                        <input type="text" class="form-control pe-5"
+                                               id="address" name="address"
+                                               placeholder="Dirección"
+                                               aria-describedby="addressError"
+                                               th:classappend="${invalidAddress} ? 'is-invalid' : ''"
+                                               th:value="${address} ?: ''">
+                                        <label for="address">Dirección</label>
                                     </div>
+                                
+                                    <!-- Globo de error debajo del input -->
+                                    <div id="addressError" class="error-tooltip" role="alert">Debe tener al menos 5 caracteres.</div>
+                                
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidAddress}">Debe tener al menos 5 caracteres.</div>
+                                </div>
+                                <!-- Contraseña -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
+                                        <input type="password" id="passwordPersona" name="password"
+                                               class="form-control pe-5"
+                                               placeholder="Crea una contraseña"
+                                               required>
+                                        <label for="passwordPersona">Contraseña</label>
+                                    </div>
+                                
+                                    <!-- Globo flotante para la barra de fuerza y el texto -->
+                                    <div id="passwordTooltipPersona" class="password-tooltip">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" id="passwordStrengthBarPersona" role="progressbar" style="width: 0%;"></div>
+                                        </div>
+                                        <small id="passwordStrengthTextPersona" class="form-text text-muted">Mínimo 6 caracteres.</small>
+                                    </div>
+                                </div>
+                                <!-- Confirmar Contraseña -->
+                                <div class="mb-3 position-relative">
+                                    <div class="form-floating">
+                                        <input type="password" id="confirmPasswordPersona" name="confirmPassword"
+                                               class="form-control pe-5"
+                                               placeholder="Repite tu contraseña"
+                                               required disabled>
+                                        <label for="confirmPasswordPersona">Confirmar Contraseña</label>
+                                    </div>
+                                
+                                    <!-- Globo de error para contraseñas no coincidentes -->
+                                    <div id="confirmPasswordErrorPersona" class="error-tooltip" role="alert">Las contraseñas no coinciden</div>
                                 </div>
                             </div>
                         </div>
