@@ -97,20 +97,84 @@ public class HomeController {
         logger.info(AnsiColor.RED + "[DEBUG] Sector recibido (industry): {}" + AnsiColor.RESET, industry);
         logger.info(AnsiColor.RED + "[DEBUG] Otro sector recibido (other_industry): {}" + AnsiColor.RESET, other_industry);
 
+        // Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
+        if ("COMPANY".equals(userType) && companyRepository.existsByBusinessName(business_name)) {
+            redirectAttributes.addFlashAttribute("error", "La Razón Social ya está registrada. Por favor, usa otra.");
+        
+            // Marcar el campo como inválido
+            redirectAttributes.addFlashAttribute("invalidBusinessName", true);
+        
+            // Conservar todos los demás datos
+            redirectAttributes.addFlashAttribute("business_name", business_name);
+            redirectAttributes.addFlashAttribute("ruc", ruc);
+            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+            redirectAttributes.addFlashAttribute("userType", userType);
+            redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+        
+            return "redirect:/register";
+        }
 
+        if ("COMPANY".equals(userType) && companyRepository.findByRuc(ruc) != null) {
+            redirectAttributes.addFlashAttribute("error", "El RUC ya está registrado. Por favor, verifica tu información.");
+            
+            // Marcar el campo como inválido
+            redirectAttributes.addFlashAttribute("invalidRuc", true);
+            
+            // Conservar todos los demás datos
+            redirectAttributes.addFlashAttribute("business_name", business_name);
+            redirectAttributes.addFlashAttribute("ruc", ruc);
+            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+            redirectAttributes.addFlashAttribute("userType", userType);
+            redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+            
+            return "redirect:/register";
+        }
 
         // Verificar si el correo electrónico ya está registrado
         if (userRepository.findByEmail(email) != null) {
             redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado. Por favor, usa otro.");
+            
+            // Marcar el campo como inválido
+            redirectAttributes.addFlashAttribute("invalidEmail", true);
+            
+            // Conservar todos los demás datos
+            redirectAttributes.addFlashAttribute("business_name", business_name);
+            redirectAttributes.addFlashAttribute("ruc", ruc);
+            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+            redirectAttributes.addFlashAttribute("userType", userType);
+            redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+            
             logger.warn(AnsiColor.RED + "[ERROR] El correo '{}' ya está registrado." + AnsiColor.RESET, email);
-            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
             return "redirect:/register";
         }
 
         // Verificar si el número de teléfono está vacío
-        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "El número de teléfono es obligatorio.");
-            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
+        if (!phoneNumber.startsWith("+")) {
+            phoneNumber = "+51" + phoneNumber;
+        }
+        
+        // Verificar si el número de teléfono ya está registrado
+        if (userRepository.findByPhoneNumber(phoneNumber) != null) {
+            redirectAttributes.addFlashAttribute("error", "El número de teléfono ya está registrado. Por favor, usa otro.");
+            
+            // Marcar el campo como inválido
+            redirectAttributes.addFlashAttribute("invalidPhone", true);
+            
+            // Quitar el prefijo +51 para mostrarlo en el formulario
+            String phoneNumberWithoutPrefix = phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber;
+            
+            // Conservar todos los demás datos
+            redirectAttributes.addFlashAttribute("business_name", business_name);
+            redirectAttributes.addFlashAttribute("ruc", ruc);
+            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+            redirectAttributes.addFlashAttribute("userType", userType);
+            redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("phone_number", phoneNumberWithoutPrefix);  // Usamos el número sin prefijo
+            
+            logger.warn(AnsiColor.RED + "[ERROR] El número de teléfono '{}' ya está registrado." + AnsiColor.RESET, phoneNumber);
             return "redirect:/register";
         }
 

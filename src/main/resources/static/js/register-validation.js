@@ -379,10 +379,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Reaparecer el globo de error si el usuario vuelve al campo
     document.getElementById('confirmPasswordEmpresa').addEventListener('focus', function () {
-        if (!this.classList.contains('is-valid') && this.value.trim() !== "") {
-            document.getElementById('confirmPasswordError').classList.add('visible');
-        }
-    }); 
+        validateConfirmPassword('passwordEmpresa', 'confirmPasswordEmpresa', 'confirmPasswordError');
+    });
 
     // Validación de contraseñas (Personas)
     document.getElementById('passwordPersona').addEventListener('input', function () {
@@ -484,22 +482,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmPasswordElement = document.getElementById(confirmPasswordId);
         const errorTooltip = document.getElementById(errorTooltipId);
     
+        if (!passwordElement || !confirmPasswordElement || !errorTooltip) {
+            console.warn("Uno de los elementos de validación no se encontró en el DOM.");
+            return;
+        }
+    
         const passwordValue = passwordElement.value;
         const confirmPasswordValue = confirmPasswordElement.value;
     
-        // Evaluar la fortaleza de la contraseña principal
+        // Si "Confirmar contraseña" está vacío, no aplicar ninguna validación
+        if (confirmPasswordValue.trim() === "") {
+            confirmPasswordElement.classList.remove('is-valid', 'is-invalid');
+            errorTooltip.classList.remove('visible');
+            return;
+        }
+    
+        // Evaluar la fortaleza de la contraseña principal y de "Confirmar contraseña"
         const passwordStrength = evaluatePasswordStrength(passwordValue);
-        const passwordValid = passwordValue.length >= 6 && (passwordStrength.message === 'Contraseña media' || passwordStrength.message === 'Contraseña fuerte');
+        const confirmPasswordStrength = evaluatePasswordStrength(confirmPasswordValue);
+    
+        let passwordValid = passwordValue.length >= 6 && (passwordStrength.message === 'Contraseña media' || passwordStrength.message === 'Contraseña fuerte');
+        let confirmPasswordValid = confirmPasswordValue.length >= 6 && (confirmPasswordStrength.message === 'Contraseña media' || confirmPasswordStrength.message === 'Contraseña fuerte');
     
         // Verificar si coinciden las contraseñas
-        const isMatch = passwordValue === confirmPasswordValue && confirmPasswordValue.length >= 6;
+        let isMatch = passwordValid && confirmPasswordValid && passwordValue === confirmPasswordValue;
     
-        // Aplicar Bootstrap validation
-        confirmPasswordElement.classList.toggle('is-valid', isMatch && passwordValid);
-        confirmPasswordElement.classList.toggle('is-invalid', !isMatch || !passwordValid);
+        // Aplicar Bootstrap validation solo si el usuario ya escribió algo
+        confirmPasswordElement.classList.toggle('is-valid', isMatch);
+        confirmPasswordElement.classList.toggle('is-invalid', !isMatch || !confirmPasswordValid);
     
-        // Mostrar mensaje de error adecuado
-        if (!passwordValid) {
+        // Mostrar mensaje de error adecuado solo si el campo tiene contenido
+        if (!confirmPasswordValid) {
             errorTooltip.textContent = "Contraseña débil";
             errorTooltip.classList.add('visible');
         } else if (!isMatch) {
@@ -510,22 +523,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function validateConfirmPasswordWithoutError(passwordId, confirmPasswordId, errorTooltipId) {
+    function validateConfirmPasswordWithoutError(passwordId, confirmPasswordId) {
         const passwordElement = document.getElementById(passwordId);
         const confirmPasswordElement = document.getElementById(confirmPasswordId);
-        const errorTooltip = document.getElementById(errorTooltipId);
+    
+        if (!passwordElement || !confirmPasswordElement) {
+            console.warn("Uno de los elementos de validación no se encontró en el DOM.");
+            return;
+        }
     
         const passwordValue = passwordElement.value;
         const confirmPasswordValue = confirmPasswordElement.value;
     
+        // Si "Confirmar contraseña" está vacío, no aplicar ninguna validación
+        if (confirmPasswordValue.trim() === "") {
+            confirmPasswordElement.classList.remove('is-valid', 'is-invalid');
+            return;
+        }
+    
         // Evaluar la fortaleza de la contraseña principal
         const passwordStrength = evaluatePasswordStrength(passwordValue);
-        const passwordValid = passwordValue.length >= 6 && (passwordStrength.message === 'Contraseña media' || passwordStrength.message === 'Contraseña fuerte');
+        let passwordValid = passwordValue.length >= 6 && (passwordStrength.message === 'Contraseña media' || passwordStrength.message === 'Contraseña fuerte');
     
         // Verificar si coinciden las contraseñas
-        const isMatch = passwordValid && passwordValue === confirmPasswordValue && confirmPasswordValue.length >= 6;
+        let isMatch = passwordValid && passwordValue === confirmPasswordValue && confirmPasswordValue.length >= 6;
     
-        // Aplicar Bootstrap validation SIN mostrar el globo de error
+        // Aplicar Bootstrap validation solo si el usuario ya escribió algo
         confirmPasswordElement.classList.toggle('is-valid', isMatch);
         confirmPasswordElement.classList.toggle('is-invalid', !isMatch);
     }
@@ -546,6 +569,51 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (strengthScore >= 4) {
             return { percent: 100, colorClass: 'bg-success', message: 'Contraseña fuerte' };
         }
+    }
+    
+    // =========================================================
+    // VALIDACIONES DE LOS CAMPOS LUEGO DE PRESIONAR "REGISTRAR"
+    // =========================================================
+
+    // Validación de Razón Social
+    const businessNameInput = document.getElementById("business_name");
+    const errorTooltip = document.getElementById("businessNameError");
+    
+    if (businessNameInput) {
+        let previousInvalidValue = businessNameInput.value.trim();
+    
+        businessNameInput.addEventListener("input", function () {
+            const currentValue = this.value.trim();
+            let isValidLength = currentValue.length >= 5;
+    
+            if (currentValue === previousInvalidValue) {
+                this.classList.add("is-invalid");
+            } else if (!isValidLength) {
+                this.classList.add("is-invalid");
+                this.classList.remove("is-valid");
+            } else {
+                this.classList.remove("is-invalid");
+                this.classList.add("is-valid");
+            }
+    
+            // Mostrar o ocultar el globo de error solo si el campo no está vacío y no es válido
+            errorTooltip.classList.toggle("visible", !isValidLength && currentValue !== "");
+        });
+    
+        // Evento focus mejorado para evitar mostrar el globo si el campo es válido
+        businessNameInput.addEventListener("focus", function () {
+            const currentValue = this.value.trim();
+            if (currentValue !== "" && currentValue.length < 5 && !this.classList.contains("is-valid")) {
+                errorTooltip.classList.add("visible");
+            } else {
+                errorTooltip.classList.remove("visible");
+            }
+        });
+    
+        // Ocultar el globo de error cuando el usuario pierde el foco
+        businessNameInput.addEventListener("blur", function () {
+            errorTooltip.classList.remove("visible");
+        });
     }
 
 });

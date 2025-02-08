@@ -14,8 +14,8 @@ public class Company {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;  // Relación con la tabla users
 
-    @Column(name = "business_name", nullable = false)
-    private String businessName;
+    @Column(name = "business_name", nullable = false, unique = true) // Agregar unique=true si aún no está
+    private String businessName; // <-- Debe coincidir con el repositorio
 
     @Column(name = "ruc", nullable = false, unique = true)
     private String ruc;

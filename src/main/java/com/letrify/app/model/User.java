@@ -16,7 +16,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email; // Correo electrónico (único)
 
-    @Column(name = "phone_number", nullable = false) // Nuevo campo de teléfono
+    @Column(name = "phone_number", nullable = false, unique = true) // Nuevo campo de teléfono
     private String phoneNumber;
 
     @Column(nullable = false)

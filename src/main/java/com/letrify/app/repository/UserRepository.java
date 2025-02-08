@@ -9,6 +9,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     // Buscar usuario por correo electrónico (nuevo)
     User findByEmail(String email);
+
+    // Nuevo método para buscar usuario por número de teléfono
+    User findByPhoneNumber(String phoneNumber);
     
     // Si quieres permitir autenticación por DNI o RUC:
     // User findByDni(String dni);        // Requiere ajuste en la entidad si lo añades directamente

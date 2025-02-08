@@ -56,47 +56,71 @@
                                 <!-- Razón Social -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="business_name" name="business_name" placeholder="Razón Social">
+                                        <input type="text" class="form-control"
+                                               id="business_name" name="business_name"
+                                               placeholder="Razón Social"
+                                               th:classappend="${invalidBusinessName} ? 'is-invalid' : ''"
+                                               th:value="${business_name} ?: ''">
                                         <label for="business_name">Razón Social</label>
                                     </div>
-                                    <!-- Globo de error -->
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidBusinessName}">La Razón Social ya está registrada. Por favor, usa otra.</div>
+                                    <!-- Globo de error flotante personalizado -->
                                     <div id="businessNameError" class="error-tooltip" role="alert">Debe tener al menos 5 caracteres.</div>
                                 </div>
                                 <!-- RUC -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
-                                        <input type="text" class="form-control pe-5" id="ruc" name="ruc" placeholder="RUC" aria-describedby="rucError">
+                                        <input type="text" class="form-control pe-5"
+                                               id="ruc" name="ruc"
+                                               placeholder="RUC"
+                                               aria-describedby="rucError"
+                                               th:classappend="${invalidRuc} ? 'is-invalid' : ''"
+                                               th:value="${ruc} ?: ''">
                                         <label for="ruc">RUC</label>
                                     </div>
                                 
                                     <!-- Globo de error debajo del input -->
                                     <div id="rucError" class="error-tooltip" role="alert">Deben ser 11 dígitos.</div>
 
-                                    <!-- <div id="rucError" class="invalid-feedback">
-                                        Deben ser 11 dígitos.
-                                    </div> -->
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidRuc}">Deben ser 11 dígitos.</div>
                                 </div>
                                 <!-- Correo Electrónico -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
-                                        <input type="email" class="form-control pe-5" id="emailEmpresa" name="email" placeholder="Correo Electrónico" th:value="${email}" required aria-describedby="emailEmpresaError">
+                                        <input type="email" class="form-control pe-5"
+                                               id="emailEmpresa" name="email"
+                                               placeholder="Correo Electrónico"
+                                               required aria-describedby="emailEmpresaError"
+                                               th:classappend="${invalidEmail} ? 'is-invalid' : ''"
+                                               th:value="${email} ?: ''">
                                         <label for="emailEmpresa">Correo Electrónico</label>
                                     </div>
                                 
                                     <!-- Globo de error debajo del input -->
-                                    <div id="emailEmpresaError" class="error-tooltip" role="alert">
-                                        Ingresa un correo válido.
-                                    </div>
+                                    <div id="emailEmpresaError" class="error-tooltip" role="alert">Ingresa un correo válido.</div>
+                                
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidEmail}">Ingresa un correo válido.</div>
                                 </div>
                                 <!-- Número de Teléfono -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
-                                        <input type="text" class="form-control pe-5" id="phoneEmpresa" name="phone_number" placeholder="Número de Teléfono" aria-describedby="phoneEmpresaError">
+                                        <input type="text" class="form-control pe-5"
+                                               id="phoneEmpresa" name="phone_number"
+                                               placeholder="Número de Teléfono"
+                                               aria-describedby="phoneEmpresaError"
+                                               th:classappend="${invalidPhone} ? 'is-invalid' : ''"
+                                               th:value="${phone_number} ?: ''">
                                         <label for="phoneEmpresa">Número de Teléfono</label>
                                     </div>
                                 
                                     <!-- Globo de error debajo del input -->
                                     <div id="phoneEmpresaError" class="error-tooltip" role="alert">Debe tener 9 dígitos.</div>
+                                
+                                    <!-- Mensaje de error de Bootstrap -->
+                                    <div class="invalid-feedback" th:if="${invalidPhone}">Debe tener 9 dígitos.</div>
                                 </div>
                             </div>
                             <!-- Segunda Columna -->
@@ -104,7 +128,11 @@
                                 <!-- Dirección Fiscal -->
                                 <div class="mb-3 position-relative">
                                     <div class="form-floating position-relative">
-                                        <input type="text" class="form-control pe-5" id="fiscal_address" name="fiscal_address" placeholder="Dirección Fiscal" aria-describedby="fiscalAddressError">
+                                        <input type="text" class="form-control pe-5"
+                                               id="fiscal_address" name="fiscal_address"
+                                               placeholder="Dirección Fiscal"
+                                               aria-describedby="fiscalAddressError"
+                                               th:value="${fiscal_address} ?: ''">
                                         <label for="fiscal_address">Dirección Fiscal</label>
                                     </div>
 
@@ -115,7 +143,9 @@
                                 <div class="mb-3 d-flex gap-2 align-items-center">
                                     <!-- Select de sectores -->
                                     <div class="form-floating flex-grow-1">
-                                        <select class="form-select" id="industry" name="industry" aria-describedby="industryError" required>
+                                        <select class="form-select" id="industry" name="industry"
+                                                aria-describedby="industryError"
+                                                required>
                                             <option value="" disabled selected>Selecciona un sector</option> <!-- Ahora está deshabilitado -->
                                             <option value="Tecnología">Tecnología</option>
                                             <option value="Finanzas">Finanzas</option>

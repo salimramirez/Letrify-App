@@ -9,4 +9,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     // Método para buscar una empresa por RUC
     Company findByRuc(String ruc);
+
+    boolean existsByBusinessName(String businessName);
 }
