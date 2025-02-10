@@ -9,4 +9,6 @@ public interface IndividualRepository extends JpaRepository<Individual, Long> {
 
     // Método para buscar un individuo por DNI
     Individual findByDni(String dni);
+
+    boolean existsByDni(String dni);
 }

@@ -95,10 +95,75 @@ public class HomeController {
                             @RequestParam(required = false) String birth_date,
                             @RequestParam(required = false) String address,
                             RedirectAttributes redirectAttributes) {
-        
+
+        // ###################################
+        // ##### VALIDACIONES GENERALES ######
+        // ###################################
+
         // Determinar el email y teléfono según el tipo de usuario
         String email = "COMPANY".equals(userType) ? emailEmpresa : emailPersona;
         String phoneNumber = "COMPANY".equals(userType) ? phoneEmpresa : phonePersona;
+
+        // Validar número de teléfono
+        String phoneWithoutPrefix = phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber;
+        if (phoneNumber.startsWith("+") || !isValidPhone(phoneNumber)) {
+            String errorMessage = phoneNumber.startsWith("+") 
+                ? "No debes ingresar el prefijo (+51)." 
+                : "Número de teléfono no válido. Debe tener exactamente 9 dígitos.";
+            
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+            redirectAttributes.addFlashAttribute("userType", userType);
+        
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
+            }
+        
+            return "redirect:/register";
+        }
+
+        // Agregar prefijo +51 para la verificación y almacenamiento
+        String phoneWithPrefix = "+51" + phoneNumber;
+        
+        // Verificar si el número de teléfono ya está registrado
+        if (userRepository.findByPhoneNumber(phoneWithPrefix) != null) {
+            redirectAttributes.addFlashAttribute("error", "El número de teléfono ya está registrado. Por favor, usa otro.");
+            redirectAttributes.addFlashAttribute("userType", userType);
+        
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
+            }
+        
+            return "redirect:/register";
+        }
+
+        // Guardar el número de teléfono con el prefijo +51
+        phoneNumber = phoneWithPrefix;
 
         // Validar correo
         if (!isValidEmail(email)) {
@@ -107,24 +172,21 @@ public class HomeController {
             
             if ("COMPANY".equals(userType)) {
                 redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
             } else {
                 redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
             }
-
-            return "redirect:/register";
-        }
-
-        // Validar número de teléfono
-        if (!isValidPhone(phoneNumber)) {
-            redirectAttributes.addFlashAttribute("error", "Número de teléfono no válido.");
-            redirectAttributes.addFlashAttribute("userType", userType);
             
-            if ("COMPANY".equals(userType)) {
-                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneNumber);
-            } else {
-                redirectAttributes.addFlashAttribute("phonePersona", phoneNumber);
-            }
-
             return "redirect:/register";
         }
 
@@ -134,120 +196,169 @@ public class HomeController {
         logger.info(AnsiColor.RED + "[DEBUG] Sector recibido (industry): {}" + AnsiColor.RESET, industry);
         logger.info(AnsiColor.RED + "[DEBUG] Otro sector recibido (other_industry): {}" + AnsiColor.RESET, other_industry);
 
-        // EMPRESAS: Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
-        if ("COMPANY".equals(userType) && companyRepository.existsByBusinessName(business_name)) {
-            redirectAttributes.addFlashAttribute("error", "La Razón Social ya está registrada. Por favor, usa otra.");
+        // Validar que la contraseña sea válida y coincida con la confirmación
+        if (!isValidPassword(password) || !password.equals(confirmPassword)) {
+            if (!isValidPassword(password)) {
+                redirectAttributes.addFlashAttribute("error", "La contraseña debe tener al menos 6 caracteres y contener letras y números.");
+                logger.warn(AnsiColor.YELLOW + "[ADVERTENCIA] Contraseña inválida para el correo '{}'" + AnsiColor.RESET, email);
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden. Intenta nuevamente.");
+                logger.warn(AnsiColor.YELLOW + "[ADVERTENCIA] Las contraseñas no coinciden para el correo '{}'" + AnsiColor.RESET, email);
+            }
         
-            // Marcar el campo como inválido
-            redirectAttributes.addFlashAttribute("invalidBusinessName", true);
-        
-            // Conservar todos los demás datos
-            redirectAttributes.addFlashAttribute("business_name", business_name);
-            redirectAttributes.addFlashAttribute("ruc", ruc);
-            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
             redirectAttributes.addFlashAttribute("userType", userType);
-            redirectAttributes.addFlashAttribute("email", email);
-            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+            
+            if ("COMPANY".equals(userType)) {
+                redirectAttributes.addFlashAttribute("invalidPasswordEmpresa", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidPasswordPersona", true);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
+            }
         
             return "redirect:/register";
         }
 
-        if ("COMPANY".equals(userType) && companyRepository.findByRuc(ruc) != null) {
-            redirectAttributes.addFlashAttribute("error", "El RUC ya está registrado. Por favor, verifica tu información.");
-            
-            // Marcar el campo como inválido
-            redirectAttributes.addFlashAttribute("invalidRuc", true);
-            
-            // Conservar todos los demás datos
-            redirectAttributes.addFlashAttribute("business_name", business_name);
-            redirectAttributes.addFlashAttribute("ruc", ruc);
-            redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
-            redirectAttributes.addFlashAttribute("userType", userType);
-            redirectAttributes.addFlashAttribute("email", email);
-            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
-            
-            return "redirect:/register";
+        // ####################################
+        // ##### VALIDACIONES DE EMPRESA ######
+        // ####################################
+
+        // Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
+        if ("COMPANY".equals(userType)) {
+            if (business_name == null || business_name.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "La Razón Social es obligatoria.");
+                redirectAttributes.addFlashAttribute("invalidBusinessName", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        
+            if (business_name.trim().length() < 5 || business_name.trim().length() > 100) {
+                redirectAttributes.addFlashAttribute("error", "La Razón Social debe tener entre 5 y 100 caracteres.");
+                redirectAttributes.addFlashAttribute("invalidBusinessName", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        
+            // Verificar si la Razón Social ya está registrada antes de insertar en la base de datos
+            if (companyRepository.existsByBusinessName(business_name)) {
+                redirectAttributes.addFlashAttribute("error", "La Razón Social ya está registrada. Por favor, usa otra.");
+                redirectAttributes.addFlashAttribute("invalidBusinessName", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        }
+
+        // Verificar RUC
+        if ("COMPANY".equals(userType)) {
+            if (ruc == null || ruc.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "El RUC es obligatorio.");
+                redirectAttributes.addFlashAttribute("invalidRuc", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        
+            if (!ruc.matches("\\d{11}")) {
+                redirectAttributes.addFlashAttribute("error", "El RUC debe contener exactamente 11 dígitos.");
+                redirectAttributes.addFlashAttribute("invalidRuc", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        
+            // Verificar si el RUC ya está registrado en la base de datos
+            if (companyRepository.findByRuc(ruc) != null) {
+                redirectAttributes.addFlashAttribute("error", "El RUC ya está registrado. Por favor, verifica tu información.");
+                redirectAttributes.addFlashAttribute("invalidRuc", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+        }
+
+        // Validar dirección fiscal: Debe tener al menos 5 caracteres
+        if ("COMPANY".equals(userType)) {
+            if (fiscal_address == null || fiscal_address.trim().length() < 5) {
+                redirectAttributes.addFlashAttribute("error", "La Dirección Fiscal debe tener al menos 5 caracteres.");
+                redirectAttributes.addFlashAttribute("invalidFiscalAddress", true);
+                
+                // Conservar los demás datos
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);
+                
+                return "redirect:/register";
+            }
         }
 
         // Verificar si el correo electrónico ya está registrado
         if (userRepository.findByEmail(email) != null) {
             redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado. Por favor, usa otro.");
+            redirectAttributes.addFlashAttribute("userType", userType);
             
-            // Marcar el campo como inválido según el tipo de usuario
             if ("COMPANY".equals(userType)) {
                 redirectAttributes.addFlashAttribute("invalidEmailEmpresa", true);
+                redirectAttributes.addFlashAttribute("business_name", business_name);
+                redirectAttributes.addFlashAttribute("ruc", ruc);
+                redirectAttributes.addFlashAttribute("fiscal_address", fiscal_address);
                 redirectAttributes.addFlashAttribute("emailEmpresa", email);
+                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneWithoutPrefix);  // Conservar phoneEmpresa
             } else {
                 redirectAttributes.addFlashAttribute("invalidEmailPersona", true);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
                 redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);  // Conservar phonePersona
             }
-            
-            // Conservar todos los demás datos necesarios
-            redirectAttributes.addFlashAttribute("userType", userType);
-            redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
             
             logger.warn(AnsiColor.RED + "[ERROR] El correo '{}' ya está registrado." + AnsiColor.RESET, email);
             return "redirect:/register";
         }
 
-        // Verificar si el número de teléfono está vacío
-        if (!phoneNumber.startsWith("+")) {
-            phoneNumber = "+51" + phoneNumber;
-        }
-        
-        // Verificar si el número de teléfono ya está registrado
-        if (userRepository.findByPhoneNumber(phoneNumber) != null) {
-            redirectAttributes.addFlashAttribute("error", "El número de teléfono ya está registrado. Por favor, usa otro.");
-        
-            // Marcar el campo correcto como inválido
-            if ("COMPANY".equals(userType)) {
-                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
-                redirectAttributes.addFlashAttribute("phoneEmpresa", phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber);
-            } else {
-                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
-                redirectAttributes.addFlashAttribute("phonePersona", phoneNumber.startsWith("+51") ? phoneNumber.substring(3) : phoneNumber);
-            }
-        
-            // Conservar otros datos relevantes
-            redirectAttributes.addFlashAttribute("userType", userType);
-            redirectAttributes.addFlashAttribute("email", email);
-            
-            logger.warn(AnsiColor.RED + "[ERROR] El número de teléfono '{}' ya está registrado." + AnsiColor.RESET, phoneNumber);
-            return "redirect:/register";
-        }
-
-        // Validar que el número de teléfono contenga solo números y un posible prefijo
-        if (!phoneNumber.matches("^\\+?\\d{7,15}$")) {
-            redirectAttributes.addFlashAttribute("error", "El número de teléfono no es válido.");
-            redirectAttributes.addFlashAttribute("userType", userType);
-        
-            if ("COMPANY".equals(userType)) {
-                redirectAttributes.addFlashAttribute("invalidPhoneEmpresa", true);
-            } else {
-                redirectAttributes.addFlashAttribute("invalidPhonePersona", true);
-            }
-        
-            return "redirect:/register";
-        }
-
-
-        // Si se ingresó un sector en "Otro", usarlo en lugar del select
-        if (industry != null && industry.equals("Otro") && other_industry != null && !other_industry.trim().isEmpty()) {
-            industry = other_industry.trim();
-        }
-        
-        // Verificar si las contraseñas coinciden
-        if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden. Intenta nuevamente.");
-            logger.warn(AnsiColor.YELLOW + "[ADVERTENCIA] Las contraseñas no coinciden para el correo '{}'" + AnsiColor.RESET, email);
-            redirectAttributes.addFlashAttribute("userType", userType); // Guardar el tipo de usuario
-            redirectAttributes.addFlashAttribute("email", email);
-            return "redirect:/register";
-        }
-
-        // ################
-        // ### PERSONAS ###
-        // ################
+        // ####################################
+        // ##### VALIDACIONES DE PERSONA ######
+        // ####################################
 
         // Validación del Nombre Completo para INDIVIDUAL
         if ("INDIVIDUAL".equals(userType)) {
@@ -263,8 +374,8 @@ public class HomeController {
                 redirectAttributes.addFlashAttribute("birth_date", birth_date);
                 redirectAttributes.addFlashAttribute("address", address);
                 redirectAttributes.addFlashAttribute("userType", userType);
-                redirectAttributes.addFlashAttribute("email", email);
-                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
                 
                 return "redirect:/register";
             }
@@ -274,86 +385,78 @@ public class HomeController {
         if ("INDIVIDUAL".equals(userType)) {
             if (dni == null || !dni.matches("\\d{8}")) {
                 redirectAttributes.addFlashAttribute("error", "El DNI debe contener exactamente 8 dígitos.");
-                
-                // Marcar el campo como inválido
                 redirectAttributes.addFlashAttribute("invalidDni", true);
-                
-                // Conservar todos los demás datos ingresados
                 redirectAttributes.addFlashAttribute("full_name", full_name);
                 redirectAttributes.addFlashAttribute("dni", dni);
                 redirectAttributes.addFlashAttribute("birth_date", birth_date);
                 redirectAttributes.addFlashAttribute("address", address);
                 redirectAttributes.addFlashAttribute("userType", userType);
-                redirectAttributes.addFlashAttribute("email", email);
-                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
-                
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
+                return "redirect:/register";
+            }
+            
+            // Verificar si el DNI ya está registrado en la base de datos
+            if (individualRepository.existsByDni(dni)) {
+                redirectAttributes.addFlashAttribute("error", "El DNI ya está registrado. Verifica tu información.");
+                redirectAttributes.addFlashAttribute("invalidDni", true);
+                redirectAttributes.addFlashAttribute("full_name", full_name);
+                redirectAttributes.addFlashAttribute("dni", dni);
+                redirectAttributes.addFlashAttribute("birth_date", birth_date);
+                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("userType", userType);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
                 return "redirect:/register";
             }
         }
 
         // Validación de fecha de nacimiento para INDIVIDUAL
         if ("INDIVIDUAL".equals(userType)) {
+            boolean hasError = false;  // Bandera para verificar si encontramos un error en esta sección.
+        
             if (birth_date == null || birth_date.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "La fecha de nacimiento es obligatoria.");
-                
-                // Marcar el campo como inválido
                 redirectAttributes.addFlashAttribute("invalidBirthDate", true);
-                
-                // Conservar todos los demás datos ingresados
-                redirectAttributes.addFlashAttribute("full_name", full_name);
-                redirectAttributes.addFlashAttribute("dni", dni);
-                redirectAttributes.addFlashAttribute("birth_date", birth_date);
-                redirectAttributes.addFlashAttribute("address", address);
-                redirectAttributes.addFlashAttribute("userType", userType);
-                redirectAttributes.addFlashAttribute("email", email);
-                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
-                
-                return "redirect:/register";
-            }
-
-            // Validación adicional: comprobar si la fecha es válida y no está en el futuro
-            LocalDate birthDateParsed;
-            try {
-                birthDateParsed = LocalDate.parse(birth_date);
-                if (birthDateParsed.isAfter(LocalDate.now())) {
-                    redirectAttributes.addFlashAttribute("error", "La fecha de nacimiento no puede ser en el futuro.");
-                    
-                    // Marcar el campo como inválido
+                hasError = true;
+            } else {
+                try {
+                    LocalDate birthDateParsed = LocalDate.parse(birth_date);
+                    LocalDate today = LocalDate.now();
+                    LocalDate minValidBirthDate = today.minusYears(18);  // Fecha mínima válida: hace 18 años desde hoy
+        
+                    if (birthDateParsed.isAfter(today)) {
+                        redirectAttributes.addFlashAttribute("error", "La fecha de nacimiento no puede ser en el futuro.");
+                        redirectAttributes.addFlashAttribute("invalidBirthDate", true);
+                        hasError = true;
+                    } else if (birthDateParsed.isAfter(minValidBirthDate)) {
+                        redirectAttributes.addFlashAttribute("error", "Debes tener al menos 18 años para registrarte.");
+                        redirectAttributes.addFlashAttribute("invalidBirthDate", true);
+                        hasError = true;
+                    }
+                } catch (DateTimeParseException e) {
+                    redirectAttributes.addFlashAttribute("error", "Formato de fecha de nacimiento no válido.");
                     redirectAttributes.addFlashAttribute("invalidBirthDate", true);
-                    
-                    // Conservar todos los datos
-                    redirectAttributes.addFlashAttribute("full_name", full_name);
-                    redirectAttributes.addFlashAttribute("dni", dni);
-                    redirectAttributes.addFlashAttribute("birth_date", birth_date);
-                    redirectAttributes.addFlashAttribute("address", address);
-                    redirectAttributes.addFlashAttribute("userType", userType);
-                    redirectAttributes.addFlashAttribute("email", email);
-                    redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
-                    
-                    return "redirect:/register";
+                    hasError = true;
                 }
-            } catch (DateTimeParseException e) {
-                redirectAttributes.addFlashAttribute("error", "Formato de fecha de nacimiento no válido.");
-                
-                // Marcar el campo como inválido
-                redirectAttributes.addFlashAttribute("invalidBirthDate", true);
-                
-                // Conservar los datos ingresados
+            }
+        
+            // Si se detectó algún error, conservar los datos y redirigir
+            if (hasError) {
                 redirectAttributes.addFlashAttribute("full_name", full_name);
                 redirectAttributes.addFlashAttribute("dni", dni);
                 redirectAttributes.addFlashAttribute("birth_date", birth_date);
                 redirectAttributes.addFlashAttribute("address", address);
                 redirectAttributes.addFlashAttribute("userType", userType);
-                redirectAttributes.addFlashAttribute("email", email);
-                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
-                
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
                 return "redirect:/register";
             }
         }
 
         // Validación de dirección para INDIVIDUAL
         if ("INDIVIDUAL".equals(userType)) {
-            if (address == null || address.trim().length() < 5) {
+            if (address == null || address.trim().isEmpty() || address.trim().length() < 5) {
                 redirectAttributes.addFlashAttribute("error", "La dirección debe tener al menos 5 caracteres.");
                 
                 // Marcar el campo como inválido
@@ -363,14 +466,23 @@ public class HomeController {
                 redirectAttributes.addFlashAttribute("full_name", full_name);
                 redirectAttributes.addFlashAttribute("dni", dni);
                 redirectAttributes.addFlashAttribute("birth_date", birth_date);
-                redirectAttributes.addFlashAttribute("address", address);
+                redirectAttributes.addFlashAttribute("address", address); // Conservar la dirección ingresada
                 redirectAttributes.addFlashAttribute("userType", userType);
-                redirectAttributes.addFlashAttribute("email", email);
-                redirectAttributes.addFlashAttribute("phone_number", phoneNumber);
+                redirectAttributes.addFlashAttribute("emailPersona", email);
+                redirectAttributes.addFlashAttribute("phonePersona", phoneWithoutPrefix);
                 
                 return "redirect:/register";
             }
         }
+
+        // Si se ingresó un sector en "Otro", usarlo en lugar del select
+        if (industry != null && industry.equals("Otro") && other_industry != null && !other_industry.trim().isEmpty()) {
+            industry = other_industry.trim();
+        }
+
+        // #############################
+        // ##### GUARDAR USUARIOS ######
+        // #############################
 
         // Guardar en la tabla 'users'
         User user = new User();
@@ -408,6 +520,10 @@ public class HomeController {
             logger.info(AnsiColor.GREEN + "[ÉXITO] Persona registrada: {}" + AnsiColor.RESET, full_name);
         }
 
+        // ########################
+        // ##### REDIRECCIÓN ######
+        // ########################
+
         // Agregar mensaje de éxito y redirigir al login
         redirectAttributes.addFlashAttribute("success", "Usuario registrado con éxito.");
         logger.info(AnsiColor.GREEN + "[ÉXITO] Usuario registrado correctamente: {}" + AnsiColor.RESET, email);
@@ -422,7 +538,7 @@ public class HomeController {
     // }
 
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
         return email != null && email.matches(emailRegex);
     }
     
@@ -431,5 +547,11 @@ public class HomeController {
         return phone != null && phone.matches(phoneRegex);
     }
     
+    // Método para validar la contraseña
+    private boolean isValidPassword(String password) {
+        // Al menos 6 caracteres, debe contener al menos una letra y un número
+        String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+        return password != null && password.matches(passwordRegex);
+    }
 
 }
