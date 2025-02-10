@@ -12,3 +12,6 @@
     font-size: 1.2rem;  /* Ajusta el tamaño del ícono si es necesario */
 }
 
+#iconPassword {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}

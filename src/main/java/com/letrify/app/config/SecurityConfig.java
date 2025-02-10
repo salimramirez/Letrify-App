@@ -68,12 +68,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", // Permitir acceso público a los recursos estáticos
                 //      "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Permitir acceso a Swagger
-                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**").permitAll() // Permitir acceso público a estos recursos
+                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/site.webmanifest").permitAll() // Permitir acceso público a estos recursos
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN") // Restringir acceso a Swagger a usuarios con rol ADMIN
                 .anyRequest().authenticated() // Proteger las demás rutas
             )
             .formLogin(form -> form
                 .loginPage("/login") // Página de login personalizada
+                .usernameParameter("email")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/dashboard", true) // Redirigir tras login exitoso
                 .failureUrl("/login?error") // Redirigir en caso de error
                 .permitAll() // Permitir acceso público al login
