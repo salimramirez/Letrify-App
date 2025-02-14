@@ -4,57 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Letrify</title>
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Estilos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/dashboard.css">
-    <style>
-        #wrapper.toggled #sidebar-wrapper {
-            margin-left: 0;
-        }
-
-        #sidebar-wrapper {
-            width: 250px;
-            margin-left: -250px;
-            transition: margin 0.3s ease-in-out;
-        }
-
-        #page-content-wrapper {
-            flex: 1;
-            padding: 20px;
-        }
-
-        #wrapper {
-            display: flex;
-            width: 100%;
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-    </style>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="/js/dashboard-main.js" defer></script>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
-        <div class="border-end bg-light" id="sidebar-wrapper">
-            <div class="sidebar-heading bg-primary text-white text-center py-4">Letrify</div>
+        <div class="bg-light" id="sidebar-wrapper">
+            <div class="sidebar-heading bg-white text-center py-4 d-flex align-items-center justify-content-center">
+                <img src="/img/letrify-logo.png" alt="Letrify Logo" class="me-2" style="height: 40px;"> 
+                <span class="sidebar-title">Letrify</span>
+            </div>
             <div class="list-group list-group-flush">
-                <a href="#" class="list-group-item list-group-item-action bg-light" data-target="inicio">Inicio</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light" data-target="gestion">Gestión de Letras/Facturas</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light" data-target="reportes">Reportes</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light" data-target="configuracion">Configuración</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light text-danger">Cerrar Sesión</a>
-                <!-- BOTÓN DE PRUEBA (eliminar) -->
-                <form action="/logout" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit">Cerrar sesión</button>
-                </form>    
+                <!-- Inicio -->
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-house-door" data-target="inicio"> Inicio</a>
+        
+                <!-- Gestión de Documentos -->
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-file-earmark-text" data-target="gestion-documentos">
+                    Gestión de Documentos
+                </a>
+        
+                <!-- Gestión de Carteras -->
+                <div class="dropdown-sidebar">
+                    <a href="#" class="list-group-item list-group-item-action bg-light bi bi-folder"> 
+                        Gestión de Carteras
+                        <i class="bi bi-chevron-down float-end"></i>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="crear-cartera">Crear Nueva Cartera</a>
+                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="ver-carteras">Ver Carteras Actuales</a>
+                    </div>
+                </div>
+        
+                <!-- Bancos y Tasas -->
+                <div class="dropdown-sidebar">
+                    <a href="#" class="list-group-item list-group-item-action bg-light bi bi-bank"> 
+                        Bancos y Tasas
+                        <i class="bi bi-chevron-down float-end"></i>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="lista-bancos">Lista de Bancos</a>
+                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="tasas-bancarias">Tasas Bancarias</a>
+                    </div>
+                </div>
+        
+                <!-- Reportes -->
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-graph-up" data-target="reportes"> Reportes</a>
+        
+                <!-- Configuración -->
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-gear" data-target="configuracion"> Configuración</a>
+        
+                <!-- Cerrar Sesión -->
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-box-arrow-right text-danger"> Cerrar Sesión</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
+
+        <!-- BOTÓN DE PRUEBA (eliminar) -->
+        <!-- <form action="/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Cerrar sesión</button>
+        </form>     -->
+
+        <!-- Overlay (Fondo Oscuro) -->
+        <div id="overlay"></div>
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
@@ -91,6 +115,151 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Valor Total Descontado</h5>
                                     <p class="card-text display-6">S/ 50,000</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestión de Documentos -->
+                <div id="gestion-documentos" class="content-section">
+                    <h2>Gestión de Documentos</h2>
+                    <!-- Botón para abrir el modal -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#registerDocumentModal">
+                        Agregar Nueva Letra/Factura
+                    </button>
+
+                    <!-- Tabla de Documentos Registrados -->
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tipo</th>
+                                    <th>N° Doc</th>
+                                    <th>Cliente</th>
+                                    <th>Monto</th>
+                                    <th>Emisión</th>
+                                    <th>Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Factura</td>
+                                    <td>F001-123456</td>
+                                    <td>Empresa ABC</td>
+                                    <td>S/ 5,000.00</td>
+                                    <td>01/01/2025</td>
+                                    <td>15/01/2025</td>
+                                    <td>Pendiente</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning">Editar</button>
+                                        <button class="btn btn-sm btn-danger">Eliminar</button>
+                                    </td>
+                                </tr>
+                                <!-- Más filas aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Cards de Documentos para Móviles -->
+                    <div class="d-md-none">
+                        <div class="card mb-3 border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title">Documento #1 - Factura F001-123456</h5>
+                                <p class="card-text"><strong>Cliente:</strong> Empresa ABC</p>
+                                <p class="card-text"><strong>Monto:</strong> S/ 5,000.00</p>
+                                <p class="card-text"><strong>Emisión:</strong> 01/01/2025</p>
+                                <p class="card-text"><strong>Vencimiento:</strong> 15/01/2025</p>
+                                <p class="card-text"><strong>Estado:</strong> Pendiente</p>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button class="btn btn-warning btn-sm">Editar</button>
+                                    <button class="btn btn-danger btn-sm">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Bootstrap -->
+                    <div class="modal fade" id="registerDocumentModal" tabindex="-1" aria-labelledby="registerDocumentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="registerDocumentModalLabel">Registrar Documento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="registerDocumentForm">
+                                        <div class="row">
+                                            <!-- Tipo de Documento -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="documentType" class="form-label">Tipo de Documento</label>
+                                                <select id="documentType" class="form-select" required>
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="FACTURA">Factura</option>
+                                                    <option value="LETRA">Letra de Cambio</option>
+                                                </select>
+                                            </div>
+                                            <!-- Número de Documento -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="documentNumber" class="form-label">Número de Documento</label>
+                                                <input type="text" id="documentNumber" class="form-control" placeholder="Ingrese el número de documento" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <!-- Monto -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="amount" class="form-label">Monto</label>
+                                                <input type="number" id="amount" class="form-control" step="0.01" min="0" placeholder="Ingrese el monto" required>
+                                            </div>
+                                            <!-- Moneda -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="currency" class="form-label">Moneda</label>
+                                                <select id="currency" class="form-select" required>
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="PEN">Soles (PEN)</option>
+                                                    <option value="USD">Dólares (USD)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <!-- Fecha de Emisión -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="issueDate" class="form-label">Fecha de Emisión</label>
+                                                <input type="date" id="issueDate" class="form-control" required>
+                                            </div>
+                                            <!-- Fecha de Vencimiento -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="dueDate" class="form-label">Fecha de Vencimiento</label>
+                                                <input type="date" id="dueDate" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <!-- Descripción -->
+                                            <div class="col-12 mb-3">
+                                                <label for="description" class="form-label">Descripción</label>
+                                                <textarea id="description" class="form-control" rows="3" placeholder="Ingrese una descripción o nota adicional"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <!-- Cliente -->
+                                            <div class="col-12 mb-3">
+                                                <label for="client" class="form-label">Cliente</label>
+                                                <select id="client" class="form-select" required>
+                                                    <option value="">Seleccione un cliente...</option>
+                                                    <!-- Aquí agregarás dinámicamente los clientes disponibles -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Botones de acción -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar Documento</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -150,31 +319,5 @@
         </div>
         <!-- /#page-content-wrapper -->
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Toggle de la sidebar
-        document.getElementById("menu-toggle").addEventListener("click", function() {
-            document.getElementById("wrapper").classList.toggle("toggled");
-        });
-
-        // Navegación dinámica
-        const links = document.querySelectorAll('.list-group-item');
-        const sections = document.querySelectorAll('.content-section');
-
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = link.getAttribute('data-target');
-
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                document.getElementById(target).classList.add('active');
-            });
-        });
-    </script>
 </body>
 </html>

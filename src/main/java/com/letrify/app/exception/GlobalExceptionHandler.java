@@ -4,6 +4,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -26,4 +27,13 @@ public class GlobalExceptionHandler {
         model.addAttribute("message", ex.getMessage()); // Puedes mostrar el mensaje si es útil
         return "500"; // Nombre de la plantilla Thymeleaf (500.html)
     }
+
+    // Manejar errores 404 (Página no encontrada)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNotFoundException(NoHandlerFoundException ex, Model model) {
+        model.addAttribute("error", "La página solicitada no fue encontrada.");
+        return "404"; // Página personalizada 404.html
+    }
+
 }
