@@ -2,6 +2,8 @@ package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -30,9 +32,8 @@ public class Document {
     private String description;
 
     @NotNull
-    @DecimalMin("0.00")
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
-    private Double amount;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "currency", nullable = false)
@@ -124,11 +125,11 @@ public class Document {
         this.description = description;
     }
     
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
     
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
     

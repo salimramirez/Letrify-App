@@ -63,12 +63,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf // Configuración CSRF (opcional, usa predeterminado si no lo necesitas)
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // Verificar lo siguiente:
+                .ignoringRequestMatchers("/api/**") // Desactiva CSRF solo para las rutas de la API
             )
             .authorizeHttpRequests(auth -> auth
                 // .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", // Permitir acceso público a los recursos estáticos
                 //      "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Permitir acceso a Swagger
                 .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/site.webmanifest").permitAll() // Permitir acceso público a estos recursos
+                // Verificar lo siguiente:
+                .requestMatchers("/api/**").permitAll()   // Permite acceso público a la API
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN") // Restringir acceso a Swagger a usuarios con rol ADMIN
                 .anyRequest().authenticated() // Proteger las demás rutas
             )
