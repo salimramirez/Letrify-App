@@ -36,4 +36,12 @@ public class GlobalExceptionHandler {
         return "404"; // Página personalizada 404.html
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)  // Código de estado 404
+    public String handleResourceNotFoundException(ResourceNotFoundException ex, Model model) {
+        model.addAttribute("error", "Recurso no encontrado.");
+        model.addAttribute("message", ex.getMessage());
+        return "404";  // Nombre de la plantilla Thymeleaf para errores 404
+    }
+
 }
