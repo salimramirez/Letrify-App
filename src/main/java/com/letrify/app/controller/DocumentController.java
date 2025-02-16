@@ -1,6 +1,9 @@
 package com.letrify.app.controller;
 
 import com.letrify.app.model.Document;
+import com.letrify.app.model.Document.DocumentStatus;
+import com.letrify.app.model.User;
+import com.letrify.app.repository.UserRepository;
 import com.letrify.app.service.DocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +17,11 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    public DocumentController(DocumentService documentService) {
+    private final UserRepository userRepository;
+
+    public DocumentController(DocumentService documentService, UserRepository userRepository) {
         this.documentService = documentService;
+        this.userRepository = userRepository;
     }
 
     // Obtener todos los documentos
@@ -35,6 +41,27 @@ public class DocumentController {
     // Crear un nuevo documento
     @PostMapping
     public ResponseEntity<Document> createDocument(@RequestBody Document document) {
+        System.out.println("Valor de customer: " + document.getCustomer());
+        
+        // Buscar y asignar Company (usuario tipo empresa)
+        if (document.getCompanyId() != null) {
+            User company = userRepository.findById(document.getCompanyId())
+                    .orElseThrow(() -> new RuntimeException("Company no encontrada"));
+            document.setCompany(company);
+        }
+
+        // Buscar y asignar Individual (usuario tipo persona)
+        if (document.getIndividualId() != null) {
+            User individual = userRepository.findById(document.getIndividualId())
+                    .orElseThrow(() -> new RuntimeException("Individual no encontrado"));
+            document.setIndividual(individual);
+        }
+
+        // Valor por defecto para el status si no está presente
+        if (document.getStatus() == null) {
+            document.setStatus(DocumentStatus.PENDIENTE);
+        }
+        
         Document savedDocument = documentService.saveDocument(document);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDocument);
     }
