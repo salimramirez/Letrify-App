@@ -2,8 +2,10 @@ package com.letrify.app.controller;
 
 import com.letrify.app.model.Document;
 import com.letrify.app.model.Document.DocumentStatus;
-import com.letrify.app.model.User;
-import com.letrify.app.repository.UserRepository;
+import com.letrify.app.model.Company;
+import com.letrify.app.model.Individual;
+import com.letrify.app.repository.CompanyRepository;
+import com.letrify.app.repository.IndividualRepository;
 import com.letrify.app.service.DocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,15 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
+    private final CompanyRepository companyRepository;
+    private final IndividualRepository individualRepository;
 
-    private final UserRepository userRepository;
-
-    public DocumentController(DocumentService documentService, UserRepository userRepository) {
+    public DocumentController(DocumentService documentService, 
+                              CompanyRepository companyRepository, 
+                              IndividualRepository individualRepository) {
         this.documentService = documentService;
-        this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
+        this.individualRepository = individualRepository;
     }
 
     // Obtener todos los documentos
@@ -42,17 +47,17 @@ public class DocumentController {
     @PostMapping
     public ResponseEntity<Document> createDocument(@RequestBody Document document) {
         System.out.println("Valor de customer: " + document.getCustomer());
-        
-        // Buscar y asignar Company (usuario tipo empresa)
-        if (document.getCompanyId() != null) {
-            User company = userRepository.findById(document.getCompanyId())
+
+        // Asignar Company si está presente
+        if (document.getCompany() != null && document.getCompany().getId() != null) {
+            Company company = companyRepository.findById(document.getCompany().getId())
                     .orElseThrow(() -> new RuntimeException("Company no encontrada"));
             document.setCompany(company);
         }
 
-        // Buscar y asignar Individual (usuario tipo persona)
-        if (document.getIndividualId() != null) {
-            User individual = userRepository.findById(document.getIndividualId())
+        // Asignar Individual si está presente
+        if (document.getIndividual() != null && document.getIndividual().getId() != null) {
+            Individual individual = individualRepository.findById(document.getIndividual().getId())
                     .orElseThrow(() -> new RuntimeException("Individual no encontrado"));
             document.setIndividual(individual);
         }
@@ -61,7 +66,7 @@ public class DocumentController {
         if (document.getStatus() == null) {
             document.setStatus(DocumentStatus.PENDIENTE);
         }
-        
+
         Document savedDocument = documentService.saveDocument(document);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDocument);
     }

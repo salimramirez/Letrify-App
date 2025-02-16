@@ -55,11 +55,11 @@ public class Document {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    private User company;
+    private Company company;
 
     @ManyToOne
     @JoinColumn(name = "individual_id")
-    private User individual;
+    private Individual individual;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
@@ -68,12 +68,6 @@ public class Document {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
     private Date updatedAt = new Date();
-
-    @Transient
-    private Long companyId;
-    
-    @Transient
-    private Long individualId;
 
     public enum DocumentType {
         FACTURA,
@@ -171,36 +165,20 @@ public class Document {
         this.status = status;
     }
     
-    public User getCompany() {
+    public Company getCompany() {
         return company;
     }
-    
-    public void setCompany(User company) {
+
+    public void setCompany(Company company) {
         this.company = company;
     }
 
-    public Long getCompanyId() {
-        return companyId;
-    }
-    
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
-    }
-    
-    public User getIndividual() {
+    public Individual getIndividual() {
         return individual;
     }
-    
-    public void setIndividual(User individual) {
-        this.individual = individual;
-    }
 
-    public Long getIndividualId() {
-        return individualId;
-    }
-    
-    public void setIndividualId(Long individualId) {
-        this.individualId = individualId;
+    public void setIndividual(Individual individual) {
+        this.individual = individual;
     }
     
     public Date getCreatedAt() {
