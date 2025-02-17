@@ -3,6 +3,8 @@ package com.letrify.app.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // import org.hibernate.usertype.UserType;
 
 @Entity
@@ -35,9 +37,11 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now(); // Fecha de creación de la cuenta
 
+    @JsonIgnore // Evitar problemas de recursión infinita en JSON cuando se serializan respuestas en controladores REST
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Company company;
 
+    @JsonIgnore // Evitar problemas de recursión infinita en JSON cuando se serializan respuestas en controladores REST
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Individual individual;
 
@@ -127,4 +131,12 @@ public class User {
     public void setIndividual(Individual individual) {
         this.individual = individual;
     }
+
+    public boolean isCompany() {
+        return this.userType == UserType.COMPANY;
+    }
+    
+    public boolean isIndividual() {
+        return this.userType == UserType.INDIVIDUAL;
+    }    
 }

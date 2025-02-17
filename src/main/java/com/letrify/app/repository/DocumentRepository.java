@@ -17,8 +17,8 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Buscar documentos por cliente (customer)
     List<Document> findByCustomerContainingIgnoreCase(String customer);
 
-    List<Document> findByCompanyId(Long companyId);  
-    
-    List<Document> findByIndividualId(Long individualId);
+    List<Document> findByCompany_Id(Long companyId);
+
+    List<Document> findByIndividual_Id(Long individualId);
 
 }

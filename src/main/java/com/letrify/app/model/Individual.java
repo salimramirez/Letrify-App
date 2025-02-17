@@ -74,4 +74,9 @@ public class Individual {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public Individual() {
+        
+    }
+    
 }

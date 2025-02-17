@@ -1,15 +1,17 @@
 package com.letrify.app.controller;
 
 import com.letrify.app.model.Document;
-import com.letrify.app.model.Document.DocumentStatus;
 import com.letrify.app.model.Company;
 import com.letrify.app.model.Individual;
 import com.letrify.app.repository.CompanyRepository;
 import com.letrify.app.repository.IndividualRepository;
+import com.letrify.app.service.CustomUserDetails;
 import com.letrify.app.service.DocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.letrify.app.model.User; // Importa la clase User para UserType
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // Importa la anotación AuthenticationPrincipal
 
 import java.util.List;
 
@@ -45,27 +47,48 @@ public class DocumentController {
 
     // Crear un nuevo documento
     @PostMapping
-    public ResponseEntity<Document> createDocument(@RequestBody Document document) {
-        System.out.println("Valor de customer: " + document.getCustomer());
+    public ResponseEntity<Document> createDocument(@RequestBody Document document, 
+                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
+        System.out.println("📌 Valor de customer: " + document.getCustomer());
 
-        // Asignar Company si está presente
-        if (document.getCompany() != null && document.getCompany().getId() != null) {
-            Company company = companyRepository.findById(document.getCompany().getId())
-                    .orElseThrow(() -> new RuntimeException("Company no encontrada"));
-            document.setCompany(company);
+        // Verificar que el usuario autenticado tiene un ID válido
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        // Asignar Individual si está presente
-        if (document.getIndividual() != null && document.getIndividual().getId() != null) {
-            Individual individual = individualRepository.findById(document.getIndividual().getId())
-                    .orElseThrow(() -> new RuntimeException("Individual no encontrado"));
+        // Asignar Company si el usuario es una empresa
+        if (userDetails.getUserType() == User.UserType.COMPANY && userDetails.getCompanyId() != null) {
+            Company company = companyRepository.findById(userDetails.getCompanyId())
+                .orElseThrow(() -> new RuntimeException("Company no encontrada con ID: " + userDetails.getCompanyId()));
+            document.setCompany(company);
+            System.out.println(" - 📌 Asignado a Company con ID: " + company.getId());
+        }
+
+        // Asignar Individual si el usuario es una persona
+        if (userDetails.getUserType() == User.UserType.INDIVIDUAL && userDetails.getIndividualId() != null) {
+            Individual individual = individualRepository.findById(userDetails.getIndividualId())
+                .orElseThrow(() -> new RuntimeException("Individual no encontrado con ID: " + userDetails.getIndividualId()));
             document.setIndividual(individual);
+            System.out.println(" - 📌 Asignado a Individual con ID: " + individual.getId());
         }
 
         // Valor por defecto para el status si no está presente
         if (document.getStatus() == null) {
-            document.setStatus(DocumentStatus.PENDIENTE);
+            document.setStatus(Document.DocumentStatus.PENDIENTE);
         }
+
+        System.out.println("📌 Datos del documento recibidos en el backend:");
+        System.out.println(" - Cliente: " + document.getCustomer());
+        System.out.println(" - Tipo de Documento: " + document.getDocumentType());
+        System.out.println(" - Número: " + document.getDocumentNumber());
+        System.out.println(" - Monto: " + document.getAmount());
+        System.out.println(" - Moneda: " + document.getCurrency());
+        System.out.println(" - Fecha de Emisión: " + document.getIssueDate());
+        System.out.println(" - Fecha de Vencimiento: " + document.getDueDate());
+        System.out.println(" - Estado: " + document.getStatus());
+        System.out.println(" - Descripción: " + document.getDescription());
+        System.out.println(" - Company ID: " + (document.getCompany() != null ? document.getCompany().getId() : "null"));
+        System.out.println(" - Individual ID: " + (document.getIndividual() != null ? document.getIndividual().getId() : "null"));
 
         Document savedDocument = documentService.saveDocument(document);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDocument);

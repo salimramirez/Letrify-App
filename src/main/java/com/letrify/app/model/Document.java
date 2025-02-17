@@ -180,6 +180,14 @@ public class Document {
     public void setIndividual(Individual individual) {
         this.individual = individual;
     }
+
+    public Long getCompanyId() {
+        return company != null ? company.getId() : null;
+    }
+
+    public Long getIndividualId() {
+        return individual != null ? individual.getId() : null;
+    }
     
     public Date getCreatedAt() {
         return createdAt;

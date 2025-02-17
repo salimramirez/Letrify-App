@@ -74,4 +74,9 @@ public class Company {
     public void setIndustry(String industry) {
         this.industry = industry;
     }
+
+    public Company() {
+        
+    }
+    
 }

@@ -26,11 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
         }
     
-        // Crear un objeto UserDetails basado en el usuario de la base de datos
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())  // Usar el email como identificador
-                .password(user.getPassword())  // Contraseña cifrada con BCrypt
-                .roles(user.getRole())  // Asignar roles (USER, ADMIN)
-                .build();
+        // Devolver un CustomUserDetails con más información del usuario
+        return new CustomUserDetails(user);
     }
 }

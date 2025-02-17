@@ -71,8 +71,7 @@ public class SecurityConfig {
                 // .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", // Permitir acceso público a los recursos estáticos
                 //      "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Permitir acceso a Swagger
                 .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/site.webmanifest").permitAll() // Permitir acceso público a estos recursos
-                // Verificar lo siguiente:
-                .requestMatchers("/api/**").permitAll()   // Permite acceso público a la API
+                .requestMatchers("/api/**").authenticated()   // Permite acceso a usuarios autenticados
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN") // Restringir acceso a Swagger a usuarios con rol ADMIN
                 .anyRequest().authenticated() // Proteger las demás rutas
             )
