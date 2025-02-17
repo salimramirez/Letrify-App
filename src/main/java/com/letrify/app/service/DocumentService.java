@@ -29,6 +29,17 @@ public class DocumentService {
     // Método para registrar o actualizar un documento
     public Document saveDocument(Document document) {
         validateDocumentDates(document);
+
+        System.out.println("🟢 Fecha ANTES de guardar en Hibernate:");
+        System.out.println("   - Fecha de Emisión: " + document.getIssueDate());
+        System.out.println("   - Fecha de Vencimiento: " + document.getDueDate());
+    
+        Document savedDoc = documentRepository.save(document);
+    
+        System.out.println("✅ Fecha DESPUÉS de guardar en Hibernate:");
+        System.out.println("   - Fecha de Emisión: " + savedDoc.getIssueDate());
+        System.out.println("   - Fecha de Vencimiento: " + savedDoc.getDueDate());
+
         return documentRepository.save(document);
     }
 
@@ -42,8 +53,16 @@ public class DocumentService {
 
     // Método para validar las fechas del documento
     private void validateDocumentDates(Document document) {
-        if (document.getDueDate().before(document.getIssueDate())) {
+        if (document.getDueDate().isBefore(document.getIssueDate())) {
             throw new IllegalArgumentException("La fecha de vencimiento no puede ser anterior a la fecha de emisión.");
         }
+    }
+
+    public List<Document> findDocumentsByCompanyId(Long companyId) {
+        return documentRepository.findByCompany_Id(companyId); // Método corregido
+    }
+    
+    public List<Document> findDocumentsByIndividualId(Long individualId) {
+        return documentRepository.findByIndividual_Id(individualId); // Método corregido
     }
 }

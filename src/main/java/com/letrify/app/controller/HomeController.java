@@ -4,9 +4,16 @@ import com.letrify.app.model.User;
 import com.letrify.app.service.UserService;
 import com.letrify.app.util.AnsiColor;
 
+import jakarta.annotation.PostConstruct;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +27,17 @@ import org.springframework.security.web.csrf.CsrfToken;
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+
+@Component
+public class TimezoneChecker {
+    @PostConstruct
+    public void init() {
+        System.out.println("Zona horaria del sistema: " + TimeZone.getDefault().getID());
+        System.out.println("Zona horaria de Java: " + ZoneId.systemDefault());
+        System.out.println("Fecha y hora en UTC: " + ZonedDateTime.now(ZoneId.of("UTC")));
+        System.out.println("Fecha y hora en la zona del sistema: " + ZonedDateTime.now());
+    }
+}
 
     @Autowired
     private UserService userService; // Nuevo servicio para manejar usuarios

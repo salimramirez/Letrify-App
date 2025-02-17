@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "documents")
@@ -39,15 +40,13 @@ public class Document {
     @Column(name = "currency", nullable = false)
     private CurrencyType currency;  // ENUM: PEN, USD
 
-    @Temporal(TemporalType.DATE)
     @NotNull
     @Column(name = "issue_date", nullable = false)
-    private Date issueDate;
+    private LocalDate issueDate;
 
-    @Temporal(TemporalType.DATE)
     @NotNull
     @Column(name = "due_date", nullable = false)
-    private Date dueDate;
+    private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -141,19 +140,19 @@ public class Document {
         this.currency = currency;
     }
     
-    public Date getIssueDate() {
+    public LocalDate getIssueDate() {
         return issueDate;
     }
     
-    public void setIssueDate(Date issueDate) {
+    public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
     }
     
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
     
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
     

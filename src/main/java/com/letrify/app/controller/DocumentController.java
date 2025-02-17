@@ -45,11 +45,38 @@ public class DocumentController {
         return ResponseEntity.ok(document);
     }
 
+    // Obtener documentos del usuario autenticado
+    @GetMapping("/user")
+    public ResponseEntity<List<Document>> getDocumentsByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Document> documents;
+        
+        // Si el usuario es una empresa, obtener los documentos asociados a su companyId
+        if (userDetails.getUserType() == User.UserType.COMPANY && userDetails.getCompanyId() != null) {
+            documents = documentService.findDocumentsByCompanyId(userDetails.getCompanyId());
+        }
+        // Si el usuario es una persona natural, obtener los documentos asociados a su individualId
+        else if (userDetails.getUserType() == User.UserType.INDIVIDUAL && userDetails.getIndividualId() != null) {
+            documents = documentService.findDocumentsByIndividualId(userDetails.getIndividualId());
+        }
+        else {
+            return ResponseEntity.ok(List.of()); // Devolver lista vacía si no tiene documentos asociados
+        }
+
+        return ResponseEntity.ok(documents);
+    }
+
     // Crear un nuevo documento
     @PostMapping
     public ResponseEntity<Document> createDocument(@RequestBody Document document, 
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
         System.out.println(" Valor de customer: " + document.getCustomer());
+
+        System.out.println("Fecha recibida en el backend - Emisión: " + document.getIssueDate());
+        System.out.println("Fecha recibida en el backend - Vencimiento: " + document.getDueDate());
 
         // Verificar que el usuario autenticado tiene un ID válido
         if (userDetails == null) {
