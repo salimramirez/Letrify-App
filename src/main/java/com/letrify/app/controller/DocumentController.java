@@ -49,7 +49,7 @@ public class DocumentController {
     @PostMapping
     public ResponseEntity<Document> createDocument(@RequestBody Document document, 
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-        System.out.println("📌 Valor de customer: " + document.getCustomer());
+        System.out.println(" Valor de customer: " + document.getCustomer());
 
         // Verificar que el usuario autenticado tiene un ID válido
         if (userDetails == null) {
@@ -61,7 +61,7 @@ public class DocumentController {
             Company company = companyRepository.findById(userDetails.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("Company no encontrada con ID: " + userDetails.getCompanyId()));
             document.setCompany(company);
-            System.out.println(" - 📌 Asignado a Company con ID: " + company.getId());
+            System.out.println(" - Asignado a Company con ID: " + company.getId());
         }
 
         // Asignar Individual si el usuario es una persona
@@ -69,7 +69,7 @@ public class DocumentController {
             Individual individual = individualRepository.findById(userDetails.getIndividualId())
                 .orElseThrow(() -> new RuntimeException("Individual no encontrado con ID: " + userDetails.getIndividualId()));
             document.setIndividual(individual);
-            System.out.println(" - 📌 Asignado a Individual con ID: " + individual.getId());
+            System.out.println(" - Asignado a Individual con ID: " + individual.getId());
         }
 
         // Valor por defecto para el status si no está presente
@@ -77,7 +77,7 @@ public class DocumentController {
             document.setStatus(Document.DocumentStatus.PENDIENTE);
         }
 
-        System.out.println("📌 Datos del documento recibidos en el backend:");
+        System.out.println("Datos del documento recibidos en el backend:");
         System.out.println(" - Cliente: " + document.getCustomer());
         System.out.println(" - Tipo de Documento: " + document.getDocumentType());
         System.out.println(" - Número: " + document.getDocumentNumber());
