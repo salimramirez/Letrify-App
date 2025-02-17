@@ -52,6 +52,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.ok) {
                 alert("Documento creado exitosamente.");
                 form.reset(); // Limpiar el formulario
+
+                // Aquí se actualizan los documentos sin hacer refresh de la página
+                const updatedDocuments = await fetch("/api/documents/user");  // Solicitar la lista actualizada
+                const documentsData = await updatedDocuments.json(); // Obtener los datos de los documentos
+                console.log("Documentos obtenidos después de enviar el formulario:", documentsData);
+
+                // Actualizar la tabla con los nuevos documentos
+                insertarDocumentosEnTabla(documentsData);
+                
             } else {
                 const errorData = await response.json();
                 console.error("Error al crear el documento:", errorData);
