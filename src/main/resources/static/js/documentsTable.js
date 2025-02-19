@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             console.log("Documentos obtenidos:", data);
-            insertarDocumentosEnTabla(data);
+            insertarDocumentosEnTabla(data);  // Actualizar la tabla en vista escritorio
+            insertarDocumentosEnCards(data);  // Actualizar las cards en vista móvil
         })
         .catch(error => console.error("Error:", error));
 });
@@ -93,6 +94,55 @@ function insertarDocumentosEnTabla(documentos) {
 
 }
 
+function insertarDocumentosEnCards(documentos) {
+    console.log("insertarDocumentosEnCards() ejecutado", documentos.length, "documentos.");
+    const cardsContainer = document.getElementById("documentCardsContainer");
+    cardsContainer.innerHTML = ""; // Limpiar contenido previo
+
+    if (documentos.length === 0) {
+        cardsContainer.innerHTML = `<p class="text-center text-muted">No hay documentos registrados.</p>`;
+        return;
+    }
+
+    documentos.forEach(doc => {
+        const card = document.createElement("div");
+        card.classList.add("card", "mb-4", "border-primary");
+        card.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">Documento - ${formatearTexto(doc.documentType)} ${doc.documentNumber}</h5>
+                <p class="card-text"><strong>Cliente:</strong> ${doc.customer}</p>
+                <p class="card-text"><strong>Monto:</strong> ${doc.currency} ${formatearMonto(doc.amount)}</p>
+                <p class="card-text"><strong>Emisión:</strong> ${formatearFecha(doc.issueDate)}</p>
+                <p class="card-text"><strong>Vencimiento:</strong> ${formatearFecha(doc.dueDate)}</p>
+                <p class="card-text"><strong>Estado:</strong> <span class="${getEstadoClase(doc.status)}">${formatearTexto(doc.status)}</span></p>
+                <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-warning btn-sm edit-card-btn" data-id="${doc.id}" data-bs-toggle="modal" data-bs-target="#editDocumentModal">Editar</button>
+                    <button class="btn btn-danger btn-sm delete-card-btn" data-id="${doc.id}" data-number="${doc.documentNumber}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Eliminar</button>
+                </div>
+            </div>
+        `;
+        cardsContainer.appendChild(card);
+    });
+
+    // Agregar eventos a los botones de las cards
+    document.querySelectorAll(".edit-card-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const documentId = this.getAttribute("data-id");
+            cargarDatosEnModal(documentId);
+        });
+    });
+
+    document.querySelectorAll(".delete-card-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const documentId = this.getAttribute("data-id");
+            const documentNumber = this.getAttribute("data-number");
+
+            document.getElementById("deleteDocumentNumber").textContent = documentNumber;
+            document.getElementById("confirmDeleteButton").setAttribute("data-id", documentId);
+        });
+    });
+}
+
 // Función para cargar los datos del documento en el modal de edición
 function cargarDatosEnModal(documentId) {
     fetch(`/api/documents/${documentId}`)
@@ -162,6 +212,7 @@ function actualizarDocumento(id, form) {
     .then(response => response.json())
     .then(updatedDocuments => {
         insertarDocumentosEnTabla(updatedDocuments);
+        insertarDocumentosEnCards(updatedDocuments);
     })
     .catch(error => {
         console.error("Error al actualizar el documento:", error);
@@ -181,6 +232,7 @@ function eliminarDocumento(id) {
         .then(response => response.json())
         .then(updatedDocuments => {
             insertarDocumentosEnTabla(updatedDocuments); // Actualizar la tabla correctamente
+            insertarDocumentosEnCards(updatedDocuments); // Actualizar las cards correctamente
             mostrarMensaje("Documento eliminado con éxito", "success");
 
             // Cerrar el modal después de la eliminación exitosa

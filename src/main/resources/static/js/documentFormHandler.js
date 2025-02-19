@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Actualizar la tabla con los nuevos documentos
                 insertarDocumentosEnTabla(documentsData);
+                insertarDocumentosEnCards(documentsData);
                 
             } else {
                 const errorData = await response.json();

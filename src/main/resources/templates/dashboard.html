@@ -149,40 +149,19 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <!-- <tbody id="documentTableBody"> -->
                                 <tr>
-                                    <td>1</td>
-                                    <td>Factura</td>
-                                    <td>F001-123456</td>
-                                    <td>Empresa ABC</td>
-                                    <td>S/ 5,000.00</td>
-                                    <td>01/01/2025</td>
-                                    <td>15/01/2025</td>
-                                    <td>Pendiente</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning">Editar</button>
-                                        <button class="btn btn-sm btn-danger">Eliminar</button>
-                                    </td>
+                                    <td colspan="9" class="text-center text-muted">Cargando documentos...</td>
                                 </tr>
-                                <!-- Más filas aquí -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Cards de Documentos para Móviles -->
                     <div class="d-md-none">
-                        <div class="card mb-3 border-primary">
-                            <div class="card-body">
-                                <h5 class="card-title">Documento #1 - Factura F001-123456</h5>
-                                <p class="card-text"><strong>Cliente:</strong> Empresa ABC</p>
-                                <p class="card-text"><strong>Monto:</strong> S/ 5,000.00</p>
-                                <p class="card-text"><strong>Emisión:</strong> 01/01/2025</p>
-                                <p class="card-text"><strong>Vencimiento:</strong> 15/01/2025</p>
-                                <p class="card-text"><strong>Estado:</strong> Pendiente</p>
-                                <div class="d-flex justify-content-between mt-3">
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                    <button class="btn btn-danger btn-sm">Eliminar</button>
-                                </div>
-                            </div>
+                        <div id="documentCardsContainer">
+                            <!-- Mensaje de carga inicial (se reemplazará dinámicamente) -->
+                            <p class="text-center text-muted">Cargando documentos...</p>
                         </div>
                     </div>
 
