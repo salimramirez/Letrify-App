@@ -216,6 +216,18 @@
     }
 }
 
+/* ===================================== */
+/* SECCIÓN: GESTIÓN DE DOCUMENTOS   */
+/* ===================================== */
+
+.alert-icon {
+    width: 60px; /* Ajusta el tamaño según prefieras */
+    height: 60px;
+    display: block;
+    margin: 0 auto; /* Centrar horizontalmente */
+}
+
+
 
 
 /* ===================================== */

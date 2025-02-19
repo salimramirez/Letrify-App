@@ -281,3 +281,21 @@ p {
     height: 4px;
     width: 100%; /* Hacer que la barra ocupe todo el ancho del tooltip */
 }
+
+/* =================== */
+/* MENSAJES DE ALERTAS */
+/* =================== */
+
+/* Mensaje más ancho en móviles */
+.mensaje-alerta {
+    width: 75%;
+    z-index: 1100 !important; /* Mayor que el modal de Bootstrap */
+    position: fixed;
+}
+
+/* Ajuste de ancho en pantallas grandes */
+@media (min-width: 768px) {
+    .mensaje-alerta {
+        width: 50%;
+    }
+}

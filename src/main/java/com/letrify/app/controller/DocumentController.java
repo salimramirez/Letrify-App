@@ -14,6 +14,7 @@ import com.letrify.app.model.User; // Importa la clase User para UserType
 import org.springframework.security.core.annotation.AuthenticationPrincipal; // Importa la anotación AuthenticationPrincipal
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -123,10 +124,30 @@ public class DocumentController {
 
     // Actualizar un documento existente
     @PutMapping("/{id}")
-    public ResponseEntity<Document> updateDocument(@PathVariable Long id, @RequestBody Document document) {
-        document.setId(id);
-        Document updatedDocument = documentService.saveDocument(document);
-        return ResponseEntity.ok(updatedDocument);
+    public ResponseEntity<?> updateDocument(@PathVariable Long id, @RequestBody Document document) {
+        Optional<Document> existingDocument = Optional.ofNullable(documentService.findDocumentById(id));
+    
+        if (!existingDocument.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Documento no encontrado.");
+        }
+    
+        // Obtener el documento actual y actualizar los campos permitidos
+        Document docToUpdate = existingDocument.get();
+        docToUpdate.setCustomer(document.getCustomer());
+        docToUpdate.setDocumentType(document.getDocumentType());
+        docToUpdate.setDocumentNumber(document.getDocumentNumber());
+        docToUpdate.setAmount(document.getAmount());
+        docToUpdate.setCurrency(document.getCurrency());
+        docToUpdate.setIssueDate(document.getIssueDate());
+        docToUpdate.setDueDate(document.getDueDate());
+        docToUpdate.setDescription(document.getDescription());
+    
+        try {
+            Document updatedDocument = documentService.saveDocument(docToUpdate);
+            return ResponseEntity.ok(updatedDocument);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el documento.");
+        }
     }
 
     // Eliminar un documento por ID

@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (response.ok) {
-                alert("Documento creado exitosamente.");
+                mostrarMensaje("Documento creado exitosamente.", "success");
                 form.reset(); // Limpiar el formulario
 
                 // Aquí se actualizan los documentos sin hacer refresh de la página
@@ -64,12 +64,12 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 const errorData = await response.json();
                 console.error("Error al crear el documento:", errorData);
-                alert("Ocurrió un error. Revisa los datos e inténtalo nuevamente.");
+                mostrarMensaje("Ocurrió un error. Revisa los datos e inténtalo nuevamente.", "error");
             }
 
         } catch (error) {
             console.error("Error en la solicitud:", error);
-            alert("Error de red. Inténtalo nuevamente.");
+            mostrarMensaje("Error de red. Inténtalo nuevamente.", "error");
         }
     });
 });

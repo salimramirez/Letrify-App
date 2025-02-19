@@ -53,6 +53,6 @@ links.forEach(link => {
 
 document.getElementById('registerDocumentForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    alert('Documento registrado con éxito');
+    // alert('Documento registrado con éxito');
     // Aquí puedes agregar la lógica para enviar el formulario al backend.
 });
