@@ -19,6 +19,10 @@ public class DiscountFee {
     @Column(name = "fee_type", length = 100, nullable = false)
     private String feeType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fee_timing", nullable = false)
+    private FeeTiming feeTiming;
+
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal amount;
 
@@ -33,6 +37,12 @@ public class DiscountFee {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = new Date();
+    }
+
+    // Enum para fee_timing
+    public enum FeeTiming {
+        INICIO,
+        FINAL;
     }
 
     // Getters y Setters
@@ -58,6 +68,14 @@ public class DiscountFee {
 
     public void setFeeType(String feeType) {
         this.feeType = feeType;
+    }
+
+    public FeeTiming getFeeTiming() {
+        return feeTiming;
+    }
+
+    public void setFeeTiming(FeeTiming feeTiming) {
+        this.feeTiming = feeTiming;
     }
 
     public BigDecimal getAmount() {

@@ -18,6 +18,10 @@ public class Portfolio {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency", nullable = false)
+    private Currency currency;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "discount_date", nullable = false)
     private Date discountDate;
@@ -30,7 +34,7 @@ public class Portfolio {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private PortfolioStatus status;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,7 +53,13 @@ public class Portfolio {
     // Enum para el estado de la cartera
     public enum PortfolioStatus {
         PENDIENTE,
-        DESCONTADO;
+        EN_DESCUENTO,
+        CANCELADA
+    }
+
+    // Enum para la moneda
+    public enum Currency {
+        PEN, USD
     }
 
     // Getters y Setters

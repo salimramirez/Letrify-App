@@ -39,16 +39,9 @@
                 </a>
         
                 <!-- Gestión de Carteras -->
-                <div class="dropdown-sidebar">
-                    <a href="#" class="list-group-item list-group-item-action bg-light bi bi-folder"> 
-                        Gestión de Carteras
-                        <i class="bi bi-chevron-down float-end"></i>
-                    </a>
-                    <div class="dropdown-content">
-                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="crear-cartera">Crear Nueva Cartera</a>
-                        <a href="#" class="list-group-item list-group-item-action ps-4" data-target="ver-carteras">Ver Carteras Actuales</a>
-                    </div>
-                </div>
+                <a href="#" class="list-group-item list-group-item-action bg-light bi bi-folder" data-target="gestion-carteras">
+                    Gestión de Carteras
+                </a>
         
                 <!-- Bancos y Tasas -->
                 <div class="dropdown-sidebar">
@@ -365,31 +358,44 @@
 
                 </div>
 
-                <!-- Gestión de Letras/Facturas -->
-                <div id="gestion" class="content-section">
-                    <h2>Gestión de Letras/Facturas</h2>
-                    <div class="mb-3">
-                        <button class="btn btn-primary mb-3">Agregar Nueva Letra/Factura</button>
+                <!-- Gestión de Carteras -->
+                <div id="gestion-carteras" class="content-section">
+                    <h2>Gestión de Carteras</h2>
+                    
+                    <!-- Botón para agregar una nueva cartera -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#registerCarteraModal">
+                        Agregar Nueva Cartera
+                    </button>
+
+                    <!-- Tabla de Carteras Registradas -->
+                    <div class="table-responsive d-none d-md-block">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Cliente</th>
-                                    <th>Monto</th>
-                                    <th>Fecha de Emisión</th>
-                                    <th>Fecha de Descuento</th>
-                                    <th>TCEA</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha Creación</th>
+                                    <th>Fecha Descuento</th>
+                                    <th>Moneda</th>
+                                    <th>Estado</th>
+                                    <th>Documentos</th>
+                                    <th>Cantidad</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>1</td>
-                                    <td>Empresa ABC</td>
-                                    <td>S/ 5,000</td>
+                                    <td>Cartera Enero</td>
                                     <td>01/01/2025</td>
                                     <td>15/01/2025</td>
-                                    <td>10%</td>
+                                    <td>PEN</td>
+                                    <td><span class="badge bg-warning">Pendiente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Agregar</button>
+                                        <button class="btn btn-sm btn-info">Ver</button>
+                                    </td>
+                                    <td><span class="badge bg-secondary">3</span></td> <!-- Nueva columna "Cantidad" -->
                                     <td>
                                         <button class="btn btn-sm btn-warning">Editar</button>
                                         <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -398,6 +404,142 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Cards para vista móvil -->
+                    <div class="d-md-none">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Cartera Enero</h5>
+                                <p class="card-text"><strong>Fecha Creación:</strong> 01/01/2025</p>
+                                <p class="card-text"><strong>Fecha Descuento:</strong> 15/01/2025</p>
+                                <p class="card-text"><strong>Moneda:</strong> PEN</p>
+                                <p class="card-text"><strong>Estado:</strong> <span class="badge bg-warning">Pendiente</span></p>
+                                <p class="card-text"><strong>Documentos:</strong> <span class="badge bg-secondary">3</span></p> <!-- Cantidad de documentos -->
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-primary btn-sm">Agregar</button>
+                                    <button class="btn btn-info btn-sm">Ver</button>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <button class="btn btn-warning btn-sm">Editar</button>
+                                    <button class="btn btn-danger btn-sm">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Bootstrap para Nueva Cartera -->
+                    <div class="modal fade" id="registerCarteraModal" tabindex="-1" aria-labelledby="registerCarteraModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="registerCarteraModalLabel">Registrar Nueva Cartera</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="registerCarteraForm">
+                                        <!-- Nombre de la Cartera -->
+                                        <div class="mb-3 form-floating">
+                                            <input type="text" id="carteraName" class="form-control" placeholder="Nombre de la Cartera" required>
+                                            <label for="carteraName">Nombre de la Cartera</label>
+                                        </div>
+                    
+                                        <!-- Descripción -->
+                                        <div class="mb-3 form-floating">
+                                            <textarea id="carteraDescription" class="form-control" placeholder="Descripción de la cartera"></textarea>
+                                            <label for="carteraDescription">Descripción (Opcional)</label>
+                                        </div>
+                    
+                                        <!-- Fecha de Descuento -->
+                                        <div class="mb-3 form-floating">
+                                            <input type="date" id="discountDate" class="form-control" required>
+                                            <label for="discountDate">Fecha de Descuento</label>
+                                        </div>
+                    
+                                        <!-- Moneda -->
+                                        <div class="mb-3 form-floating">
+                                            <select id="carteraCurrency" class="form-select" required>
+                                                <option value="PEN">Soles (PEN)</option>
+                                                <option value="USD">Dólares (USD)</option>
+                                            </select>
+                                            <label for="carteraCurrency">Moneda</label>
+                                        </div>
+                    
+                                        <!-- Estado (Pendiente por defecto, oculto) -->
+                                        <input type="hidden" id="carteraStatus" value="Pendiente">
+                    
+                                        <!-- Botones de acción -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar Cartera</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal para Seleccionar Documentos -->
+                    <div class="modal fade" id="selectDocumentsModal" tabindex="-1" aria-labelledby="selectDocumentsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="selectDocumentsModalLabel">Seleccionar Documentos</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Cartera:</strong> <span id="selectedPortfolioName"></span></p>
+                                    <p><strong>Moneda:</strong> <span id="selectedPortfolioCurrency"></span></p>
+
+                                    <!-- Lista de Documentos Disponibles -->
+                                    <div class="list-group" id="documentList">
+                                        <!-- Los documentos disponibles se cargarán dinámicamente aquí -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-primary" id="saveSelectedDocuments">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal para Ver Documentos de una Cartera -->
+                    <div class="modal fade" id="viewDocumentsModal" tabindex="-1" aria-labelledby="viewDocumentsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-secondary text-white">
+                                    <h5 class="modal-title" id="viewDocumentsModalLabel">Documentos en la Cartera</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Cartera:</strong> <span id="viewPortfolioName"></span></p>
+                                    <p><strong>Moneda:</strong> <span id="viewPortfolioCurrency"></span></p>
+
+                                    <!-- Tabla de Documentos en la Cartera -->
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Número</th>
+                                                    <th>Monto</th>
+                                                    <th>Fecha Vencimiento</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="viewDocumentsTableBody">
+                                                <!-- Los documentos se cargarán dinámicamente aquí -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Reportes -->

@@ -58,11 +58,23 @@ public class DocumentService {
         }
     }
 
+    // Buscar documentos por empresa
     public List<Document> findDocumentsByCompanyId(Long companyId) {
         return documentRepository.findByCompany_Id(companyId); // Método corregido
     }
     
+    // Buscar documentos por individuo
     public List<Document> findDocumentsByIndividualId(Long individualId) {
         return documentRepository.findByIndividual_Id(individualId); // Método corregido
+    }
+
+    // Buscar documentos por empresa y estado
+    public List<Document> findDocumentsByCompanyIdAndStatus(Long companyId, Document.DocumentStatus status) {
+        return documentRepository.findByCompany_IdAndStatus(companyId, status);
+    }
+
+    // Buscar documentos por individuo y estado
+    public List<Document> findDocumentsByIndividualIdAndStatus(Long individualId, Document.DocumentStatus status) {
+        return documentRepository.findByIndividual_IdAndStatus(individualId, status);
     }
 }

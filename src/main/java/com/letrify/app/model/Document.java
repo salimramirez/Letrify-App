@@ -50,7 +50,7 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private DocumentStatus status;  // ENUM: PENDIENTE, DESCONTADO
+    private DocumentStatus status;  // ENUM: PENDIENTE, EN_DESCUENTO, CANCELADO
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -78,9 +78,11 @@ public class Document {
         USD;
     }
 
+    // Enum para el estado del documento
     public enum DocumentStatus {
         PENDIENTE,
-        DESCONTADO;
+        EN_DESCUENTO,
+        CANCELADO;
     }
 
     // Getters y Setters

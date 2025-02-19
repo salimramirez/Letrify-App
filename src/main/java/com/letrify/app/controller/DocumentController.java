@@ -70,6 +70,20 @@ public class DocumentController {
         return ResponseEntity.ok(documents);
     }
 
+    // Obtener documentos por empresa y estado
+    @GetMapping("/company/{companyId}/status/{status}")
+    public ResponseEntity<List<Document>> getDocumentsByCompanyAndStatus(@PathVariable Long companyId, @PathVariable Document.DocumentStatus status) {
+        List<Document> documents = documentService.findDocumentsByCompanyIdAndStatus(companyId, status);
+        return ResponseEntity.ok(documents);
+    }
+
+    // Obtener documentos por individuo y estado
+    @GetMapping("/individual/{individualId}/status/{status}")
+    public ResponseEntity<List<Document>> getDocumentsByIndividualAndStatus(@PathVariable Long individualId, @PathVariable Document.DocumentStatus status) {
+        List<Document> documents = documentService.findDocumentsByIndividualIdAndStatus(individualId, status);
+        return ResponseEntity.ok(documents);
+    }
+
     // Crear un nuevo documento
     @PostMapping
     public ResponseEntity<Document> createDocument(@RequestBody Document document, 

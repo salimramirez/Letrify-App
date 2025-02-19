@@ -216,9 +216,9 @@
     }
 }
 
-/* ===================================== */
+/* ================================ */
 /* SECCIÓN: GESTIÓN DE DOCUMENTOS   */
-/* ===================================== */
+/* ================================ */
 
 .alert-icon {
     width: 60px; /* Ajusta el tamaño según prefieras */
@@ -227,8 +227,39 @@
     margin: 0 auto; /* Centrar horizontalmente */
 }
 
+/* ============================== */
+/* SECCIÓN: GESTIÓN DE CARTERAS   */
+/* ============================== */
 
+/* TABLE TO CARDS: Mobile View */
+@media (max-width: 768px) {
+    .card {
+        border: 1px solid var(--link-color);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-title {
+        font-family: var(--primary-font);
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+    }
+
+    .card-text {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--text-color);
+    }
+
+    .card .btn {
+        font-size: 0.85rem;
+    }
+}
 
 /* ===================================== */
 /* FUTURAS SECCIONES (POR IMPLEMENTAR)   */

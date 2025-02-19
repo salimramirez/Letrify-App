@@ -32,10 +32,24 @@ public class DiscountFeeController {
         return ResponseEntity.ok(fee);
     }
 
+    // Obtener los gastos de un descuento según feeTiming (INICIO o FINAL)
+    @GetMapping("/timing/{feeTiming}")
+    public ResponseEntity<List<DiscountFee>> getFeesByDiscountAndTiming(
+            @PathVariable Long discountId, 
+            @PathVariable DiscountFee.FeeTiming feeTiming) {
+        List<DiscountFee> fees = discountFeeService.getFeesByDiscountAndFeeTiming(discountId, feeTiming);
+        return ResponseEntity.ok(fees);
+    }
+
     // Crear un nuevo gasto para un descuento
     @PostMapping
     public ResponseEntity<DiscountFee> createDiscountFee(@PathVariable Long discountId, @RequestBody DiscountFee discountFee) {
-        discountFee.getDiscount().setId(discountId);  // Asociar el gasto al descuento correspondiente
+        // Validar que el campo feeTiming no sea nulo
+        if (discountFee.getFeeTiming() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        discountFee.getDiscount().setId(discountId); // Asociar el gasto al descuento correspondiente
         DiscountFee createdFee = discountFeeService.createDiscountFee(discountFee);
         return ResponseEntity.ok(createdFee);
     }

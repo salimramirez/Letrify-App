@@ -21,4 +21,10 @@ public interface DiscountFeeRepository extends JpaRepository<DiscountFee, Long> 
 
     // Verificar si ya existe un gasto con un tipo específico para un descuento
     boolean existsByDiscountIdAndFeeType(Long discountId, String feeType);
+
+    // Buscar todos los gastos según fee_timing (INICIO o FINAL)
+    List<DiscountFee> findByFeeTiming(DiscountFee.FeeTiming feeTiming);
+
+    // Buscar todos los gastos de un descuento específico y su fee_timing
+    List<DiscountFee> findByDiscountIdAndFeeTiming(Long discountId, DiscountFee.FeeTiming feeTiming);
 }

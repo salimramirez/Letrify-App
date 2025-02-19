@@ -24,6 +24,11 @@ public class DiscountFeeService {
         if (discountFeeRepository.existsByDiscountIdAndFeeType(discountFee.getDiscount().getId(), discountFee.getFeeType())) {
             throw new IllegalArgumentException("Ya existe un gasto de tipo '" + discountFee.getFeeType() + "' para este descuento.");
         }
+
+        if (discountFee.getFeeTiming() == null) {
+            throw new IllegalArgumentException("El campo feeTiming es obligatorio.");
+        }
+
         return discountFeeRepository.save(discountFee);
     }
 
@@ -34,6 +39,7 @@ public class DiscountFeeService {
 
         discountFee.setFeeType(updatedFee.getFeeType());
         discountFee.setAmount(updatedFee.getAmount());
+        discountFee.setFeeTiming(updatedFee.getFeeTiming());
 
         return discountFeeRepository.save(discountFee);
     }
@@ -59,6 +65,16 @@ public class DiscountFeeService {
     // Obtener todos los gastos asociados a un descuento
     public List<DiscountFee> getFeesByDiscountId(Long discountId) {
         return discountFeeRepository.findByDiscountId(discountId);
+    }
+
+    // Obtener todos los gastos según su feeTiming (INICIO o FINAL)
+    public List<DiscountFee> getFeesByFeeTiming(DiscountFee.FeeTiming feeTiming) {
+        return discountFeeRepository.findByFeeTiming(feeTiming);
+    }
+
+    // Obtener todos los gastos de un descuento según feeTiming (INICIO o FINAL)
+    public List<DiscountFee> getFeesByDiscountAndFeeTiming(Long discountId, DiscountFee.FeeTiming feeTiming) {
+        return discountFeeRepository.findByDiscountIdAndFeeTiming(discountId, feeTiming);
     }
 
     // Calcular el total de gastos asociados a un descuento

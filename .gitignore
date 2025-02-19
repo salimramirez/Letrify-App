@@ -37,3 +37,6 @@ logs/
 *.log
 *.log.*
 *.gz
+
+# Ignorar archivos de modelos de prueba en ERD
+*.erd

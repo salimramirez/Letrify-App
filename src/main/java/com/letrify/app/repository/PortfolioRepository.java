@@ -4,6 +4,7 @@ import com.letrify.app.model.Portfolio;
 import com.letrify.app.model.Portfolio.PortfolioStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import com.letrify.app.model.Portfolio.Currency;
 
 import java.util.Date;
 import java.util.List;
@@ -22,4 +23,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     // Buscar todass lass cartera asociados a un banco específico
     List<Portfolio> findByBankId(Long bankId);
+
+    // Nuevo método: Buscar carteras por moneda (PEN o USD)
+    List<Portfolio> findByCurrency(Currency currency);
 }

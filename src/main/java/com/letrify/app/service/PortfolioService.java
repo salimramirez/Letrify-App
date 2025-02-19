@@ -1,6 +1,8 @@
 package com.letrify.app.service;
 
 import com.letrify.app.model.Portfolio;
+// import com.letrify.app.model.Portfolio.PortfolioStatus;
+// import com.letrify.app.model.Portfolio.Currency;
 import com.letrify.app.repository.PortfolioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,8 @@ public class PortfolioService {
 
     // Crear una nueva cartera
     public Portfolio createPortfolio(Portfolio portfolio) {
+        // Asegurar que la cartera inicia en estado PENDIENTE
+        // portfolio.setStatus(PortfolioStatus.PENDIENTE);
         return portfolioRepository.save(portfolio);
     }
 
