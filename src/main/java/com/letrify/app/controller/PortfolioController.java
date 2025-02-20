@@ -34,9 +34,13 @@ public class PortfolioController {
 
     // Crear una nueva cartera
     @PostMapping
-    public ResponseEntity<Portfolio> createPortfolio(@RequestBody Portfolio portfolio) {
-        Portfolio createdPortfolio = portfolioService.createPortfolio(portfolio);
-        return ResponseEntity.ok(createdPortfolio);
+    public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) {
+        try {
+            Portfolio createdPortfolio = portfolioService.createPortfolio(portfolio);
+            return ResponseEntity.ok(createdPortfolio);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error: No se pudo crear la cartera.");
+        }
     }
 
     // Actualizar una cartera existente

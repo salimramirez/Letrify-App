@@ -2,10 +2,10 @@ package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
 import java.math.BigDecimal;
-import java.util.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "documents")
@@ -60,13 +60,14 @@ public class Document {
     @JoinColumn(name = "individual_id")
     private Individual individual;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PortfolioDocument> portfolioDocuments;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public enum DocumentType {
         FACTURA,
@@ -189,26 +190,34 @@ public class Document {
     public Long getIndividualId() {
         return individual != null ? individual.getId() : null;
     }
+
+    public List<PortfolioDocument> getPortfolioDocuments() {
+        return portfolioDocuments;
+    }
+
+    public void setPortfolioDocuments(List<PortfolioDocument> portfolioDocuments) {
+        this.portfolioDocuments = portfolioDocuments;
+    }
     
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
     
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
     
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
     
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

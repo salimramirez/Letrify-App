@@ -1,8 +1,9 @@
 package com.letrify.app.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "portfolios")
@@ -20,34 +21,31 @@ public class Portfolio {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "currency", nullable = false)
-    private Currency currency;
+    private CurrencyType currency;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "discount_date", nullable = false)
-    private Date discountDate;
+    private LocalDate discountDate;
 
     @ManyToOne
     @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
 
-    @Column(name = "total_amount", precision = 12, scale = 2, nullable = false)
-    private BigDecimal totalAmount = BigDecimal.ZERO;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PortfolioStatus status;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PortfolioDocument> portfolioDocuments;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Enum para el estado de la cartera
@@ -58,7 +56,7 @@ public class Portfolio {
     }
 
     // Enum para la moneda
-    public enum Currency {
+    public enum CurrencyType {
         PEN, USD
     }
 
@@ -87,11 +85,11 @@ public class Portfolio {
         this.description = description;
     }
 
-    public Date getDiscountDate() {
+    public LocalDate getDiscountDate() {
         return discountDate;
     }
 
-    public void setDiscountDate(Date discountDate) {
+    public void setDiscountDate(LocalDate discountDate) {
         this.discountDate = discountDate;
     }
 
@@ -103,14 +101,6 @@ public class Portfolio {
         this.bank = bank;
     }
 
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
     public PortfolioStatus getStatus() {
         return status;
     }
@@ -119,19 +109,27 @@ public class Portfolio {
         this.status = status;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public List<PortfolioDocument> getPortfolioDocuments() {
+        return portfolioDocuments;
+    }
+
+    public void setPortfolioDocuments(List<PortfolioDocument> portfolioDocuments) {
+        this.portfolioDocuments = portfolioDocuments;
+    }
+
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

@@ -40,7 +40,8 @@ public class DocumentService {
         System.out.println("   - Fecha de Emisión: " + savedDoc.getIssueDate());
         System.out.println("   - Fecha de Vencimiento: " + savedDoc.getDueDate());
 
-        return documentRepository.save(document);
+        // return documentRepository.save(document);
+        return savedDoc;
     }
 
     // Método para eliminar un documento por ID

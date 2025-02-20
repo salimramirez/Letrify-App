@@ -4,6 +4,7 @@ import com.letrify.app.model.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -32,4 +33,8 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Buscar documentos por individuo y estado
     List<Document> findByIndividual_IdAndStatus(Long individualId, Document.DocumentStatus status);
 
+    List<Document> findByIssueDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Document> findByDueDateBetween(LocalDate startDate, LocalDate endDate);
+
+    
 }

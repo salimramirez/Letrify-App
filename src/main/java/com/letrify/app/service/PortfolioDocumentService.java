@@ -34,11 +34,10 @@ public class PortfolioDocumentService {
     // Asociar un documento a una cartera
     @Transactional
     public PortfolioDocument addDocumentToPortfolio(Portfolio portfolio, Document document) {
-        PortfolioDocument portfolioDocument = new PortfolioDocument();
-        portfolioDocument.setPortfolio(portfolio);
-        portfolioDocument.setDocument(document);
+        PortfolioDocument portfolioDocument = new PortfolioDocument(portfolio, document);
         return portfolioDocumentRepository.save(portfolioDocument);
     }
+
 
     // Asociar un documento a una cartera usando sus IDs
     @Transactional
@@ -48,10 +47,7 @@ public class PortfolioDocumentService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Documento no encontrado: " + documentId));
 
-        PortfolioDocument portfolioDocument = new PortfolioDocument();
-        portfolioDocument.setPortfolio(portfolio);
-        portfolioDocument.setDocument(document);
-
+        PortfolioDocument portfolioDocument = new PortfolioDocument(portfolio, document);
         return portfolioDocumentRepository.save(portfolioDocument);
     }
 

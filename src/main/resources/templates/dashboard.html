@@ -171,15 +171,15 @@
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
                                                 <div class="form-floating">
-                                                    <input type="text" name="customer" class="form-control" placeholder="Cliente" required>
-                                                    <label for="client">Cliente</label>
+                                                    <input type="text" id="customer" name="customer" class="form-control" placeholder="Cliente" required>
+                                                    <label for="customer">Cliente</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <select name="documentType" class="form-select" required>
+                                                    <select id="documentType" name="documentType" class="form-select" required>
                                                         <option value="">Seleccione...</option>
                                                         <option value="FACTURA">Factura</option>
                                                         <option value="LETRA">Letra de Cambio</option>
@@ -189,7 +189,7 @@
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <input type="text" name="documentNumber" class="form-control" placeholder="Número de Documento" required>
+                                                    <input id="documentNumber" type="text" name="documentNumber" class="form-control" placeholder="Número de Documento" required>
                                                     <label for="documentNumber">Número de Documento</label>
                                                 </div>
                                             </div>
@@ -197,13 +197,13 @@
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <input type="number" name="amount" class="form-control" step="0.01" min="0" placeholder="Monto" required>
+                                                    <input id="amount "type="number" name="amount" class="form-control" step="0.01" min="0" placeholder="Monto" required>
                                                     <label for="amount">Monto</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <select name="currency" class="form-select" required>
+                                                    <select id="currency" name="currency" class="form-select" required>
                                                         <option value="">Seleccione...</option>
                                                         <option value="PEN">Soles (PEN)</option>
                                                         <option value="USD">Dólares (USD)</option>
@@ -215,13 +215,13 @@
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <input type="date" name="issueDate" class="form-control" placeholder="Fecha de Emisión" required>
+                                                    <input id="issueDate" type="date" name="issueDate" class="form-control" placeholder="Fecha de Emisión" required>
                                                     <label for="issueDate">Fecha de Emisión</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
-                                                    <input type="date" name="dueDate" class="form-control" placeholder="Fecha de Vencimiento" required>
+                                                    <input id="dueDate" type="date" name="dueDate" class="form-control" placeholder="Fecha de Vencimiento" required>
                                                     <label for="dueDate">Fecha de Vencimiento</label>
                                                 </div>
                                             </div>
@@ -229,7 +229,7 @@
                                         <div class="row">
                                             <div class="col-12 mb-3">
                                                 <div class="form-floating">
-                                                    <textarea name="description" class="form-control" rows="3" placeholder="Descripción"></textarea>
+                                                    <textarea id="description" name="description" class="form-control" rows="3" placeholder="Descripción"></textarea>
                                                     <label for="description">Descripción</label>
                                                 </div>
                                             </div>

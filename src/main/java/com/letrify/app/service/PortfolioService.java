@@ -59,11 +59,11 @@ public class PortfolioService {
         return portfolioRepository.findById(id);
     }
 
-    // Calcular el monto total de una cartera (sumar todos los documentos asociados)
-    public BigDecimal calculateTotalAmount(Portfolio portfolio) {
-        // Placeholder: Deberemos implementar la lógica real una vez tengamos los documentos asociados
-        return portfolio.getTotalAmount();  // De momento devuelve el valor almacenado
-    }
+    // // Calcular el monto total de una cartera (sumar todos los documentos asociados)
+    // public BigDecimal calculateTotalAmount(Portfolio portfolio) {
+    //     // Placeholder: Deberemos implementar la lógica real una vez tengamos los documentos asociados
+    //     return portfolio.getTotalAmount();  // De momento devuelve el valor almacenado
+    // }
 
     // Calcular la TCEA para una cartera (futuro)
     public BigDecimal calculateTCEA(Portfolio portfolio) {

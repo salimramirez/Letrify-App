@@ -1,34 +1,40 @@
 package com.letrify.app.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "portfolio_documents")
 public class PortfolioDocument {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PortfolioDocumentId id;
 
     @ManyToOne
+    @MapsId("portfolioId")
     @JoinColumn(name = "portfolio_id", nullable = false)
     private Portfolio portfolio;
 
     @ManyToOne
+    @MapsId("documentId")
     @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    // Constructor vacío
+    public PortfolioDocument() {}
+
+    // Constructor con parámetros
+    public PortfolioDocument(Portfolio portfolio, Document document) {
+        this.id = new PortfolioDocumentId(portfolio.getId(), document.getId());
+        this.portfolio = portfolio;
+        this.document = document;
+    }
 
     // Getters y Setters
-    public Long getId() {
+    public PortfolioDocumentId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(PortfolioDocumentId id) {
         this.id = id;
     }
 
@@ -48,11 +54,4 @@ public class PortfolioDocument {
         this.document = document;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
 }

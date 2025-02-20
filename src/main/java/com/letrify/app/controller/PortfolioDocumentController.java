@@ -20,9 +20,13 @@ public class PortfolioDocumentController {
 
     // Asociar un documento a una cartera
     @PostMapping("/{documentId}")
-    public ResponseEntity<PortfolioDocument> addDocumentToPortfolio(
+    public ResponseEntity<?> addDocumentToPortfolio(
             @PathVariable Long portfolioId,
             @PathVariable Long documentId) {
+        
+        if (portfolioDocumentService.isDocumentInPortfolio(portfolioId, documentId)) {
+            return ResponseEntity.badRequest().body("Error: El documento ya está asociado a esta cartera.");
+        }
         
         PortfolioDocument portfolioDocument = portfolioDocumentService.addDocumentToPortfolioByIds(portfolioId, documentId);
         return ResponseEntity.ok(portfolioDocument);
@@ -37,11 +41,16 @@ public class PortfolioDocumentController {
 
     // Eliminar la asociación entre un documento y una cartera
     @DeleteMapping("/{documentId}")
-    public ResponseEntity<Void> removeDocumentFromPortfolio(
+    public ResponseEntity<?> removeDocumentFromPortfolio(
             @PathVariable Long portfolioId,
             @PathVariable Long documentId) {
+        
+        if (!portfolioDocumentService.isDocumentInPortfolio(portfolioId, documentId)) {
+            return ResponseEntity.status(404).body("Error: La relación no existe.");
+        }
         
         portfolioDocumentService.removeDocumentFromPortfolio(portfolioId, documentId);
         return ResponseEntity.noContent().build();
     }
+    
 }

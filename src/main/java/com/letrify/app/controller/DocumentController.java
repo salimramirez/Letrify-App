@@ -166,8 +166,12 @@ public class DocumentController {
 
     // Eliminar un documento por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
-        documentService.deleteDocument(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteDocument(@PathVariable Long id) {
+        try {
+            documentService.deleteDocument(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Documento no encontrado.");
+        }
     }
 }
