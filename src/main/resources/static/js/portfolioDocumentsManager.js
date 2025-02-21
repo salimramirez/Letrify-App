@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
     
             console.log("✅ Documentos actualizados correctamente.");
-            alert("Los cambios en la cartera han sido guardados.");
+            mostrarMensaje("Los cambios en la cartera han sido guardados.", "success");
     
             // Cerrar el modal
             const modalInstance = bootstrap.Modal.getInstance(document.getElementById("selectDocumentsModal"));

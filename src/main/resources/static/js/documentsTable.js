@@ -241,6 +241,17 @@ function eliminarDocumento(id) {
             if (modalInstance) {
                 modalInstance.hide();
             }
+
+            // Actualizar la tabla de carteras para reflejar los cambios en la cantidad de documentos
+            fetch("/api/portfolios")
+                .then(response => response.json())
+                .then(carteras => {
+                    insertarCarterasEnTabla(carteras); // Refrescar la tabla de carteras
+                    insertarCarterasEnCards(carteras);
+                })
+                .catch(error => console.error("Error al obtener carteras:", error));
+                mostrarMensaje("Error al obtener carteras", "error");
+
         })
         .catch(error => {
             console.error("Error al eliminar el documento:", error);
