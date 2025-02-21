@@ -94,4 +94,19 @@ public class PortfolioController {
             return ResponseEntity.notFound().build();   // No se encontró la cartera
         }
     }
+
+    // Eliminar un documento de una cartera
+    @DeleteMapping("/{portfolioId}/documents/{documentId}")
+    public ResponseEntity<String> removeDocumentFromPortfolio(
+            @PathVariable Long portfolioId, 
+            @PathVariable Long documentId) {
+        try {
+            portfolioService.removeDocumentFromPortfolio(documentId);
+            return ResponseEntity.ok("Documento eliminado correctamente de la cartera.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cartera o documento no encontrado.");
+        }
+    }
 }

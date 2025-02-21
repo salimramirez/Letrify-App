@@ -81,6 +81,31 @@ public class PortfolioService {
         // Asignar la cartera al documento y guardar
         document.setPortfolio(portfolio);
         documentRepository.save(document);
+
+        // Actualizar documentCount en Portfolio
+        int documentCount = documentRepository.countByPortfolioId(portfolioId);
+        portfolioRepository.updateDocumentCount(portfolioId, documentCount);
+
+        return true;
+    }
+
+    public boolean removeDocumentFromPortfolio(Long documentId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+    
+        Portfolio portfolio = document.getPortfolio();
+        if (portfolio == null) {
+            throw new IllegalStateException("El documento no pertenece a ninguna cartera.");
+        }
+    
+        // Quitar la cartera del documento y guardar
+        document.setPortfolio(null);
+        documentRepository.save(document);
+    
+        // Actualizar documentCount en Portfolio
+        int documentCount = documentRepository.countByPortfolioId(portfolio.getId());
+        portfolioRepository.updateDocumentCount(portfolio.getId(), documentCount);
+    
         return true;
     }
 

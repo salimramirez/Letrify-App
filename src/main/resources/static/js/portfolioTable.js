@@ -40,7 +40,7 @@ function insertarCarterasEnTabla(carteras) {
                 <button class="btn btn-sm btn-primary add-doc-btn" data-id="${cartera.id}">Agregar</button>
                 <button class="btn btn-sm btn-info view-doc-btn" data-id="${cartera.id}">Ver</button>
             </td>
-            <td><span class="badge bg-secondary">${cartera.portfolioDocuments ? cartera.portfolioDocuments.length : 0}</span></td>
+            <td><span class="badge bg-secondary">${cartera.documentCount !== undefined ? cartera.documentCount : 0}</span></td>
             <td>
                 <button class="btn btn-sm btn-warning edit-btn" data-id="${cartera.id}">Editar</button>
                 <button class="btn btn-sm btn-danger delete-btn" data-id="${cartera.id}">Eliminar</button>
@@ -74,7 +74,7 @@ function insertarCarterasEnCards(carteras) {
                 <p class="card-text"><strong>Fecha Descuento:</strong> ${formatearFecha(cartera.discountDate)}</p>
                 <p class="card-text"><strong>Moneda:</strong> ${cartera.currency}</p>
                 <p class="card-text"><strong>Estado:</strong> <span class="${getEstadoClase(cartera.status)}">${cartera.status}</span></p>
-                <p class="card-text"><strong>Documentos:</strong> <span class="badge bg-secondary">${cartera.portfolioDocuments ? cartera.portfolioDocuments.length : 0}</span></p>
+                <p class="card-text"><strong>Documentos:</strong> <span class="badge bg-secondary">${cartera.documentCount !== undefined ? cartera.documentCount : 0}</span></p>
                 <div class="d-flex justify-content-between">
                     <button class="btn btn-primary btn-sm add-doc-btn" data-id="${cartera.id}">Agregar</button>
                     <button class="btn btn-info btn-sm view-doc-btn" data-id="${cartera.id}">Ver</button>

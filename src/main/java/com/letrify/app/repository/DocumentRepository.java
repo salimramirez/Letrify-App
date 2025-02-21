@@ -44,6 +44,9 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // @Query("SELECT COUNT(d) FROM Document d WHERE d.portfolio.id = :portfolioId AND d.portfolio IS NOT NULL")
     // int countDocumentsByPortfolio(@Param("portfolioId") Long portfolioId);
 
+    @Query("SELECT COUNT(d) FROM Document d WHERE d.portfolio.id = :portfolioId")
+    int countByPortfolioId(@Param("portfolioId") Long portfolioId);
+
     List<Document> findByIssueDateBetween(LocalDate startDate, LocalDate endDate);
     List<Document> findByDueDateBetween(LocalDate startDate, LocalDate endDate);
 
