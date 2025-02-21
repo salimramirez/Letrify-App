@@ -1,9 +1,9 @@
 package com.letrify.app.service;
 
 import com.letrify.app.model.Portfolio;
-// import com.letrify.app.model.Portfolio.PortfolioStatus;
-// import com.letrify.app.model.Portfolio.Currency;
+import com.letrify.app.model.Document;
 import com.letrify.app.repository.PortfolioRepository;
+import com.letrify.app.repository.DocumentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +16,15 @@ import java.util.Optional;
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
+    private final DocumentRepository documentRepository; // Agregamos el repositorio de documentos
 
-    public PortfolioService(PortfolioRepository portfolioRepository) {
+    public PortfolioService(PortfolioRepository portfolioRepository, DocumentRepository documentRepository) {
         this.portfolioRepository = portfolioRepository;
+        this.documentRepository = documentRepository; 
     }
 
     // Crear una nueva cartera
     public Portfolio createPortfolio(Portfolio portfolio) {
-        // Asegurar que la cartera inicia en estado PENDIENTE
-        // portfolio.setStatus(PortfolioStatus.PENDIENTE);
         return portfolioRepository.save(portfolio);
     }
 
@@ -59,15 +59,33 @@ public class PortfolioService {
         return portfolioRepository.findById(id);
     }
 
-    // // Calcular el monto total de una cartera (sumar todos los documentos asociados)
-    // public BigDecimal calculateTotalAmount(Portfolio portfolio) {
-    //     // Placeholder: Deberemos implementar la lógica real una vez tengamos los documentos asociados
-    //     return portfolio.getTotalAmount();  // De momento devuelve el valor almacenado
-    // }
-
     // Calcular la TCEA para una cartera (futuro)
     public BigDecimal calculateTCEA(Portfolio portfolio) {
         // Placeholder para el cálculo real del TCEA
         return BigDecimal.ZERO;
+    }
+
+    // Nuevo método: Agregar un documento a una cartera
+    public boolean addDocumentToPortfolio(Long portfolioId, Long documentId) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new RuntimeException("Cartera no encontrada"));
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+
+        // Verificar si el documento ya pertenece a otra cartera
+        if (document.getPortfolio() != null) {
+            throw new IllegalArgumentException("Este documento ya está asignado a otra cartera.");
+        }
+
+        // Asignar la cartera al documento y guardar
+        document.setPortfolio(portfolio);
+        documentRepository.save(document);
+        return true;
+    }
+
+    // Nuevo método: Obtener documentos dentro de una cartera
+    public List<Document> getDocumentsByPortfolio(Long portfolioId) {
+        return documentRepository.findByPortfolioId(portfolioId);
     }
 }

@@ -35,8 +35,8 @@ public class Portfolio {
     @Column(name = "status", nullable = false)
     private PortfolioStatus status;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PortfolioDocument> portfolioDocuments = new ArrayList<>();
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    private List<Document> documents = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -127,13 +127,13 @@ public class Portfolio {
         this.createdAt = createdAt;
     }
 
-    public List<PortfolioDocument> getPortfolioDocuments() {
-        return portfolioDocuments;
+    public List<Document> getDocuments() {
+        return documents;
     }
-
-    public void setPortfolioDocuments(List<PortfolioDocument> portfolioDocuments) {
-        this.portfolioDocuments = portfolioDocuments;
-    }
+    
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }    
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

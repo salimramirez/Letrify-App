@@ -33,8 +33,13 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Buscar documentos por individuo y estado
     List<Document> findByIndividual_IdAndStatus(Long individualId, Document.DocumentStatus status);
 
+    // Obtener documentos que NO están en ninguna cartera (disponibles para ser asignados)
+    List<Document> findByPortfolioIsNull();
+
+    // Obtener documentos que pertenecen a una cartera específica
+    List<Document> findByPortfolioId(Long portfolioId);
+
     List<Document> findByIssueDateBetween(LocalDate startDate, LocalDate endDate);
     List<Document> findByDueDateBetween(LocalDate startDate, LocalDate endDate);
 
-    
 }

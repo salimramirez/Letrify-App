@@ -1,9 +1,12 @@
 package com.letrify.app.controller;
 
 import com.letrify.app.model.Portfolio;
+import com.letrify.app.model.Document;
 import com.letrify.app.service.PortfolioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import java.util.NoSuchElementException;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,14 @@ public class PortfolioController {
         return portfolio.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Endpoint para obtener documentos dentro de una cartera
+    @GetMapping("/{portfolioId}/documents")
+    public ResponseEntity<List<Document>> getDocumentsByPortfolio(
+            @PathVariable Long portfolioId) {
+        List<Document> documents = portfolioService.getDocumentsByPortfolio(portfolioId);
+        return ResponseEntity.ok(documents);
+    }
+
     // Crear una nueva cartera
     @PostMapping
     public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) {
@@ -49,6 +60,21 @@ public class PortfolioController {
         } catch (Exception e) {
             e.printStackTrace(); // Imprime el error exacto en la consola de Spring Boot
             return ResponseEntity.status(400).body("Error: No se pudo crear la cartera.");
+        }
+    }
+
+    // Endpoint para agregar un documento a una cartera
+    @PostMapping("/{portfolioId}/documents/{documentId}")
+    public ResponseEntity<String> addDocumentToPortfolio(
+            @PathVariable Long portfolioId,
+            @PathVariable Long documentId) {
+        try {
+            portfolioService.addDocumentToPortfolio(portfolioId, documentId);
+            return ResponseEntity.ok("Documento agregado correctamente a la cartera.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cartera o documento no encontrado.");
         }
     }
 

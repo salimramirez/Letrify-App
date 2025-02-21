@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "documents")
@@ -60,8 +59,9 @@ public class Document {
     @JoinColumn(name = "individual_id")
     private Individual individual;
 
-    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PortfolioDocument> portfolioDocuments;
+    @ManyToOne
+    @JoinColumn(name = "fk_documents_portfolio")
+    private Portfolio portfolio;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -191,13 +191,13 @@ public class Document {
         return individual != null ? individual.getId() : null;
     }
 
-    public List<PortfolioDocument> getPortfolioDocuments() {
-        return portfolioDocuments;
+    public Portfolio getPortfolio() {
+        return portfolio;
     }
-
-    public void setPortfolioDocuments(List<PortfolioDocument> portfolioDocuments) {
-        this.portfolioDocuments = portfolioDocuments;
-    }
+    
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }    
     
     public LocalDateTime getCreatedAt() {
         return createdAt;
