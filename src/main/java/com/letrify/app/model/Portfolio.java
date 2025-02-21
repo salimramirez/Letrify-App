@@ -40,7 +40,7 @@ public class Portfolio {
     @Column(name = "document_count", nullable = false)
     private int documentCount = 0;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio")
     @JsonManagedReference  // Controla la serialización
     private List<Document> documents = new ArrayList<>();
 

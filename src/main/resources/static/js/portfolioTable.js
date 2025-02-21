@@ -50,6 +50,7 @@ function insertarCarterasEnTabla(carteras) {
     });
 
     agregarEventosTabla();
+    asignarEventosAgregarDocumento();
 }
 
 // Función para insertar carteras en las cards (vista móvil)
@@ -89,23 +90,24 @@ function insertarCarterasEnCards(carteras) {
     });
 
     agregarEventosCards();
+    asignarEventosAgregarDocumento();
 }
 
 // Función para asignar eventos a los botones en la tabla
 function agregarEventosTabla() {
-    document.querySelectorAll(".add-doc-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            const portfolioId = this.getAttribute("data-id");
-            console.log("📌 Agregar documentos a cartera:", portfolioId);
-        });
-    });
+    // document.querySelectorAll(".add-doc-btn").forEach(button => {
+    //     button.addEventListener("click", function () {
+    //         const portfolioId = this.getAttribute("data-id");
+    //         console.log("📌 Agregar documentos a cartera:", portfolioId);
+    //     });
+    // });
 
-    document.querySelectorAll(".view-doc-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            const portfolioId = this.getAttribute("data-id");
-            console.log("📌 Ver documentos de cartera:", portfolioId);
-        });
-    });
+    // document.querySelectorAll(".view-doc-btn").forEach(button => {
+    //     button.addEventListener("click", function () {
+    //         const portfolioId = this.getAttribute("data-id");
+    //         console.log("📌 Ver documentos de cartera:", portfolioId);
+    //     });
+    // });
 
     document.querySelectorAll(".edit-btn").forEach(button => {
         button.addEventListener("click", function () {

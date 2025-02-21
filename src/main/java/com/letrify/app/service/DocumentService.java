@@ -3,16 +3,20 @@ package com.letrify.app.service;
 import com.letrify.app.model.Document;
 import com.letrify.app.repository.DocumentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
+    private final PortfolioService portfolioService;
 
-    public DocumentService(DocumentRepository documentRepository) {
+    public DocumentService(DocumentRepository documentRepository, PortfolioService portfolioService) {
         this.documentRepository = documentRepository;
+        this.portfolioService = portfolioService; //
     }
 
     // Método para listar todos los documentos
@@ -44,13 +48,19 @@ public class DocumentService {
         return savedDoc;
     }
 
-    // Método para eliminar un documento por ID
+    // Método para eliminar un documento por ID y quitarlo de la cartera si es necesario
     public void deleteDocument(Long id) {
-        if (!documentRepository.existsById(id)) {
-            throw new IllegalArgumentException("No se puede eliminar, el documento no existe con ID: " + id);
+        Document document = documentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se puede eliminar, el documento no existe con ID: " + id));
+
+        // Si el documento pertenece a una cartera, eliminarlo de la cartera primero
+        if (document.getPortfolio() != null) {
+            portfolioService.removeDocumentFromPortfolio(id);
         }
+
         documentRepository.deleteById(id);
-    }
+        System.out.println("✅ Documento eliminado correctamente.");
+}
 
     // Método para validar las fechas del documento
     private void validateDocumentDates(Document document) {
