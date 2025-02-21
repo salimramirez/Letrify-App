@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "portfolios")
 public class Portfolio {
@@ -35,7 +37,11 @@ public class Portfolio {
     @Column(name = "status", nullable = false)
     private PortfolioStatus status;
 
+    @Column(name = "document_count", nullable = false)
+    private int documentCount = 0;
+
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @JsonManagedReference  // Controla la serialización
     private List<Document> documents = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
@@ -117,6 +123,14 @@ public class Portfolio {
 
     public void setStatus(PortfolioStatus status) {
         this.status = status;
+    }
+
+    public int getDocumentCount() {
+        return documentCount;
+    }
+
+    public void setDocumentCount(int documentCount) {
+        this.documentCount = documentCount;
     }
 
     public LocalDateTime getCreatedAt() {

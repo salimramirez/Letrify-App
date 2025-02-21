@@ -2,6 +2,8 @@ package com.letrify.app.repository;
 
 import com.letrify.app.model.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -37,7 +39,10 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByPortfolioIsNull();
 
     // Obtener documentos que pertenecen a una cartera específica
-    List<Document> findByPortfolioId(Long portfolioId);
+    List<Document> findByPortfolio_Id(Long portfolioId);
+
+    // @Query("SELECT COUNT(d) FROM Document d WHERE d.portfolio.id = :portfolioId AND d.portfolio IS NOT NULL")
+    // int countDocumentsByPortfolio(@Param("portfolioId") Long portfolioId);
 
     List<Document> findByIssueDateBetween(LocalDate startDate, LocalDate endDate);
     List<Document> findByDueDateBetween(LocalDate startDate, LocalDate endDate);

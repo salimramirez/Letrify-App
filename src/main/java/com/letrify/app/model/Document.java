@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "documents")
 public class Document {
@@ -60,7 +62,8 @@ public class Document {
     private Individual individual;
 
     @ManyToOne
-    @JoinColumn(name = "fk_documents_portfolio")
+    @JoinColumn(name = "portfolio_id")
+    @JsonBackReference  // Evita la serialización cíclica
     private Portfolio portfolio;
 
     @Column(name = "created_at", updatable = false)
@@ -198,6 +201,10 @@ public class Document {
     public void setPortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
     }    
+
+    public Long getPortfolioId() {
+        return portfolio != null ? portfolio.getId() : null;
+    }
     
     public LocalDateTime getCreatedAt() {
         return createdAt;

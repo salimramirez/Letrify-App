@@ -86,6 +86,6 @@ public class PortfolioService {
 
     // Nuevo método: Obtener documentos dentro de una cartera
     public List<Document> getDocumentsByPortfolio(Long portfolioId) {
-        return documentRepository.findByPortfolioId(portfolioId);
+        return documentRepository.findByPortfolio_Id(portfolioId);
     }
 }
