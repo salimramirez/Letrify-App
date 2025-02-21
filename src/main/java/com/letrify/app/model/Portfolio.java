@@ -3,6 +3,7 @@ package com.letrify.app.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class Portfolio {
     private LocalDate discountDate;
 
     @ManyToOne
-    @JoinColumn(name = "bank_id", nullable = false)
+    @JoinColumn(name = "bank_id", nullable = true)
     private Bank bank;
 
     @Enumerated(EnumType.STRING)
@@ -35,7 +36,7 @@ public class Portfolio {
     private PortfolioStatus status;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PortfolioDocument> portfolioDocuments;
+    private List<PortfolioDocument> portfolioDocuments = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -57,7 +58,8 @@ public class Portfolio {
 
     // Enum para la moneda
     public enum CurrencyType {
-        PEN, USD
+        PEN,
+        USD;
     }
 
     // Getters y Setters
@@ -83,6 +85,14 @@ public class Portfolio {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public CurrencyType getCurrency() {
+        return currency;
+    }
+    
+    public void setCurrency(CurrencyType currency) {
+        this.currency = currency;
     }
 
     public LocalDate getDiscountDate() {

@@ -20,6 +20,8 @@
     <script src="/js/dashboard-main.js" defer></script>
     <script src="/js/documentFormHandler.js" defer></script>
     <script src="/js/documentsTable.js" defer></script>
+    <script src="js/portfolioFormHandler.js" defer></script>
+    <script src="js/portfolioTable.js" defer></script>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -383,9 +385,10 @@
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="portfolioTableBody">
                                 <tr>
-                                    <td>1</td>
+                                <!-- Aquí se insertarán dinámicamente las filas -->
+                                    <!-- <td>1</td>
                                     <td>Cartera Enero</td>
                                     <td>01/01/2025</td>
                                     <td>15/01/2025</td>
@@ -395,11 +398,11 @@
                                         <button class="btn btn-sm btn-primary">Agregar</button>
                                         <button class="btn btn-sm btn-info">Ver</button>
                                     </td>
-                                    <td><span class="badge bg-secondary">3</span></td> <!-- Nueva columna "Cantidad" -->
+                                    <td><span class="badge bg-secondary">3</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-warning">Editar</button>
                                         <button class="btn btn-sm btn-danger">Eliminar</button>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>
@@ -407,23 +410,27 @@
 
                     <!-- Cards para vista móvil -->
                     <div class="d-md-none">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Cartera Enero</h5>
-                                <p class="card-text"><strong>Fecha Creación:</strong> 01/01/2025</p>
-                                <p class="card-text"><strong>Fecha Descuento:</strong> 15/01/2025</p>
-                                <p class="card-text"><strong>Moneda:</strong> PEN</p>
-                                <p class="card-text"><strong>Estado:</strong> <span class="badge bg-warning">Pendiente</span></p>
-                                <p class="card-text"><strong>Documentos:</strong> <span class="badge bg-secondary">3</span></p> <!-- Cantidad de documentos -->
-                                <div class="d-flex justify-content-between">
-                                    <button class="btn btn-primary btn-sm">Agregar</button>
-                                    <button class="btn btn-info btn-sm">Ver</button>
+                        <div id="portfolioCardsContainer">
+                            <!-- Mensaje de carga inicial (se reemplazará dinámicamente) -->
+                            <p class="text-center text-muted">Cargando documentos...</p>
+                            <!-- <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Cartera Enero</h5>
+                                    <p class="card-text"><strong>Fecha Creación:</strong> 01/01/2025</p>
+                                    <p class="card-text"><strong>Fecha Descuento:</strong> 15/01/2025</p>
+                                    <p class="card-text"><strong>Moneda:</strong> PEN</p>
+                                    <p class="card-text"><strong>Estado:</strong> <span class="badge bg-warning">Pendiente</span></p>
+                                    <p class="card-text"><strong>Documentos:</strong> <span class="badge bg-secondary">3</span></p>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-primary btn-sm">Agregar</button>
+                                        <button class="btn btn-info btn-sm">Ver</button>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <button class="btn btn-warning btn-sm">Editar</button>
+                                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between mt-2">
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                    <button class="btn btn-danger btn-sm">Eliminar</button>
-                                </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -465,7 +472,7 @@
                                         </div>
                     
                                         <!-- Estado (Pendiente por defecto, oculto) -->
-                                        <input type="hidden" id="carteraStatus" value="Pendiente">
+                                        <input type="hidden" id="carteraStatus" value="PENDIENTE">
                     
                                         <!-- Botones de acción -->
                                         <div class="modal-footer">

@@ -36,9 +36,18 @@ public class PortfolioController {
     @PostMapping
     public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) {
         try {
+            System.out.println("📌 Datos Recibidos en el Backend: " + portfolio);
+
+            // Verifica si el currency es null
+            if (portfolio.getCurrency() == null) {
+                System.out.println("⚠️ ERROR: currency es NULL en el backend.");
+                return ResponseEntity.status(400).body("Error: La moneda (currency) no puede ser null.");
+            }
+
             Portfolio createdPortfolio = portfolioService.createPortfolio(portfolio);
             return ResponseEntity.ok(createdPortfolio);
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime el error exacto en la consola de Spring Boot
             return ResponseEntity.status(400).body("Error: No se pudo crear la cartera.");
         }
     }
