@@ -113,4 +113,10 @@ public class PortfolioService {
     public List<Document> getDocumentsByPortfolio(Long portfolioId) {
         return documentRepository.findByPortfolio_Id(portfolioId);
     }
+
+    // Obtener documentos de otras carteras
+    public List<Document> getDocumentsFromOtherPortfolios(Long portfolioId) {
+        return documentRepository.findByPortfolioIsNotNullAndPortfolio_IdNot(portfolioId);
+    }    
+
 }

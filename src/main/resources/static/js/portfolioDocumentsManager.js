@@ -7,11 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // 📌 Detectar clic en "Guardar" para asignar documentos a la cartera
     document.getElementById("saveSelectedDocuments").addEventListener("click", async function () {
         const portfolioId = this.getAttribute("data-portfolio-id");
-    
-        // Obtener los documentos seleccionados (checkboxes marcados)
-        const selectedDocs = Array.from(document.querySelectorAll("#documentList input:checked")).map(input => input.value);
-    
-        console.log("📌 Documentos seleccionados para la cartera:", selectedDocs);
+        
+        // Obtener los documentos seleccionados (checkboxes marcados que NO están deshabilitados)
+        const selectedDocs = Array.from(document.querySelectorAll("#documentList input:checked"))
+            .filter(input => !input.disabled)  // Filtrar solo los habilitados
+            .map(input => input.value);
+
+        console.log("📌 Documentos seleccionados para la cartera (excluyendo deshabilitados):", selectedDocs);
     
         try {
             // Obtener los documentos que ya estaban asignados antes de abrir el modal
@@ -97,7 +99,7 @@ function abrirModalSeleccionDocumentos() {
     cargarDocumentosDisponibles(portfolioId);
 }
 
-// 📌 Función para cargar documentos disponibles en el modal
+// Función para cargar documentos disponibles en el modal
 async function cargarDocumentosDisponibles(portfolioId) {
     const documentList = document.getElementById("documentList");
     documentList.innerHTML = "<p class='text-muted'>Cargando documentos...</p>";
@@ -109,9 +111,12 @@ async function cargarDocumentosDisponibles(portfolioId) {
         const documentos = await response.json();
         console.log("✅ Documentos disponibles:", documentos);
 
-        // 🚀 Aquí llamamos a obtenerDocumentosAsignados() con portfolioId correctamente
+        // Aquí llamamos a obtenerDocumentosAsignados() con portfolioId correctamente
         const documentosAsignados = await obtenerDocumentosAsignados(portfolioId);
         console.log("📌 Documentos ya asignados a la cartera:", documentosAsignados);
+
+        // Obtener los documentos asignados a otras carteras
+        const documentosDeOtrasCarteras = await obtenerDocumentosDeOtrasCarteras(portfolioId);
 
         documentList.innerHTML = ""; // Limpiar antes de cargar
 
@@ -120,18 +125,43 @@ async function cargarDocumentosDisponibles(portfolioId) {
             return;
         }
 
-        // Crear checkboxes para seleccionar documentos y marcar los ya asignados
-        documentos.forEach(doc => {
-            const isChecked = documentosAsignados.includes(doc.id) ? "checked" : ""; // Si está asignado, marcarlo
+        // Obtener documentos filtrados según la moneda de la cartera
+        const documentosFiltrados = obtenerDocumentosFiltrados(documentos, portfolioId);
+        if (documentosFiltrados.length === 0) {
+            documentList.innerHTML = "<p class='text-muted'>No hay documentos disponibles con esta moneda.</p>";
+            return;
+        }
 
-            const docItem = document.createElement("div");
-            docItem.classList.add("list-group-item");
-            docItem.innerHTML = `
-                <input type="checkbox" class="form-check-input me-2" value="${doc.id}" id="doc-${doc.id}" ${isChecked}>
-                <label for="doc-${doc.id}">${doc.documentNumber} - ${doc.amount} ${doc.currency} (Vence: ${formatearFecha(doc.dueDate)})</label>
-            `;
-            documentList.appendChild(docItem);
-        });
+        // Variable para verificar si hay documentos deshabilitados
+        let hayDocumentosDeshabilitados = false;
+
+        // Agregar input de búsqueda en vivo
+        documentList.appendChild(crearBuscadorDocumentos());
+
+        // Contenedor para mostrar la tabla o cards
+        const container = document.createElement("div");
+        container.id = "documentContainer";
+        documentList.appendChild(container);
+
+        if (window.innerWidth > 768) {
+            // Mostrar tabla en escritorio
+            container.appendChild(crearTablaDocumentos(documentosFiltrados, documentosAsignados, documentosDeOtrasCarteras));
+        } else {
+            // Mostrar cards en móviles
+            documentosFiltrados.forEach(doc => {
+                const isChecked = documentosAsignados.includes(doc.id) || documentosDeOtrasCarteras.includes(doc.id) ? "checked" : "";
+                const isDisabled = documentosDeOtrasCarteras.includes(doc.id) && !documentosAsignados.includes(doc.id) ? "disabled" : "";
+                if (isDisabled) hayDocumentosDeshabilitados = true;
+                container.appendChild(crearCardDocumento(doc, isChecked, isDisabled));
+            });
+        }
+
+        // Mostrar mensaje si hay documentos deshabilitados
+        if (hayDocumentosDeshabilitados) {
+            mostrarMensajeDocumentosDeshabilitados(documentList);
+        }
+
+        activarBuscadorDocumentos();
 
     } catch (error) {
         console.error("❌ Error al cargar documentos:", error);
@@ -153,10 +183,179 @@ async function obtenerDocumentosAsignados(portfolioId) {
     }
 }
 
+// Función para obtener los documentos asignados a otras carteras
+async function obtenerDocumentosDeOtrasCarteras(portfolioId) {
+    try {
+        // Cambiar la URL para que coincida con el endpoint correcto en el backend
+        const response = await fetch(`/api/portfolios/other-portfolios/${portfolioId}/documents`);
+        if (!response.ok) throw new Error("Error al obtener documentos de otras carteras.");
+
+        const documentosDeOtrasCarteras = await response.json();
+        console.log("📌 Documentos de otras carteras:", documentosDeOtrasCarteras);
+
+        return documentosDeOtrasCarteras.map(doc => doc.id); // Obtener solo los IDs de los documentos
+    } catch (error) {
+        console.error("❌ Error al obtener documentos de otras carteras:", error);
+        return [];
+    }
+}
+
 // 📌 Función para formatear fechas (DD/MM/YYYY)
 function formatearFecha(fecha) {
     if (!fecha) return "N/A";
     if (fecha.includes("T")) fecha = fecha.split("T")[0]; // Remover hora si la tiene
     const [year, month, day] = fecha.split("-");
     return `${day}/${month}/${year}`;
+}
+
+// Función para obtener documentos filtrados por la moneda de la cartera
+function obtenerDocumentosFiltrados(documentos, portfolioId) {
+    const portfolioRow = document.querySelector(`button[data-id="${portfolioId}"]`).closest("tr");
+    const portfolioCurrency = portfolioRow ? portfolioRow.children[4].textContent : "N/A";
+    return documentos.filter(doc => doc.currency === portfolioCurrency);
+}
+
+// Función para crear el input de búsqueda en vivo con icono de lupa y botón de "X"
+function crearBuscadorDocumentos() {
+    const searchContainer = document.createElement("div");
+    searchContainer.classList.add("input-group", "mb-3"); // Utiliza Bootstrap Input Group
+
+    // Icono de lupa
+    const searchIcon = document.createElement("span");
+    searchIcon.classList.add("input-group-text"); 
+    searchIcon.innerHTML = `<i class="bi bi-search"></i>`; 
+
+    // Input de búsqueda
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.id = "documentSearch";
+    searchInput.classList.add("form-control");
+    searchInput.placeholder = "Buscar documento...";
+
+    // Botón de "X" para limpiar el campo
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.classList.add("btn", "btn-outline-secondary", "d-none"); // Oculto inicialmente
+    clearButton.innerHTML = `<i class="bi bi-x-circle"></i>`;
+
+    // Evento para limpiar el input al hacer clic en "X"
+    clearButton.addEventListener("click", function () {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input")); // Simular evento input para refrescar la búsqueda
+        clearButton.classList.add("d-none"); // Ocultar el botón nuevamente
+    });
+
+    // Evento para mostrar/ocultar botón "X"
+    searchInput.addEventListener("input", function () {
+        clearButton.classList.toggle("d-none", searchInput.value === "");
+    });
+
+    // Agregar elementos al contenedor
+    searchContainer.appendChild(searchIcon);
+    searchContainer.appendChild(searchInput);
+    searchContainer.appendChild(clearButton);
+
+    return searchContainer;
+}
+
+// Función para activar la búsqueda en vivo
+function activarBuscadorDocumentos() {
+    const searchInput = document.getElementById("documentSearch");
+    searchInput.addEventListener("input", function () {
+        const searchText = searchInput.value.toLowerCase();
+        document.querySelectorAll("#documentContainer .document-item").forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(searchText) ? "" : "none";
+        });
+    });
+}
+
+// Función para crear la tabla de documentos
+function crearTablaDocumentos(documentos, documentosAsignados, documentosDeOtrasCarteras) {
+    const table = document.createElement("table");
+    table.classList.add("table", "table-striped", "table-hover");
+
+    // Encabezado de la tabla
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>✔</th>
+                <th>Número</th>
+                <th>Monto</th>
+                <th>Moneda</th>
+                <th>Vencimiento</th>
+            </tr>
+        </thead>
+        <tbody id="documentTableBody"></tbody>
+    `;
+
+    const tbody = table.querySelector("#documentTableBody");
+
+    documentos.forEach(doc => {
+        const isChecked = documentosAsignados.includes(doc.id) || documentosDeOtrasCarteras.includes(doc.id) ? "checked" : "";
+        const isDisabled = documentosDeOtrasCarteras.includes(doc.id) && !documentosAsignados.includes(doc.id) ? "disabled" : "";
+
+        const row = document.createElement("tr");
+        row.classList.add("document-item"); // Para el buscador
+
+        if (isDisabled) row.classList.add("bg-light", "text-muted"); // Fondo gris si está deshabilitado
+
+        row.innerHTML = `
+            <td><input type="checkbox" class="form-check-input" value="${doc.id}" ${isChecked} ${isDisabled} style="${isDisabled ? 'opacity: 0.5;' : ''}"></td>
+            <td>${doc.documentNumber}</td>
+            <td>${doc.amount}</td>
+            <td>${doc.currency}</td>
+            <td>${formatearFecha(doc.dueDate)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    return table;
+}
+
+// Función para crear un card de documento (modo móvil)
+function crearCardDocumento(doc, isChecked, isDisabled) {
+    const card = document.createElement("div");
+    card.classList.add("card", "mb-2", "document-item");
+
+    if (isDisabled) card.classList.add("bg-light", "text-muted"); // Fondo gris si está deshabilitado
+
+    card.innerHTML = `
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">${doc.documentNumber}</h5>
+                <input type="checkbox" class="form-check-input" value="${doc.id}" ${isChecked} ${isDisabled} style="${isDisabled ? 'opacity: 0.5;' : ''}">
+            </div>
+            <p class="card-text"><strong>Monto:</strong> ${doc.amount} ${doc.currency}</p>
+            <p class="card-text"><strong>Vence:</strong> ${formatearFecha(doc.dueDate)}</p>
+        </div>
+    `;
+
+    return card;
+}
+
+// Función para crear el HTML de un documento
+// function crearElementoDocumento(doc, isChecked, isDisabled) {
+//     const docItem = document.createElement("div");
+//     docItem.classList.add("list-group-item");
+//     if (isDisabled) docItem.classList.add("bg-light", "text-muted"); // Estilo visual
+
+//     docItem.innerHTML = `
+//         <input type="checkbox" class="form-check-input me-2" value="${doc.id}" id="doc-${doc.id}" ${isChecked} ${isDisabled} style="${isDisabled ? 'opacity: 0.5;' : ''}">
+//         <label for="doc-${doc.id}">${doc.documentNumber} - ${doc.amount} ${doc.currency} (Vence: ${formatearFecha(doc.dueDate)}) 
+//         ${isDisabled ? "<span class='text-danger ms-2'>(X)</span>" : ""}</label>
+//     `;
+
+//     return docItem;
+// }
+
+// Función para mostrar mensaje de documentos deshabilitados
+function mostrarMensajeDocumentosDeshabilitados(container) {
+    const warningMessage = document.createElement("p");
+    warningMessage.classList.add("text-muted", "fst-italic", "mb-3");
+    warningMessage.innerHTML = `
+        <i class="bi bi-exclamation-triangle-fill text-warning"> </i>
+        Algunos documentos están deshabilitados porque ya pertenecen a otra cartera.
+    `;
+    container.appendChild(warningMessage);
 }

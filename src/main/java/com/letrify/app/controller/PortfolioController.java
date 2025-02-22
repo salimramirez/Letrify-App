@@ -43,6 +43,17 @@ public class PortfolioController {
         return ResponseEntity.ok(documents);
     }
 
+    // Obtener documentos de otras carteras (excluyendo la cartera actual)
+    @GetMapping("/other-portfolios/{portfolioId}/documents")
+    public ResponseEntity<List<Document>> getDocumentsFromOtherPortfolios(@PathVariable Long portfolioId) {
+        try {
+            List<Document> documents = portfolioService.getDocumentsFromOtherPortfolios(portfolioId);
+            return ResponseEntity.ok(documents);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     // Crear una nueva cartera
     @PostMapping
     public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) {

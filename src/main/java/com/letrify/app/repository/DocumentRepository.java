@@ -50,4 +50,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByIssueDateBetween(LocalDate startDate, LocalDate endDate);
     List<Document> findByDueDateBetween(LocalDate startDate, LocalDate endDate);
 
+    // Obtener documentos que pertenecen a otras carteras (excluyendo la cartera seleccionada)
+    List<Document> findByPortfolioIsNotNullAndPortfolio_IdNot(Long portfolioId);
+
 }
