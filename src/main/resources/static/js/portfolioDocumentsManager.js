@@ -146,6 +146,13 @@ async function cargarDocumentosDisponibles(portfolioId) {
         if (window.innerWidth > 768) {
             // Mostrar tabla en escritorio
             container.appendChild(crearTablaDocumentos(documentosFiltrados, documentosAsignados, documentosDeOtrasCarteras));
+
+            // Recorremos los documentos en modo tabla para ver si alguno está deshabilitado
+            documentosFiltrados.forEach(doc => {
+                if (documentosDeOtrasCarteras.includes(doc.id) && !documentosAsignados.includes(doc.id)) {
+                    hayDocumentosDeshabilitados = true;
+                }
+            });
         } else {
             // Mostrar cards en móviles
             documentosFiltrados.forEach(doc => {
@@ -272,6 +279,11 @@ function activarBuscadorDocumentos() {
 
 // Función para crear la tabla de documentos
 function crearTablaDocumentos(documentos, documentosAsignados, documentosDeOtrasCarteras) {
+    // Contenedor con scroll interno
+    const tableContainer = document.createElement("div");
+    tableContainer.id = "documentTableContainer";
+    tableContainer.classList.add("table-responsive");
+
     const table = document.createElement("table");
     table.classList.add("table", "table-striped", "table-hover");
 
@@ -310,7 +322,9 @@ function crearTablaDocumentos(documentos, documentosAsignados, documentosDeOtras
         tbody.appendChild(row);
     });
 
-    return table;
+    // Agregar la tabla dentro del contenedor
+    tableContainer.appendChild(table);
+    return tableContainer;
 }
 
 // Función para crear un card de documento (modo móvil)

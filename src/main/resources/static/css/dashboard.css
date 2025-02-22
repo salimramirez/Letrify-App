@@ -261,6 +261,12 @@
     }
 }
 
+#documentTableContainer {
+    max-height: 300px; /* Ajusta la altura según lo que necesites */
+    overflow-y: auto;  /* Scroll vertical si hay muchos documentos */
+    border: 1px solid #ddd; /* Borde para mejor apariencia */
+}
+
 /* ===================================== */
 /* FUTURAS SECCIONES (POR IMPLEMENTAR)   */
 /* ===================================== */
