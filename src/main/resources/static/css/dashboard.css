@@ -267,6 +267,33 @@
     border: 1px solid #ddd; /* Borde para mejor apariencia */
 }
 
+/* ================================ */
+/* SECCIÓN: GESTIÓN DE DESCUENTOS   */
+/* ================================ */
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+}
+.grid-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Reducir el tamaño de la barra de búsqueda sin perder responsividad */
+.search-container {
+    max-width: 400px;
+    margin: left;
+}
+.search-input {
+    font-size: 0.9rem;
+    padding: 8px;
+}
+
 /* ===================================== */
 /* FUTURAS SECCIONES (POR IMPLEMENTAR)   */
 /* ===================================== */

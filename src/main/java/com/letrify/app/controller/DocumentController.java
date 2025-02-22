@@ -14,7 +14,7 @@ import com.letrify.app.model.User; // Importa la clase User para UserType
 import org.springframework.security.core.annotation.AuthenticationPrincipal; // Importa la anotación AuthenticationPrincipal
 
 import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -44,6 +44,20 @@ public class DocumentController {
     public ResponseEntity<Document> getDocumentById(@PathVariable Long id) {
         Document document = documentService.findDocumentById(id);
         return ResponseEntity.ok(document);
+    }
+
+    // Nuevo Endpoint: Asignar DiscountDate a un documento
+    @PutMapping("/{id}/assign-discount-date")
+    public ResponseEntity<Document> assignDiscountDateToDocument(@PathVariable Long id, @RequestParam LocalDate discountDate) {
+        Document updatedDocument = documentService.applyDiscountToDocument(id, discountDate);
+        return ResponseEntity.ok(updatedDocument);
+    }
+
+    // Nuevo Endpoint: Asignar DiscountDate a todos los documentos de un Portfolio
+    @PutMapping("/portfolio/{portfolioId}/assign-discount-date")
+    public ResponseEntity<String> assignDiscountDateToPortfolio(@PathVariable Long portfolioId, @RequestParam LocalDate discountDate) {
+        documentService.applyDiscountToPortfolio(portfolioId, discountDate);
+        return ResponseEntity.ok("✅ Fecha de descuento aplicada a todos los documentos del portfolio " + portfolioId);
     }
 
     // Obtener documentos del usuario autenticado
@@ -139,25 +153,29 @@ public class DocumentController {
     // Actualizar un documento existente
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDocument(@PathVariable Long id, @RequestBody Document document) {
-        Optional<Document> existingDocument = Optional.ofNullable(documentService.findDocumentById(id));
-    
-        if (!existingDocument.isPresent()) {
+        Document existingDocument = documentService.findDocumentById(id);
+        
+        if (existingDocument == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Documento no encontrado.");
         }
     
-        // Obtener el documento actual y actualizar los campos permitidos
-        Document docToUpdate = existingDocument.get();
-        docToUpdate.setCustomer(document.getCustomer());
-        docToUpdate.setDocumentType(document.getDocumentType());
-        docToUpdate.setDocumentNumber(document.getDocumentNumber());
-        docToUpdate.setAmount(document.getAmount());
-        docToUpdate.setCurrency(document.getCurrency());
-        docToUpdate.setIssueDate(document.getIssueDate());
-        docToUpdate.setDueDate(document.getDueDate());
-        docToUpdate.setDescription(document.getDescription());
+        // Actualizar los campos permitidos
+        existingDocument.setCustomer(document.getCustomer());
+        existingDocument.setDocumentType(document.getDocumentType());
+        existingDocument.setDocumentNumber(document.getDocumentNumber());
+        existingDocument.setAmount(document.getAmount());
+        existingDocument.setCurrency(document.getCurrency());
+        existingDocument.setIssueDate(document.getIssueDate());
+        existingDocument.setDueDate(document.getDueDate());
+        existingDocument.setDescription(document.getDescription());
+    
+        // Si cambia la discountDate, recalcular discountDays
+        if (document.getDiscountDate() != null) {
+            existingDocument.setDiscountDate(document.getDiscountDate());
+        }
     
         try {
-            Document updatedDocument = documentService.saveDocument(docToUpdate);
+            Document updatedDocument = documentService.saveDocument(existingDocument);
             return ResponseEntity.ok(updatedDocument);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el documento.");

@@ -49,6 +49,12 @@ public class Document {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
+    @Column(name = "discount_date", nullable = true)
+    private LocalDate discountDate;  // Fecha en que se aplica el descuento
+
+    @Column(name = "discount_days", nullable = true)
+    private Integer discountDays;  // Días entre discountDate y dueDate
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private DocumentStatus status;  // ENUM: PENDIENTE, EN_DESCUENTO, CANCELADO
@@ -162,6 +168,36 @@ public class Document {
         this.dueDate = dueDate;
     }
     
+    public LocalDate getDiscountDate() {
+        return discountDate;
+    }
+
+    public void setDiscountDate(LocalDate discountDate) {
+        this.discountDate = discountDate;
+        if (this.dueDate != null && discountDate != null) {
+            this.discountDays = Math.toIntExact(java.time.temporal.ChronoUnit.DAYS.between(discountDate, dueDate));
+        } else {
+            this.discountDays = null;
+        }
+    }
+
+    public Integer getDiscountDays() {
+        return discountDays;
+    }
+
+    public void setDiscountDays(Integer discountDays) {
+        this.discountDays = discountDays;
+    }
+
+    // MÉTODO PARA ACTUALIZAR AUTOMÁTICAMENTE discountDays
+    public void updateDiscountDays() {
+        if (this.discountDate != null && this.dueDate != null) {
+            this.discountDays = Math.toIntExact(java.time.temporal.ChronoUnit.DAYS.between(discountDate, dueDate));
+        } else {
+            this.discountDays = null;
+        }
+    }
+
     public DocumentStatus getStatus() {
         return status;
     }
@@ -225,6 +261,7 @@ public class Document {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        updateDiscountDays();
     }
 
 }

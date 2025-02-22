@@ -5,6 +5,7 @@ import com.letrify.app.repository.DocumentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,16 +34,11 @@ public class DocumentService {
     // Método para registrar o actualizar un documento
     public Document saveDocument(Document document) {
         validateDocumentDates(document);
-
-        System.out.println("🟢 Fecha ANTES de guardar en Hibernate:");
-        System.out.println("   - Fecha de Emisión: " + document.getIssueDate());
-        System.out.println("   - Fecha de Vencimiento: " + document.getDueDate());
+        updateDiscountDays(document); // Recalcular discountDays si hay discountDate
     
         Document savedDoc = documentRepository.save(document);
     
-        System.out.println("✅ Fecha DESPUÉS de guardar en Hibernate:");
-        System.out.println("   - Fecha de Emisión: " + savedDoc.getIssueDate());
-        System.out.println("   - Fecha de Vencimiento: " + savedDoc.getDueDate());
+        System.out.println("✅ Documento guardado con éxito.");
 
         // return documentRepository.save(document);
         return savedDoc;
@@ -66,6 +62,35 @@ public class DocumentService {
     private void validateDocumentDates(Document document) {
         if (document.getDueDate().isBefore(document.getIssueDate())) {
             throw new IllegalArgumentException("La fecha de vencimiento no puede ser anterior a la fecha de emisión.");
+        }
+    }
+
+    // Método para asignar discountDate y recalcular discountDays
+    public Document applyDiscountToDocument(Long documentId, LocalDate discountDate) {
+        Document document = findDocumentById(documentId);
+        document.setDiscountDate(discountDate);
+        updateDiscountDays(document);
+        return documentRepository.save(document);
+    }
+
+    // Método para actualizar discountDate en todos los documentos de un portfolio
+    public void applyDiscountToPortfolio(Long portfolioId, LocalDate discountDate) {
+        List<Document> documents = documentRepository.findByPortfolio_Id(portfolioId);
+
+        for (Document doc : documents) {
+            doc.setDiscountDate(discountDate);
+            updateDiscountDays(doc);
+            documentRepository.save(doc);
+        }
+        System.out.println("✅ Fecha de descuento aplicada a todos los documentos del portfolio.");
+    }
+
+    // Método para calcular discountDays cuando discountDate cambia
+    private void updateDiscountDays(Document document) {
+        if (document.getDiscountDate() != null && document.getDueDate() != null) {
+            document.setDiscountDays((int) java.time.temporal.ChronoUnit.DAYS.between(document.getDiscountDate(), document.getDueDate()));
+        } else {
+            document.setDiscountDays(null);
         }
     }
 

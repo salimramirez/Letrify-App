@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 // import java.util.Optional;
 
 @Repository
@@ -24,6 +25,9 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     // Verificar si ya existe un descuento para una combinación específica de cartera y banco
     boolean existsByPortfolioIdAndBankId(Long portfolioId, Long bankId);
 
+    // Buscar descuentos por rango de fecha de descuento
+    List<Discount> findByDiscountDateBetween(LocalDate startDate, LocalDate endDate);
+
     // Buscar descuentos por rango de fecha de creación
-    List<Discount> findByCreatedAtBetween(Date startDate, Date endDate);
+    List<Discount> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

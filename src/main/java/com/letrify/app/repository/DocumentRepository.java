@@ -41,6 +41,24 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Obtener documentos que pertenecen a una cartera específica
     List<Document> findByPortfolio_Id(Long portfolioId);
 
+    // Obtener documentos con una fecha de descuento asignada
+    List<Document> findByDiscountDateIsNotNull();
+
+    // Obtener documentos SIN descuento asignado (discountDate es NULL)
+    List<Document> findByDiscountDateIsNull();
+
+    // Obtener documentos que tienen una cantidad específica de días de descuento
+    List<Document> findByDiscountDays(Integer discountDays);
+
+    // Obtener documentos que tienen más de X días de descuento
+    List<Document> findByDiscountDaysGreaterThan(Integer days);
+
+    // Obtener documentos con un rango de descuento específico
+    List<Document> findByDiscountDaysBetween(Integer minDays, Integer maxDays);
+
+    // Obtener documentos con descuento en un rango de fechas
+    List<Document> findByDiscountDateBetween(LocalDate startDate, LocalDate endDate);
+
     // @Query("SELECT COUNT(d) FROM Document d WHERE d.portfolio.id = :portfolioId AND d.portfolio IS NOT NULL")
     // int countDocumentsByPortfolio(@Param("portfolioId") Long portfolioId);
 

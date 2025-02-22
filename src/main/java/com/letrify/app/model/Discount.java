@@ -2,7 +2,8 @@ package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "discounts")
@@ -20,26 +21,48 @@ public class Discount {
     @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
 
+    @Column(name = "discount_date", nullable = false)
+    private LocalDate discountDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rate_type", nullable = false)
+    private RateType rateType;
+
+    @Column(name = "rate", precision = 10, scale = 5, nullable = false)
+    private BigDecimal rate;
+
+    @Column(name = "rate_days", nullable = false)
+    private Integer rateDays;
+
+    @Column(name = "capitalization_days")
+    private Integer capitalizationDays; // Solo si la tasa es nominal
+
+    @Column(name = "exchange_rate", precision = 10, scale = 5)
+    private BigDecimal exchangeRate; // Tipo de cambio aplicado en la fecha del descuento
+
     @Column(name = "interest_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal interestAmount;
-
-    @Column(name = "tcea", precision = 5, scale = 2, nullable = false)
-    private BigDecimal tcea;
 
     @Column(name = "total_discount_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal totalDiscountAmount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    @Column(name = "tcea", precision = 10, scale = 5)
+    private BigDecimal tcea;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Enum para RateType
+    public enum RateType {
+        NOMINAL, EFECTIVA
     }
 
     // Getters y Setters
@@ -67,20 +90,61 @@ public class Discount {
         this.bank = bank;
     }
 
+    public LocalDate getDiscountDate() {
+        return discountDate;
+    }
+
+    public void setDiscountDate(LocalDate discountDate) {
+        this.discountDate = discountDate;
+    }
+
+    public RateType getRateType() {
+        return rateType;
+    }
+
+    public void setRateType(RateType rateType) {
+        this.rateType = rateType;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+
+    public Integer getRateDays() {
+        return rateDays;
+    }
+
+    public void setRateDays(Integer rateDays) {
+        this.rateDays = rateDays;
+    }
+
+    public Integer getCapitalizationDays() {
+        return capitalizationDays;
+    }
+
+    public void setCapitalizationDays(Integer capitalizationDays) {
+        this.capitalizationDays = capitalizationDays;
+    }
+
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
     public BigDecimal getInterestAmount() {
         return interestAmount;
     }
 
     public void setInterestAmount(BigDecimal interestAmount) {
         this.interestAmount = interestAmount;
-    }
-
-    public BigDecimal getTcea() {
-        return tcea;
-    }
-
-    public void setTcea(BigDecimal tcea) {
-        this.tcea = tcea;
     }
 
     public BigDecimal getTotalDiscountAmount() {
@@ -91,19 +155,27 @@ public class Discount {
         this.totalDiscountAmount = totalDiscountAmount;
     }
 
-    public Date getCreatedAt() {
+    public BigDecimal getTcea() {
+        return tcea;
+    }
+
+    public void setTcea(BigDecimal tcea) {
+        this.tcea = tcea;
+    }
+
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

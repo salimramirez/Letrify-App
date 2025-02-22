@@ -2,10 +2,12 @@ package com.letrify.app.controller;
 
 import com.letrify.app.model.Discount;
 import com.letrify.app.service.DiscountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,27 +35,36 @@ public class DiscountController {
         return discount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Crear un nuevo descuento
+    // Crear un nuevo descuento con validaciones
     @PostMapping
-    public ResponseEntity<Discount> createDiscount(@RequestBody Discount discount) {
-        Discount createdDiscount = discountService.createDiscount(discount);
-        return ResponseEntity.ok(createdDiscount);
+    public ResponseEntity<?> createDiscount(@RequestBody Discount discount) {
+        try {
+            Discount createdDiscount = discountService.createDiscount(discount);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // Actualizar un descuento existente
     @PutMapping("/{id}")
-    public ResponseEntity<Discount> updateDiscount(@PathVariable Long id, @RequestBody Discount discount) {
+    public ResponseEntity<?> updateDiscount(@PathVariable Long id, @RequestBody Discount discount) {
         Optional<Discount> updatedDiscount = discountService.updateDiscount(id, discount);
-        return updatedDiscount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+        if (updatedDiscount.isPresent()) {
+            return ResponseEntity.ok(updatedDiscount.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Descuento no encontrado.");
+        }
     }
 
     // Eliminar un descuento
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiscount(@PathVariable Long id) {
+    public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
         if (discountService.deleteDiscount(id)) {
-            return ResponseEntity.noContent().build();  // Eliminación exitosa
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build();   // No se encontró el descuento
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Descuento no encontrado.");
         }
     }
 
@@ -61,6 +72,16 @@ public class DiscountController {
     @GetMapping("/tcea-greater-than/{value}")
     public ResponseEntity<List<Discount>> getDiscountsByTceaGreaterThan(@PathVariable BigDecimal value) {
         List<Discount> discounts = discountService.getDiscountsByTceaGreaterThan(value);
+        return ResponseEntity.ok(discounts);
+    }
+
+    // Obtener descuentos dentro de un rango de fechas
+    @GetMapping("/date-range")
+    public ResponseEntity<List<Discount>> getDiscountsByDateRange(
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate) {
+
+        List<Discount> discounts = discountService.getDiscountsByDateRange(startDate, endDate);
         return ResponseEntity.ok(discounts);
     }
 }

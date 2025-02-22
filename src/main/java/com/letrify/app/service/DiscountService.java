@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,18 @@ public class DiscountService {
         if (discountRepository.existsByPortfolioIdAndBankId(discount.getPortfolio().getId(), discount.getBank().getId())) {
             throw new IllegalArgumentException("Ya existe un descuento registrado para esta cartera y banco.");
         }
+
+        // Validación de fechas y tasas
+        if (discount.getDiscountDate() == null) {
+            throw new IllegalArgumentException("La fecha de descuento no puede ser nula.");
+        }
+        if (discount.getRate() == null || discount.getRate().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("La tasa debe ser mayor que 0.");
+        }
+        if (discount.getRateDays() == null || discount.getRateDays() <= 0) {
+            throw new IllegalArgumentException("El período de la tasa en días debe ser mayor a 0.");
+        }
+
         return discountRepository.save(discount);
     }
 
@@ -33,6 +46,12 @@ public class DiscountService {
             discount.setInterestAmount(updatedDiscount.getInterestAmount());
             discount.setTcea(updatedDiscount.getTcea());
             discount.setTotalDiscountAmount(updatedDiscount.getTotalDiscountAmount());
+            discount.setDiscountDate(updatedDiscount.getDiscountDate());
+            discount.setRate(updatedDiscount.getRate());
+            discount.setRateDays(updatedDiscount.getRateDays());
+            discount.setCapitalizationDays(updatedDiscount.getCapitalizationDays());
+            discount.setExchangeRate(updatedDiscount.getExchangeRate());
+
             return discountRepository.save(discount);
         });
     }
@@ -69,5 +88,10 @@ public class DiscountService {
     // Obtener descuentos con una TCEA superior a un valor dado
     public List<Discount> getDiscountsByTceaGreaterThan(BigDecimal tcea) {
         return discountRepository.findByTceaGreaterThan(tcea);
+    }
+
+    // Obtener descuentos dentro de un rango de fechas
+    public List<Discount> getDiscountsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return discountRepository.findByDiscountDateBetween(startDate, endDate);
     }
 }
