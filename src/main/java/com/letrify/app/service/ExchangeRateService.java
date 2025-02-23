@@ -46,12 +46,14 @@ public class ExchangeRateService {
             Map<String, Object> response = responseEntity.getBody();
             
             if (response != null) {
-                BigDecimal buyRate = new BigDecimal(response.get("compra").toString());
-                BigDecimal sellRate = new BigDecimal(response.get("venta").toString());
+                BigDecimal buyRate = BigDecimal.valueOf(Double.parseDouble(response.get("compra").toString()));
+                BigDecimal sellRate = BigDecimal.valueOf(Double.parseDouble(response.get("venta").toString()));                
                 String source = response.get("origen").toString();
                 LocalDate exchangeDate = LocalDate.parse(response.get("fecha").toString());
     
                 ExchangeRate exchangeRate = new ExchangeRate();
+                exchangeRate.setCurrencyFrom("USD");
+                exchangeRate.setCurrencyTo("PEN");
                 exchangeRate.setBuyRate(buyRate);
                 exchangeRate.setSellRate(sellRate);
                 exchangeRate.setExchangeDate(exchangeDate);
@@ -67,6 +69,10 @@ public class ExchangeRateService {
 
     public BigDecimal convertirMoneda(BigDecimal monto, String deMoneda, String aMoneda) {
         ExchangeRate exchangeRate = getExchangeRate();
+
+        if (exchangeRate == null) {
+            throw new IllegalStateException("No se encontró un tipo de cambio válido.");
+        }
 
         if (deMoneda.equalsIgnoreCase("USD") && aMoneda.equalsIgnoreCase("PEN")) {
             return monto.multiply(exchangeRate.getSellRate()); // USD → PEN usa "venta"

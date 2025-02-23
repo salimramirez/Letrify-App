@@ -2,6 +2,8 @@ package com.letrify.app.controller;
 
 import com.letrify.app.model.ExchangeRate;
 import com.letrify.app.service.ExchangeRateService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -17,15 +19,26 @@ public class ExchangeRateController {
     }
 
     @GetMapping
-    public ExchangeRate getExchangeRate() {
-        return exchangeRateService.getExchangeRate();
+    public ResponseEntity<ExchangeRate> getExchangeRate() {
+        ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
+        if (exchangeRate == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(exchangeRate);
     }
 
     @GetMapping("/convert")
-    public BigDecimal convertirMoneda(
+    public ResponseEntity<BigDecimal> convertirMoneda(
             @RequestParam BigDecimal monto,
             @RequestParam String deMoneda,
             @RequestParam String aMoneda) {
-        return exchangeRateService.convertirMoneda(monto, deMoneda, aMoneda);
+        try {
+            BigDecimal resultado = exchangeRateService.convertirMoneda(monto, deMoneda, aMoneda);
+            return ResponseEntity.ok(resultado);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(null); // Si no hay tipo de cambio registrado
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null); // Si la conversión no es válida
+        }
     }
 }
