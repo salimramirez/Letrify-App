@@ -2,7 +2,7 @@ package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -22,20 +22,18 @@ public class Bank {
     @Column(name = "bank_phone", length = 20)
     private String bankPhone;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Portfolio> portfolios = new ArrayList<>();
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
@@ -71,19 +69,19 @@ public class Bank {
         this.bankPhone = bankPhone;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
