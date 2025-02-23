@@ -1,7 +1,10 @@
 package com.letrify.app.service;
 
 import com.letrify.app.model.Discount;
+import com.letrify.app.model.ExchangeRate;
 import com.letrify.app.repository.DiscountRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +18,12 @@ import java.util.Optional;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
+    private final ExchangeRateService exchangeRateService;
 
-    public DiscountService(DiscountRepository discountRepository) {
+    @Autowired
+    public DiscountService(DiscountRepository discountRepository, ExchangeRateService exchangeRateService) {
         this.discountRepository = discountRepository;
+        this.exchangeRateService = exchangeRateService;
     }
 
     // Crear un nuevo descuento
@@ -37,6 +43,10 @@ public class DiscountService {
             throw new IllegalArgumentException("El período de la tasa en días debe ser mayor a 0.");
         }
 
+        // Obtener el tipo de cambio más reciente
+        ExchangeRate latestRate = exchangeRateService.fetchAndSaveExchangeRate();
+        discount.setExchangeRate(latestRate);
+
         return discountRepository.save(discount);
     }
 
@@ -50,11 +60,13 @@ public class DiscountService {
             discount.setRate(updatedDiscount.getRate());
             discount.setRateDays(updatedDiscount.getRateDays());
             discount.setCapitalizationDays(updatedDiscount.getCapitalizationDays());
-            discount.setExchangeRate(updatedDiscount.getExchangeRate());
-
+    
+            // No permitir cambiar el tipo de cambio después de la creación
+            // discount.setExchangeRate(updatedDiscount.getExchangeRate()); <-- Eliminado
+    
             return discountRepository.save(discount);
         });
-    }
+    }     
 
     // Eliminar un descuento solo si existe
     public boolean deleteDiscount(Long id) {

@@ -33,7 +33,7 @@ public class ExchangeRateService {
         return existingRate.orElseGet(this::fetchAndSaveExchangeRate);
     }
 
-    private ExchangeRate fetchAndSaveExchangeRate() {
+    public ExchangeRate fetchAndSaveExchangeRate() {
         try {
             // Usar ParameterizedTypeReference para obtener un Map<String, Object> de manera segura
             ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(

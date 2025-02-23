@@ -30,4 +30,8 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
     // Buscar descuentos por rango de fecha de creación
     List<Discount> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    // Buscar todos los descuentos asociados a un tipo de cambio específico
+    List<Discount> findByExchangeRateId(Long exchangeRateId);
+
 }

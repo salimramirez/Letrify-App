@@ -21,6 +21,10 @@ public class Discount {
     @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
 
+    @ManyToOne
+    @JoinColumn(name = "exchange_rate_id", nullable = false)
+    private ExchangeRate exchangeRate;    
+
     @Column(name = "discount_date", nullable = false)
     private LocalDate discountDate;
 
@@ -36,9 +40,6 @@ public class Discount {
 
     @Column(name = "capitalization_days")
     private Integer capitalizationDays; // Solo si la tasa es nominal
-
-    @Column(name = "exchange_rate", precision = 10, scale = 5)
-    private BigDecimal exchangeRate; // Tipo de cambio aplicado en la fecha del descuento
 
     @Column(name = "interest_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal interestAmount;
@@ -90,6 +91,14 @@ public class Discount {
         this.bank = bank;
     }
 
+    public ExchangeRate getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(ExchangeRate exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
     public LocalDate getDiscountDate() {
         return discountDate;
     }
@@ -114,7 +123,6 @@ public class Discount {
         this.rate = rate;
     }
 
-
     public Integer getRateDays() {
         return rateDays;
     }
@@ -129,14 +137,6 @@ public class Discount {
 
     public void setCapitalizationDays(Integer capitalizationDays) {
         this.capitalizationDays = capitalizationDays;
-    }
-
-    public BigDecimal getExchangeRate() {
-        return exchangeRate;
-    }
-
-    public void setExchangeRate(BigDecimal exchangeRate) {
-        this.exchangeRate = exchangeRate;
     }
 
     public BigDecimal getInterestAmount() {
