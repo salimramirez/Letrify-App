@@ -283,7 +283,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
 /* Reducir el tamaño de la barra de búsqueda sin perder responsividad */
 .search-container {
     max-width: 400px;
@@ -292,6 +291,21 @@
 .search-input {
     font-size: 0.9rem;
     padding: 8px;
+}
+
+/* Contenedor scrollable para la tabla en escritorio */
+.table-scrollable {
+    max-height: 200px; /* Altura máxima antes de activar el scroll */
+    overflow-y: auto; /* Activa el scroll solo si es necesario */
+}
+
+/* Contenedor scrollable para la lista en móviles */
+.list-scrollable {
+    max-height: 200px; /* Altura máxima antes de activar el scroll */
+    overflow-y: auto; /* Activa el scroll solo si es necesario */
+    border: 1px solid #ddd; /* Opcional: Borde para visualizar mejor */
+    padding: 5px;
+    border-radius: 5px;
 }
 
 /* ===================================== */
