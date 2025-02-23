@@ -32,7 +32,7 @@ public class Discount {
     @Column(name = "rate_type", nullable = false)
     private RateType rateType;
 
-    @Column(name = "rate", precision = 10, scale = 5, nullable = false)
+    @Column(name = "rate", precision = 15, scale = 9, nullable = false)
     private BigDecimal rate;
 
     @Column(name = "rate_days", nullable = false)
@@ -47,7 +47,7 @@ public class Discount {
     @Column(name = "total_discount_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal totalDiscountAmount;
 
-    @Column(name = "tcea", precision = 10, scale = 5)
+    @Column(name = "tcea", precision = 15, scale = 9)
     private BigDecimal tcea;
 
     @Column(name = "created_at", updatable = false)

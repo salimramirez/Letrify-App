@@ -29,7 +29,7 @@ public class Report {
     @Column(name = "rate_type", nullable = false)
     private RateType rateType;
 
-    @Column(name = "rate", precision = 10, scale = 5, nullable = false)
+    @Column(name = "rate", precision = 15, scale = 9, nullable = false)
     private BigDecimal rate;
 
     @Column(name = "rate_days", nullable = false)
@@ -44,7 +44,7 @@ public class Report {
     @Column(name = "interest_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal interestAmount;
 
-    @Column(name = "tcea", precision = 10, scale = 5, nullable = false)
+    @Column(name = "tcea", precision = 15, scale = 9, nullable = false)
     private BigDecimal tcea;
 
     @Column(name = "exchange_rate", precision = 10, scale = 5)

@@ -30,7 +30,7 @@ public class DocumentDiscount {
     @Column(name = "nominal_value", nullable = false, precision = 15, scale = 2)
     private BigDecimal nominalValue; // Valor nominal antes del descuento
 
-    @Column(name = "discount_rate", nullable = false, precision = 10, scale = 5)
+    @Column(name = "discount_rate", precision = 15, scale = 9, nullable = false)
     private BigDecimal discountRate; // Tasa de descuento aplicada (d%)
 
     @Column(name = "interest_amount", nullable = false, precision = 15, scale = 2)
@@ -45,7 +45,7 @@ public class DocumentDiscount {
     @Column(name = "delivered_value", nullable = false, precision = 15, scale = 2)
     private BigDecimal deliveredValue; // Monto total entregado al final
 
-    @Column(name = "tcea", precision = 10, scale = 5)
+    @Column(name = "tcea", precision = 15, scale = 9)
     private BigDecimal tcea; // TCEA individual del documento
 
     @Column(name = "created_at", updatable = false)
