@@ -6,7 +6,7 @@ import com.letrify.app.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,11 +19,8 @@ public class ReportService {
         this.reportRepository = reportRepository;
     }
 
-    // Crear un nuevo reporte
+    // Crear un nuevo reporte asociado a un descuento
     public Report createReport(Report report) {
-        if (reportRepository.existsByUserIdAndReportType(report.getUser().getId(), report.getReportType())) {
-            throw new IllegalArgumentException("El usuario ya tiene un reporte de tipo '" + report.getReportType() + "'.");
-        }
         return reportRepository.save(report);
     }
 
@@ -32,10 +29,17 @@ public class ReportService {
         Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado con ID: " + id));
 
-        report.setReportType(updatedReport.getReportType());
-        report.setFilePath(updatedReport.getFilePath());
-        report.setDescription(updatedReport.getDescription());
-        report.setGeneratedAt(updatedReport.getGeneratedAt());
+        report.setBankName(updatedReport.getBankName());
+        report.setDiscountDate(updatedReport.getDiscountDate());
+        report.setRateType(updatedReport.getRateType());
+        report.setRate(updatedReport.getRate());
+        report.setRateDays(updatedReport.getRateDays());
+        report.setCapitalizationDays(updatedReport.getCapitalizationDays());
+        report.setTotalDiscountAmount(updatedReport.getTotalDiscountAmount());
+        report.setInterestAmount(updatedReport.getInterestAmount());
+        report.setTcea(updatedReport.getTcea());
+        report.setExchangeRate(updatedReport.getExchangeRate());
+        report.setReportGeneratedAt(updatedReport.getReportGeneratedAt());
 
         return reportRepository.save(report);
     }
@@ -58,18 +62,13 @@ public class ReportService {
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado con ID: " + id));
     }
 
-    // Obtener todos los reportes de un usuario específico
-    public List<Report> getReportsByUserId(Long userId) {
-        return reportRepository.findByUserId(userId);
-    }
-
-    // Obtener reportes por tipo de reporte
-    public List<Report> getReportsByReportType(String reportType) {
-        return reportRepository.findByReportType(reportType);
+    // Obtener reportes de un descuento específico
+    public List<Report> getReportsByDiscountId(Long discountId) {
+        return reportRepository.findByDiscountId(discountId);
     }
 
     // Obtener reportes generados en un rango de fechas
-    public List<Report> getReportsByDateRange(Date startDate, Date endDate) {
-        return reportRepository.findByGeneratedAtBetween(startDate, endDate);
+    public List<Report> getReportsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return reportRepository.findByReportGeneratedAtBetween(startDate, endDate);
     }
 }

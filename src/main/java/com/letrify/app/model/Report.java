@@ -1,7 +1,11 @@
 package com.letrify.app.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.letrify.app.model.Discount.RateType;
 
 @Entity
 @Table(name = "reports")
@@ -12,34 +16,42 @@ public class Report {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "discount_id", nullable = false)
+    private Discount discount;
 
-    @Column(name = "report_type", length = 50, nullable = false)
-    private String reportType;
+    @Column(name = "bank_name", nullable = false, length = 255)
+    private String bankName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "generated_at", nullable = false)
-    private Date generatedAt = new Date();
+    @Column(name = "discount_date", nullable = false)
+    private LocalDate discountDate;
 
-    @Column(name = "file_path", length = 255)
-    private String filePath;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rate_type", nullable = false)
+    private RateType rateType;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "rate", precision = 10, scale = 5, nullable = false)
+    private BigDecimal rate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    @Column(name = "rate_days", nullable = false)
+    private Integer rateDays;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    @Column(name = "capitalization_days")
+    private Integer capitalizationDays;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = new Date();
-    }
+    @Column(name = "total_discount_amount", precision = 12, scale = 2, nullable = false)
+    private BigDecimal totalDiscountAmount;
+
+    @Column(name = "interest_amount", precision = 12, scale = 2, nullable = false)
+    private BigDecimal interestAmount;
+
+    @Column(name = "tcea", precision = 10, scale = 5, nullable = false)
+    private BigDecimal tcea;
+
+    @Column(name = "exchange_rate", precision = 10, scale = 5)
+    private BigDecimal exchangeRate;
+
+    @Column(name = "report_generated_at", nullable = false)
+    private LocalDateTime reportGeneratedAt = LocalDateTime.now();
 
     // Getters y Setters
     public Long getId() {
@@ -50,59 +62,99 @@ public class Report {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Discount getDiscount() {
+        return discount;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
-    public String getReportType() {
-        return reportType;
+    public String getBankName() {
+        return bankName;
     }
 
-    public void setReportType(String reportType) {
-        this.reportType = reportType;
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 
-    public Date getGeneratedAt() {
-        return generatedAt;
+    public LocalDate getDiscountDate() {
+        return discountDate;
     }
 
-    public void setGeneratedAt(Date generatedAt) {
-        this.generatedAt = generatedAt;
+    public void setDiscountDate(LocalDate discountDate) {
+        this.discountDate = discountDate;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public RateType getRateType() {
+        return rateType;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setRateType(RateType rateType) {
+        this.rateType = rateType;
     }
 
-    public String getDescription() {
-        return description;
+    public BigDecimal getRate() {
+        return rate;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Integer getRateDays() {
+        return rateDays;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setRateDays(Integer rateDays) {
+        this.rateDays = rateDays;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Integer getCapitalizationDays() {
+        return capitalizationDays;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCapitalizationDays(Integer capitalizationDays) {
+        this.capitalizationDays = capitalizationDays;
+    }
+
+    public BigDecimal getTotalDiscountAmount() {
+        return totalDiscountAmount;
+    }
+
+    public void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
+        this.totalDiscountAmount = totalDiscountAmount;
+    }
+
+    public BigDecimal getInterestAmount() {
+        return interestAmount;
+    }
+
+    public void setInterestAmount(BigDecimal interestAmount) {
+        this.interestAmount = interestAmount;
+    }
+
+    public BigDecimal getTcea() {
+        return tcea;
+    }
+
+    public void setTcea(BigDecimal tcea) {
+        this.tcea = tcea;
+    }
+
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
+    public LocalDateTime getReportGeneratedAt() {
+        return reportGeneratedAt;
+    }
+
+    public void setReportGeneratedAt(LocalDateTime reportGeneratedAt) {
+        this.reportGeneratedAt = reportGeneratedAt;
     }
 }
