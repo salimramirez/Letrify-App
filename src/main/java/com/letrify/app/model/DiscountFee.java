@@ -2,7 +2,7 @@ package com.letrify.app.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "discount_fees")
@@ -16,33 +16,51 @@ public class DiscountFee {
     @JoinColumn(name = "discount_id", nullable = false)
     private Discount discount;
 
-    @Column(name = "fee_type", length = 100, nullable = false)
-    private String feeType;
+    @ManyToOne
+    @JoinColumn(name = "bank_fee_id")
+    private BankFee bankFee; // Relación con bank_fees si aplica
+
+    @Column(name = "fee_name", length = 255, nullable = false)
+    private String feeName; // Nombre del costo
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fee_type", nullable = false)
+    private FeeType feeType; // FIJO o PORCENTUAL
+
+    @Column(name = "fee_amount", precision = 12, scale = 6, nullable = false)
+    private BigDecimal feeAmount; // Monto fijo o porcentaje
 
     @Enumerated(EnumType.STRING)
     @Column(name = "fee_timing", nullable = false)
-    private FeeTiming feeTiming;
+    private FeeTiming feeTiming; // INICIAL o FINAL
 
-    @Column(name = "amount", precision = 12, scale = 2, nullable = false)
-    private BigDecimal amount;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fee_source", nullable = false)
+    private FeeSource feeSource; // BANCARIO o MANUAL
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Enums
+    public enum FeeType {
+        FIJO, PORCENTUAL;
     }
 
     // Enum para fee_timing
     public enum FeeTiming {
-        INICIO,
-        FINAL;
+        INICIAL, FINAL;
+    }
+
+    public enum FeeSource {
+        BANCARIO, MANUAL;
     }
 
     // Getters y Setters
@@ -62,12 +80,36 @@ public class DiscountFee {
         this.discount = discount;
     }
 
-    public String getFeeType() {
+    public BankFee getBankFee() {
+        return bankFee;
+    }
+
+    public void setBankFee(BankFee bankFee) {
+        this.bankFee = bankFee;
+    }
+
+    public String getFeeName() {
+        return feeName;
+    }
+
+    public void setFeeName(String feeName) {
+        this.feeName = feeName;
+    }
+
+    public FeeType getFeeType() {
         return feeType;
     }
 
-    public void setFeeType(String feeType) {
+    public void setFeeType(FeeType feeType) {
         this.feeType = feeType;
+    }
+
+    public BigDecimal getFeeAmount() {
+        return feeAmount;
+    }
+
+    public void setFeeAmount(BigDecimal feeAmount) {
+        this.feeAmount = feeAmount;
     }
 
     public FeeTiming getFeeTiming() {
@@ -78,27 +120,27 @@ public class DiscountFee {
         this.feeTiming = feeTiming;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public FeeSource getFeeSource() {
+        return feeSource;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setFeeSource(FeeSource feeSource) {
+        this.feeSource = feeSource;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

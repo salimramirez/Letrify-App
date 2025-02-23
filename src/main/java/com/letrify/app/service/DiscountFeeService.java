@@ -21,7 +21,7 @@ public class DiscountFeeService {
 
     // Crear un nuevo gasto asociado a un descuento
     public DiscountFee createDiscountFee(DiscountFee discountFee) {
-        if (discountFeeRepository.existsByDiscountIdAndFeeType(discountFee.getDiscount().getId(), discountFee.getFeeType())) {
+        if (discountFeeRepository.existsByDiscount_IdAndFeeType(discountFee.getDiscount().getId(), discountFee.getFeeType())) {
             throw new IllegalArgumentException("Ya existe un gasto de tipo '" + discountFee.getFeeType() + "' para este descuento.");
         }
 
@@ -38,7 +38,7 @@ public class DiscountFeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto no encontrado con ID: " + id));
 
         discountFee.setFeeType(updatedFee.getFeeType());
-        discountFee.setAmount(updatedFee.getAmount());
+        discountFee.setFeeAmount(updatedFee.getFeeAmount()); // FIX: usar feeAmount en vez de amount
         discountFee.setFeeTiming(updatedFee.getFeeTiming());
 
         return discountFeeRepository.save(discountFee);
@@ -64,24 +64,30 @@ public class DiscountFeeService {
 
     // Obtener todos los gastos asociados a un descuento
     public List<DiscountFee> getFeesByDiscountId(Long discountId) {
-        return discountFeeRepository.findByDiscountId(discountId);
+        return discountFeeRepository.findByDiscount_Id(discountId); // FIX: Usar findByDiscount_Id
     }
 
-    // Obtener todos los gastos según su feeTiming (INICIO o FINAL)
+    // Obtener todos los gastos según su feeTiming (INICIAL o FINAL)
     public List<DiscountFee> getFeesByFeeTiming(DiscountFee.FeeTiming feeTiming) {
         return discountFeeRepository.findByFeeTiming(feeTiming);
     }
 
     // Obtener todos los gastos de un descuento según feeTiming (INICIO o FINAL)
     public List<DiscountFee> getFeesByDiscountAndFeeTiming(Long discountId, DiscountFee.FeeTiming feeTiming) {
-        return discountFeeRepository.findByDiscountIdAndFeeTiming(discountId, feeTiming);
+        return discountFeeRepository.findByDiscount_IdAndFeeTiming(discountId, feeTiming);
     }
 
     // Calcular el total de gastos asociados a un descuento
     public BigDecimal calculateTotalFeesForDiscount(Long discountId) {
-        List<DiscountFee> fees = discountFeeRepository.findByDiscountId(discountId);
+        List<DiscountFee> fees = discountFeeRepository.findByDiscount_Id(discountId); // FIX: Usar findByDiscount_Id
         return fees.stream()
-                .map(DiscountFee::getAmount)
+                .map(DiscountFee::getFeeAmount) // FIX: Usar getFeeAmount
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    // Validar si ya existe un fee de cierto tipo para un descuento
+    public boolean existsByDiscount_IdAndFeeType(Long discountId, DiscountFee.FeeType feeType) {
+        return discountFeeRepository.existsByDiscount_IdAndFeeType(discountId, feeType);
+    }
+    
 }
