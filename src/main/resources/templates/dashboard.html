@@ -24,6 +24,7 @@
     <script src="js/portfolioTable.js" defer></script>
     <script src="js/portfolioDocumentsManager.js" defer></script>
     <script src="js/discountFormHandler.js" defer></script>
+    <script src="js/discountModalHandler.js" defer></script>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -634,7 +635,7 @@
                                             <!-- Fecha del Descuento -->
                                             <div class="col">
                                                 <div class="form-floating">
-                                                    <input type="date" id="discountDate" class="form-control" required>
+                                                    <input type="date" id="discountDiscountDate" class="form-control" required>
                                                     <label for="discountDate">Fecha del Descuento</label>
                                                 </div>
                                             </div>
@@ -718,7 +719,7 @@
                                                 </div>
 
                                                 <!-- 📌 Botón para agregar costos manuales (solo visible cuando la lista está visible) -->
-                                                <button id="btnAddManualCostList" class="btn btn-outline-primary btn-sm mt-3 mb-3" style="display: none;">
+                                                <button type="button" id="btnAddManualCostList" class="btn btn-outline-primary btn-sm mt-3 mb-3" style="display: none;">
                                                     + Agregar Otros Costos
                                                 </button>
 
@@ -795,6 +796,10 @@
                                         <!-- Tipo de Cambio USD → PEN (Collapse Clickable) -->
                                         <div class="col">
                                             <div class="border rounded p-2 bg-light">
+
+                                                <!-- ID Oculto -->
+                                                <input type="hidden" id="exchangeRateId" value="">
+
                                                 <!-- Sección Clickable -->
                                                 <div class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#exchangeRateDetails" style="cursor: pointer;">
                                                     <h6 class="mb-0"><strong>Tipo de Cambio (USD → PEN)</strong></h6>

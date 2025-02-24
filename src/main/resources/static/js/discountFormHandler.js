@@ -148,7 +148,7 @@ async function cargarCostosBanco(bankId) {
                 ? `${(costo.feeAmount * 100).toFixed(2)}%`  // Multiplicamos por 100 y agregamos "%"
                 : costo.feeAmount;  // Si es fijo, lo dejamos igual
 
-            let fila = `<tr>
+            let fila = `<tr data-bank-fee-id="${costo.id}">
                 <td>${costo.feeName}</td>
                 <td>${costo.feeType === "FIJO" ? "Fijo" : "Porcentual"}</td>
                 <td>${formattedAmount}</td>
@@ -163,7 +163,7 @@ async function cargarCostosBanco(bankId) {
                 ? `${(costo.feeAmount * 100).toFixed(2)}%` 
                 : costo.feeAmount;
 
-            let item = `<div class="border p-1 mb-1 rounded" style="font-size: 14px;">
+            let item = `<div class="border p-1 mb-1 rounded" style="font-size: 14px;" data-bank-fee-id="${costo.id}">
                 <p class="mb-0"><strong>${costo.feeName}</strong> (Banco)</p>
                 <p class="mb-0"><small>Tipo: ${costo.feeType === "FIJO" ? "Fijo" : "Porcentual"}</small></p>
                 <p class="mb-0"><small>Monto: ${formattedAmount}</small></p>
@@ -198,12 +198,16 @@ async function obtenerTipoCambio() {
         document.getElementById("source").textContent = `${exchangeRate.source}`;
         document.getElementById("lastUpdated").textContent = `${formatearFechaHora(exchangeRate.lastUpdated)}`;
 
+        // NUEVO: Guardar claramente el exchangeRate.id en el campo oculto
+        document.getElementById("exchangeRateId").value = exchangeRate.id;
+
     } catch (error) {
         console.error("❌ Error obteniendo el tipo de cambio:", error);
         document.getElementById("exchangeRate").textContent = "Error";
         document.getElementById("exchangeDate").textContent = "No disponible";
         document.getElementById("source").textContent = "";
         document.getElementById("lastUpdated").textContent = "";
+        document.getElementById("exchangeRateId").value = ""; // Limpiar si ocurre error
     }
 }
 
