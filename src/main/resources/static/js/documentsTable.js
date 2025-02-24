@@ -283,7 +283,8 @@ function formatearTexto(texto) {
 // Función para asignar colores a los estados
 function getEstadoClase(estado) {
     if (estado === "PENDIENTE") return "text-warning fw-bold";
-    if (estado === "APROBADO") return "text-success fw-bold";
-    if (estado === "RECHAZADO") return "text-danger fw-bold";
+    if (estado === "PROGRAMADO") return "text-primary fw-bold";
+    if (estado === "EN_DESCUENTO") return "text-success fw-bold";
+    if (estado === "CANCELADO") return "text-danger fw-bold";
     return "";
 }

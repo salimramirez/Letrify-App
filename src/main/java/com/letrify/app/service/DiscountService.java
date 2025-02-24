@@ -1,8 +1,16 @@
 package com.letrify.app.service;
 
+import com.letrify.app.model.Bank;
 import com.letrify.app.model.Discount;
+import com.letrify.app.model.DiscountFee;
 import com.letrify.app.model.ExchangeRate;
+import com.letrify.app.model.Portfolio;
+import com.letrify.app.model.Portfolio.PortfolioStatus;
+import com.letrify.app.repository.BankRepository;
 import com.letrify.app.repository.DiscountRepository;
+import com.letrify.app.repository.ExchangeRateRepository;
+import com.letrify.app.repository.PortfolioRepository;
+import com.letrify.app.repository.DiscountFeeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,36 +26,70 @@ import java.util.Optional;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
-    private final ExchangeRateService exchangeRateService;
+    private final PortfolioRepository portfolioRepository;
+    private final BankRepository bankRepository;
+    private final ExchangeRateRepository exchangeRateRepository;
+    private final DiscountFeeRepository discountFeeRepository;
 
     @Autowired
-    public DiscountService(DiscountRepository discountRepository, ExchangeRateService exchangeRateService) {
+    public DiscountService(DiscountRepository discountRepository,
+                        PortfolioRepository portfolioRepository,
+                        BankRepository bankRepository,
+                        ExchangeRateRepository exchangeRateRepository,
+                        DiscountFeeRepository discountFeeRepository) {
         this.discountRepository = discountRepository;
-        this.exchangeRateService = exchangeRateService;
+        this.portfolioRepository = portfolioRepository;
+        this.bankRepository = bankRepository;
+        this.exchangeRateRepository = exchangeRateRepository;
+        this.discountFeeRepository = discountFeeRepository;
     }
 
     // Crear un nuevo descuento
-    public Discount createDiscount(Discount discount) {
-        if (discountRepository.existsByPortfolioIdAndBankId(discount.getPortfolio().getId(), discount.getBank().getId())) {
+    public Discount createDiscount(Discount discount, Long portfolioId, Long bankId, Long exchangeRateId, List<DiscountFee> fees) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new IllegalArgumentException("Portfolio no encontrado."));
+        
+        Bank bank = bankRepository.findById(bankId)
+                .orElseThrow(() -> new IllegalArgumentException("Banco no encontrado."));
+        
+        discount.setPortfolio(portfolio);
+        discount.setBank(bank);
+    
+        if(exchangeRateId != null){
+            ExchangeRate exchangeRate = exchangeRateRepository.findById(exchangeRateId)
+                    .orElseThrow(() -> new IllegalArgumentException("Tipo de cambio no encontrado."));
+            discount.setExchangeRate(exchangeRate);
+        }
+    
+        if (discountRepository.existsByPortfolio_IdAndBank_Id(portfolioId, bankId)) {
             throw new IllegalArgumentException("Ya existe un descuento registrado para esta cartera y banco.");
         }
 
-        // Validación de fechas y tasas
-        if (discount.getDiscountDate() == null) {
-            throw new IllegalArgumentException("La fecha de descuento no puede ser nula.");
+        // 📌 Asignaciones temporales para evitar errores (luego implementarás el cálculo real):
+        discount.setInterestAmount(BigDecimal.ZERO);
+        discount.setTotalDiscountAmount(BigDecimal.ZERO);
+        discount.setTcea(BigDecimal.ZERO);
+
+        Discount savedDiscount = discountRepository.save(discount);
+
+        // 🔹 Guardar fees asociados claramente:
+        for (DiscountFee fee : fees) {
+            fee.setDiscount(savedDiscount); // Asociar al descuento recién creado
+            discountFeeRepository.save(fee);
         }
-        if (discount.getRate() == null || discount.getRate().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("La tasa debe ser mayor que 0.");
-        }
-        if (discount.getRateDays() == null || discount.getRateDays() <= 0) {
-            throw new IllegalArgumentException("El período de la tasa en días debe ser mayor a 0.");
+    
+        // 🔹 **Actualizar el estado del portfolio** basado en la fecha del descuento:
+        if (discount.getDiscountDate().isAfter(LocalDate.now())) {
+            portfolio.setStatus(PortfolioStatus.PROGRAMADO);
+        } else {
+            portfolio.setStatus(PortfolioStatus.EN_DESCUENTO);
         }
 
-        // Obtener el tipo de cambio más reciente
-        ExchangeRate latestRate = exchangeRateService.fetchAndSaveExchangeRate();
-        discount.setExchangeRate(latestRate);
+        // Asociar el banco al portfolio
+        portfolio.setBank(bank);
+        portfolioRepository.save(portfolio); // Guardar cambios en el portfolio
 
-        return discountRepository.save(discount);
+        return savedDiscount;
     }
 
     // Actualizar un descuento existente
@@ -89,12 +131,12 @@ public class DiscountService {
 
     // Obtener todos los descuentos de una cartera específica
     public List<Discount> getDiscountsByPortfolioId(Long portfolioId) {
-        return discountRepository.findByPortfolioId(portfolioId);
+        return discountRepository.findByPortfolio_Id(portfolioId);
     }
 
     // Obtener todos los descuentos de un banco específico
     public List<Discount> getDiscountsByBankId(Long bankId) {
-        return discountRepository.findByBankId(bankId);
+        return discountRepository.findByBank_Id(bankId);
     }
 
     // Obtener descuentos con una TCEA superior a un valor dado

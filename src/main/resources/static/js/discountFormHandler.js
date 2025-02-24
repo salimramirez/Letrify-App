@@ -243,6 +243,14 @@ function formatearFechaHora(fechaHoraISO) {
  */
 function toggleManualCostForm(type, show = true) {
     let form = document.getElementById(`manualCostForm${type}`);
+
+    if (!show) { // Cuando ocultas, limpia los campos
+        document.getElementById(`manualCostName${type}`).value = "";
+        document.getElementById(`manualCostAmount${type}`).value = "";
+        document.getElementById(`manualCostType${type}`).selectedIndex = 0; // Opcional
+        document.getElementById(`manualCostTiming${type}`).selectedIndex = 0; // Opcional
+    }
+
     form.style.display = show ? "block" : "none";
 }
 

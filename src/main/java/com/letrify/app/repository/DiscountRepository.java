@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
     // Buscar todos los descuentos asociados a una cartera específica
-    List<Discount> findByPortfolioId(Long portfolioId);
+    List<Discount> findByPortfolio_Id(Long portfolioId);
 
     // Buscar todos los descuentos asociados a un banco específico
-    List<Discount> findByBankId(Long bankId);
+    List<Discount> findByBank_Id(Long bankId);
 
     // Buscar descuentos con una TCEA superior a un valor dado
     List<Discount> findByTceaGreaterThan(BigDecimal tcea);
 
     // Verificar si ya existe un descuento para una combinación específica de cartera y banco
-    boolean existsByPortfolioIdAndBankId(Long portfolioId, Long bankId);
+    boolean existsByPortfolio_IdAndBank_Id(Long portfolioId, Long bankId);
 
     // Buscar descuentos por rango de fecha de descuento
     List<Discount> findByDiscountDateBetween(LocalDate startDate, LocalDate endDate);
@@ -32,6 +32,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     List<Discount> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     // Buscar todos los descuentos asociados a un tipo de cambio específico
-    List<Discount> findByExchangeRateId(Long exchangeRateId);
+    List<Discount> findByExchangeRate_Id(Long exchangeRateId);
 
 }

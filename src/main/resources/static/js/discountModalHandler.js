@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Mostrar claramente en consola los datos capturados para verificar
         console.log("Datos capturados del formulario:", discountData);
+
+        // Aquí llamas a la función de envío:
+        enviarDescuentoAlBackend(discountData);
     });
 });
 
@@ -84,4 +87,30 @@ function capturarCostosMovil() {
     });
 
     return fees;
+}
+
+// =================
+// ENVIAR DESCUENTOS
+// =================
+
+async function enviarDescuentoAlBackend(discountData) {
+    try {
+        const response = await fetch("/api/discounts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(discountData)
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            console.log("✅ Éxito enviando descuento:", responseData);
+        } else {
+            console.error("⚠️ Error desde servidor:", responseData);
+        }
+    } catch (error) {
+        console.error("❌ Error en la solicitud:", error);
+    }
 }

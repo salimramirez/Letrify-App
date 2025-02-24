@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "portfolios")
@@ -29,6 +30,7 @@ public class Portfolio {
     @Column(name = "discount_date", nullable = false)
     private LocalDate discountDate;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "bank_id", nullable = true)
     private Bank bank;
@@ -58,8 +60,9 @@ public class Portfolio {
     // Enum para el estado de la cartera
     public enum PortfolioStatus {
         PENDIENTE,
+        PROGRAMADO,
         EN_DESCUENTO,
-        CANCELADA
+        CANCELADO
     }
 
     // Enum para la moneda
