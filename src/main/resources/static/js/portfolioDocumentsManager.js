@@ -79,10 +79,22 @@ function abrirModalSeleccionDocumentos() {
     const portfolioId = this.getAttribute("data-id");
     console.log("📌 Selección de documentos para cartera:", portfolioId);
 
-    // Obtener el nombre y la moneda de la cartera desde la UI
-    const portfolioRow = document.querySelector(`button[data-id="${portfolioId}"]`).closest("tr");
-    const portfolioName = portfolioRow ? portfolioRow.children[1].textContent : "Desconocido";
-    const portfolioCurrency = portfolioRow ? portfolioRow.children[4].textContent : "N/A";
+    // 📌 Seleccionar SOLO la fila de la cartera en la tabla correcta
+    const portfolioRow = document.querySelector(`#portfolioTableBody button[data-id="${portfolioId}"]`)?.closest("tr");
+
+    if (!portfolioRow) {
+        console.error("❌ No se encontró la fila de la cartera correcta.");
+        return;
+    }
+
+    console.log("🔍 Fila seleccionada:", portfolioRow ? portfolioRow.innerHTML : "No encontrada");
+
+    // 📌 CORRECCIÓN: Buscar las celdas de la cartera por clases CSS en lugar de índices fijos
+    const portfolioName = portfolioRow.querySelector(".portfolio-name")?.textContent.trim() || "Desconocido";
+    const portfolioCurrency = portfolioRow.querySelector(".portfolio-currency")?.textContent.trim() || "N/A";   
+
+    console.log("📌 Nombre detectado:", portfolioName);
+    console.log("📌 Moneda detectada:", portfolioCurrency);
 
     // Asignar los valores en el modal
     document.getElementById("selectedPortfolioName").textContent = portfolioName;
@@ -95,12 +107,15 @@ function abrirModalSeleccionDocumentos() {
     const modal = new bootstrap.Modal(document.getElementById("selectDocumentsModal"));
     modal.show();
 
+    console.log(`📌 Llamando a cargarDocumentosDisponibles con: portfolioId=${portfolioId}, portfolioCurrency=${portfolioCurrency}`);    
+
     // Cargar los documentos disponibles en el modal
-    cargarDocumentosDisponibles(portfolioId);
+    cargarDocumentosDisponibles(portfolioId, portfolioCurrency);
+
 }
 
 // Función para cargar documentos disponibles en el modal
-async function cargarDocumentosDisponibles(portfolioId) {
+async function cargarDocumentosDisponibles(portfolioId, portfolioCurrency) {
     const documentList = document.getElementById("documentList");
     documentList.innerHTML = "<p class='text-muted'>Cargando documentos...</p>";
 
@@ -125,9 +140,23 @@ async function cargarDocumentosDisponibles(portfolioId) {
             return;
         }
 
+        console.log("📌 Documentos antes del filtrado:", documentos);
+        console.log("📌 Moneda de la cartera seleccionada:", portfolioCurrency);
+        
+        // 📌 Validar que la moneda esté bien definida
+        if (!portfolioCurrency || portfolioCurrency === "N/A") {
+            console.error("❌ Error: La moneda de la cartera no está definida correctamente.");
+            return;
+        }
+
         // Obtener documentos filtrados según la moneda de la cartera
-        const documentosFiltrados = obtenerDocumentosFiltrados(documentos, portfolioId);
+        const documentosFiltrados = obtenerDocumentosFiltrados(documentos, portfolioCurrency);
+        console.log("📌 Documentos después del filtrado por moneda:", documentosFiltrados);
+
         if (documentosFiltrados.length === 0) {
+            console.warn(`⚠️ No hay documentos disponibles en ${portfolioCurrency}. 
+                          Documentos totales: ${documentos.length}, 
+                          Documentos filtrados: ${documentosFiltrados.length}`);
             documentList.innerHTML = "<p class='text-muted'>No hay documentos disponibles con esta moneda.</p>";
             return;
         }
@@ -216,9 +245,7 @@ function formatearFecha(fecha) {
 }
 
 // Función para obtener documentos filtrados por la moneda de la cartera
-function obtenerDocumentosFiltrados(documentos, portfolioId) {
-    const portfolioRow = document.querySelector(`button[data-id="${portfolioId}"]`).closest("tr");
-    const portfolioCurrency = portfolioRow ? portfolioRow.children[4].textContent : "N/A";
+function obtenerDocumentosFiltrados(documentos, portfolioCurrency) {
     return documentos.filter(doc => doc.currency === portfolioCurrency);
 }
 

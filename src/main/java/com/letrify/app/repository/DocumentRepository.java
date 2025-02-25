@@ -71,4 +71,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Obtener documentos que pertenecen a otras carteras (excluyendo la cartera seleccionada)
     List<Document> findByPortfolioIsNotNullAndPortfolio_IdNot(Long portfolioId);
 
+    // Obtener solo los documentos PENDIENTE sin discountDate asignado
+    List<Document> findByPortfolio_IdAndStatusAndDiscountDateIsNull(Long portfolioId, Document.DocumentStatus status);
+
 }

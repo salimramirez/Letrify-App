@@ -31,10 +31,10 @@ function insertarCarterasEnTabla(carteras) {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${cartera.portfolioName}</td>
+            <td class="portfolio-name">${cartera.portfolioName}</td>
             <td>${formatearFecha(cartera.createdAt)}</td>
             <td>${formatearFecha(cartera.discountDate)}</td>
-            <td>${cartera.currency}</td>
+            <td class="portfolio-currency">${cartera.currency}</td>
             <td class="${getEstadoClase(cartera.status)}">${cartera.status}</td>
             <td>
                 <button class="btn btn-sm btn-primary add-doc-btn" data-id="${cartera.id}">Agregar</button>

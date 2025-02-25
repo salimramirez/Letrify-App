@@ -86,8 +86,13 @@ public class DiscountController {
                 fees.add(fee);
             }
 
-            // ✅ Ahora llama correctamente al método del servicio:
+            // Crear el descuento en la base de datos
             Discount createdDiscount = discountService.createDiscount(discount, portfolioId, bankId, exchangeRateId, fees);
+
+            // Ahora aplicamos el descuento a los documentos de la cartera
+            discountService.applyDiscountToDocuments(createdDiscount.getId(), portfolioId, createdDiscount.getRate());
+
+            System.out.println("✅ Descuento creado y aplicado a los documentos.");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
         } catch (IllegalArgumentException e) {

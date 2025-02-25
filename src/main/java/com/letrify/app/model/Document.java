@@ -91,8 +91,9 @@ public class Document {
     // Enum para el estado del documento
     public enum DocumentStatus {
         PENDIENTE,
+        PROGRAMADO,
         EN_DESCUENTO,
-        CANCELADO;
+        CANCELADO
     }
 
     // Getters y Setters
