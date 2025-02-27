@@ -59,7 +59,8 @@ public class BankFee {
     // Enum para FeeType (FIJO o PORCENTUAL)
     public enum FeeType {
         FIJO, 
-        PORCENTUAL;
+        PORCENTUAL,
+        RETENCION;
     }
 
     // Enum para FeeTiming (INICIAL o FINAL)

@@ -45,7 +45,9 @@ function capturarCostosEscritorio() {
             fees.push({
                 bankFeeId: bankFeeId ? parseInt(bankFeeId) : null,
                 feeName: celdas[0].textContent.trim(),
-                feeType: celdas[1].textContent.trim().toUpperCase() === "FIJO" ? "FIJO" : "PORCENTUAL",
+                feeType: celdas[1].textContent.trim().toUpperCase() === "FIJO" ? "FIJO" :
+                        celdas[1].textContent.trim().toUpperCase() === "PORCENTUAL" ? "PORCENTUAL" :
+                        "RETENCION",
                 feeAmount: parseFloat(celdas[2].textContent.replace('%', '').trim()),
                 feeTiming: celdas[3].textContent.trim().toUpperCase() === "INICIAL" ? "INICIAL" : "FINAL",
                 feeSource: celdas[4].textContent.trim().toUpperCase() === "BANCO" ? "BANCARIO" : "MANUAL"
@@ -71,7 +73,9 @@ function capturarCostosMovil() {
 
         const bankFeeId = item.getAttribute("data-bank-fee-id"); // siempre será null en manuales, pero se mantiene por consistencia
         const nombre = nombreCompleto.replace(" (Otro)", "").trim();
-        const tipo = detalles[0].textContent.replace("Tipo:", "").trim().toUpperCase() === "FIJO" ? "FIJO" : "PORCENTUAL";
+        const tipo = detalles[0].textContent.replace("Tipo:", "").trim().toUpperCase() === "FIJO" ? "FIJO" :
+                    detalles[0].textContent.replace("Tipo:", "").trim().toUpperCase() === "PORCENTUAL" ? "PORCENTUAL" :
+                    "RETENCION";
         const montoTexto = detalles[1].textContent.replace("Monto:", "").replace("%","").trim();
         const monto = parseFloat(montoTexto);
         const aplicacion = detalles[2].textContent.replace("Aplicación:", "").trim().toUpperCase() === "INICIAL" ? "INICIAL" : "FINAL";

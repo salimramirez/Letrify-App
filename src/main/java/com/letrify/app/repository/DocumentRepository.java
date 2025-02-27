@@ -74,4 +74,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     // Obtener solo los documentos PENDIENTE sin discountDate asignado
     List<Document> findByPortfolio_IdAndStatusAndDiscountDateIsNull(Long portfolioId, Document.DocumentStatus status);
 
+    // Obtener documentos por cartera y estado (sin depender de discountDate)
+    List<Document> findByPortfolio_IdAndStatus(Long portfolioId, Document.DocumentStatus status);
 }

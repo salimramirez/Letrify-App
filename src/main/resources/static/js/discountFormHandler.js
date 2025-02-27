@@ -143,14 +143,14 @@ async function cargarCostosBanco(bankId) {
         }
 
         costos.forEach(costo => {
-            // **Verificamos si el costo es PORCENTUAL y lo convertimos a porcentaje**
-            let formattedAmount = costo.feeType === "PORCENTUAL" 
-                ? `${(costo.feeAmount * 100).toFixed(2)}%`  // Multiplicamos por 100 y agregamos "%"
-                : costo.feeAmount;  // Si es fijo, lo dejamos igual
-
+            // **Verificamos si el costo es PORCENTUAL o RETENCION y lo convertimos a porcentaje**
+            let formattedAmount = (costo.feeType === "PORCENTUAL" || costo.feeType === "RETENCION") 
+                ? `${(costo.feeAmount * 100).toFixed(4)}%`  // Multiplicamos por 100 y agregamos "%"
+                : costo.feeAmount;  // Si es FIJO, lo dejamos igual
+        
             let fila = `<tr data-bank-fee-id="${costo.id}">
                 <td>${costo.feeName}</td>
-                <td>${costo.feeType === "FIJO" ? "Fijo" : "Porcentual"}</td>
+                <td>${costo.feeType === "FIJO" ? "Fijo" : (costo.feeType === "RETENCION" ? "Retención" : "Porcentual")}</td>
                 <td>${formattedAmount}</td>
                 <td>${costo.feeTiming === "INICIAL" ? "Inicial" : "Final"}</td>
                 <td>Banco</td>
@@ -159,13 +159,13 @@ async function cargarCostosBanco(bankId) {
         });
 
         costos.forEach(costo => {
-            let formattedAmount = costo.feeType === "PORCENTUAL" 
-                ? `${(costo.feeAmount * 100).toFixed(2)}%` 
+            let formattedAmount = (costo.feeType === "PORCENTUAL" || costo.feeType === "RETENCION") 
+                ? `${(costo.feeAmount * 100).toFixed(4)}%` 
                 : costo.feeAmount;
-
+        
             let item = `<div class="border p-1 mb-1 rounded" style="font-size: 14px;" data-bank-fee-id="${costo.id}">
                 <p class="mb-0"><strong>${costo.feeName}</strong> (Banco)</p>
-                <p class="mb-0"><small>Tipo: ${costo.feeType === "FIJO" ? "Fijo" : "Porcentual"}</small></p>
+                <p class="mb-0"><small>Tipo: ${costo.feeType === "FIJO" ? "Fijo" : (costo.feeType === "RETENCION" ? "Retención" : "Porcentual")}</small></p>
                 <p class="mb-0"><small>Monto: ${formattedAmount}</small></p>
                 <p class="mb-0"><small>Aplicación: ${costo.feeTiming === "INICIAL" ? "Inicial" : "Final"}</small></p>
             </div>`;
@@ -268,8 +268,12 @@ function agregarCostoManual(view) {
         return;
     }
 
-    let formattedType = type === "FIJO" ? "Fijo" : "Porcentual";
+    // **Formatear el tipo correctamente para mostrar en el frontend**
+    let formattedType = type === "FIJO" ? "Fijo" : (type === "RETENCION" ? "Retención" : "Porcentual");
     let formattedTiming = timing === "INICIAL" ? "Inicial" : "Final";
+
+    // **Formatear el monto si es porcentaje o retención**
+    let formattedAmount = formatearMontoCosto(amount, type);
 
     if (view === "Table") {
         let tablaBody = document.getElementById("bankFeesTableBody");
@@ -281,7 +285,7 @@ function agregarCostoManual(view) {
         let nuevaFila = `<tr>
             <td>${name}</td>
             <td>${formattedType}</td>
-            <td>${amount}</td>
+            <td>${formattedAmount}</td>
             <td>${formattedTiming}</td>
             <td>Otro</td>
         </tr>`;
@@ -297,7 +301,7 @@ function agregarCostoManual(view) {
         let nuevoItem = `<div class="border p-1 mb-1 rounded" style="font-size: 14px;">
             <p class="mb-0"><strong>${name}</strong> (Otro)</p>
             <p class="mb-0"><small>Tipo: ${formattedType}</small></p>
-            <p class="mb-0"><small>Monto: ${amount}</small></p>
+            <p class="mb-0"><small>Aplicación: ${formattedAmount}</small></p>
             <p class="mb-0"><small>Aplicación: ${formattedTiming}</small></p>
         </div>`;
 
@@ -325,4 +329,13 @@ function actualizarCapitalizacion() {
     } else {
         capitalizationRow.style.display = "none";
     }
+}
+
+/**
+ * Formatea el monto de los costos porcentuales y de retención con 2 decimales y el símbolo '%'.
+ */
+function formatearMontoCosto(amount, type) {
+    return (type === "PORCENTUAL" || type === "RETENCION") 
+        ? `${parseFloat(amount).toFixed(4)}%` 
+        : amount;
 }

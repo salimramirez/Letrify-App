@@ -27,4 +27,7 @@ public interface DiscountFeeRepository extends JpaRepository<DiscountFee, Long> 
 
     // Buscar todos los gastos de un descuento específico y su fee_timing
     List<DiscountFee> findByDiscount_IdAndFeeTiming(Long discountId, DiscountFee.FeeTiming feeTiming);
+
+    // Buscar todos los gastos de tipo RETENCIÓN asociados a un descuento específico
+    List<DiscountFee> findByDiscount_IdAndFeeType(Long discountId, DiscountFee.FeeType feeType);
 }

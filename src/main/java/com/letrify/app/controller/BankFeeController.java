@@ -44,9 +44,19 @@ public class BankFeeController {
 
     // Crear o actualizar una tarifa bancaria
     @PostMapping
-    public ResponseEntity<BankFee> createBankFee(@RequestBody BankFee bankFee) {
-        BankFee savedFee = bankFeeService.saveBankFee(bankFee);
-        return ResponseEntity.ok(savedFee);
+    public ResponseEntity<?> createBankFee(@RequestBody Map<String, Object> requestData) {
+        try {
+            Long bankId = Long.valueOf(requestData.get("bankId").toString());
+            String feeName = requestData.get("feeName").toString();
+            String feeType = requestData.get("feeType").toString();
+            BigDecimal feeAmount = new BigDecimal(requestData.get("feeAmount").toString());
+            String feeTiming = requestData.get("feeTiming").toString();
+    
+            BankFee savedFee = bankFeeService.createBankFee(bankId, feeName, feeType, feeAmount, feeTiming);
+            return ResponseEntity.ok(savedFee);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al crear la tarifa bancaria: " + e.getMessage());
+        }
     }
 
     // Actualizar una tarifa bancaria completa

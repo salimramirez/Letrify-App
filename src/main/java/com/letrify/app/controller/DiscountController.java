@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,11 @@ public class DiscountController {
             discount.setDiscountDate(LocalDate.parse(discountData.get("discountDate").toString()));
             discount.setRateType(RateType.valueOf(discountData.get("rateType").toString()));
             discount.setRateDays(Integer.parseInt(discountData.get("rateDays").toString()));
-            discount.setRate(new BigDecimal(discountData.get("rate").toString()));
+
+            // Convertir la tasa ingresada en el frontend a decimal
+            BigDecimal ratePercentage = new BigDecimal(discountData.get("rate").toString());
+            BigDecimal rateDecimal = ratePercentage.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
+            discount.setRate(rateDecimal);
             
             if(discountData.get("capitalizationDays") != null) {
                 discount.setCapitalizationDays(Integer.parseInt(discountData.get("capitalizationDays").toString()));

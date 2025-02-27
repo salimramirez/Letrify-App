@@ -51,7 +51,7 @@ public class DiscountFee {
 
     // Enums
     public enum FeeType {
-        FIJO, PORCENTUAL;
+        FIJO, PORCENTUAL, RETENCION;
     }
 
     // Enum para fee_timing
