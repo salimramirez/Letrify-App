@@ -119,10 +119,22 @@ async function enviarDescuentoAlBackend(discountData) {
             } else {
                 console.warn("⚠️ loadDiscounts() no está definida en este contexto.");
             }
+
+            // ✅ Mostrar mensaje de éxito
+            mostrarMensaje("Descuento creado exitosamente", "success");
+
+            // 📌 Cerrar el modal automáticamente después de guardar el descuento
+            const modalElement = document.getElementById("addDiscountModal"); // Asegúrate de que este sea el ID correcto del modal
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
         } else {
             console.error("⚠️ Error desde servidor:", responseData);
+            mostrarMensaje("❌ Error al crear descuento", "error");
         }
     } catch (error) {
         console.error("❌ Error en la solicitud:", error);
+        mostrarMensaje("❌ Error en la solicitud", "error");
     }
 }
