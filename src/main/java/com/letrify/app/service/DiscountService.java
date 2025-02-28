@@ -422,4 +422,9 @@ public class DiscountService {
     public List<Discount> getDiscountsByDateRange(LocalDate startDate, LocalDate endDate) {
         return discountRepository.findByDiscountDateBetween(startDate, endDate);
     }
+
+    public List<DocumentDiscount> getDocumentsByDiscountId(Long discountId) {
+        return documentDiscountRepository.findByDiscount_Id(discountId);
+    }    
+
 }

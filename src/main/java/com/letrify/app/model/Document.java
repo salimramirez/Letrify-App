@@ -5,8 +5,11 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "documents")
@@ -71,6 +74,10 @@ public class Document {
     @JoinColumn(name = "portfolio_id")
     @JsonBackReference  // Evita la serialización cíclica
     private Portfolio portfolio;
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // 🔹 Evita el error de serialización
+    private List<DocumentDiscount> documentDiscounts = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -243,6 +250,15 @@ public class Document {
         return portfolio != null ? portfolio.getId() : null;
     }
     
+    public List<DocumentDiscount> getDocumentDiscounts() {
+        return documentDiscounts;
+    }
+    
+    public void setDocumentDiscounts(List<DocumentDiscount> documentDiscounts) {
+        this.documentDiscounts = documentDiscounts;
+    }
+    
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

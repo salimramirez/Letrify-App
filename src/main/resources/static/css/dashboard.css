@@ -308,6 +308,40 @@
     border-radius: 5px;
 }
 
+.accordion-button {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+.details-row {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-left: 5px solid #007bff;
+}
+
+/* Contenedor con altura fija y scroll */
+.discounts-container {
+    max-height: 70vh; /* Ajusta la altura al 70% de la pantalla */
+    overflow-y: auto; /* Activa el scroll vertical */
+    border: 1px solid #ccc; /* Borde opcional para separar la lista */
+    padding: 10px;
+    background-color: #f8f9fa; /* Color de fondo opcional */
+    border-radius: 5px;
+}
+
+/* Mejorar la apariencia del scrollbar en navegadores modernos */
+.discounts-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.discounts-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.discounts-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
 /* ===================================== */
 /* FUTURAS SECCIONES (POR IMPLEMENTAR)   */
 /* ===================================== */

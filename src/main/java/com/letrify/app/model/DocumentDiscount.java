@@ -6,6 +6,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "document_discounts")
 @Getter
@@ -25,6 +27,7 @@ public class DocumentDiscount {
 
     @ManyToOne
     @JoinColumn(name = "document_id", nullable = false)
+    @JsonIgnore // 🔹 Evita el error de serialización
     private Document document; // Relación con documents
 
     @Column(name = "nominal_value", nullable = false, precision = 15, scale = 2)
