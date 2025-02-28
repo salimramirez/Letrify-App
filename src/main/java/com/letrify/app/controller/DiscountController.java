@@ -50,6 +50,7 @@ public class DiscountController {
             Map<String, Object> discountData = new HashMap<>();
             discountData.put("id", discount.getId());
             discountData.put("discountDate", discount.getDiscountDate());
+            discountData.put("interestAmount", discount.getInterestAmount());
             discountData.put("totalDiscountAmount", discount.getTotalDiscountAmount());
             discountData.put("tcea", discount.getTcea());
             discountData.put("bank", discount.getBank().getBankName());

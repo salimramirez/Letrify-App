@@ -13,17 +13,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const documents = discount.documents || [];
 
                 const item = `
-                    <div class="accordion-item">
+                    <div class="accordion-item" data-portfolio-name="${portfolio.portfolioName.toLowerCase()}">
                         <h2 class="accordion-header" id="heading${index}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
-                                📅 ${discount.discountDate} - 💰 ${discount.totalDiscountAmount} - 🏷 ${portfolio.status}
+                                🗂️ ${portfolio.portfolioName} - 📅 ${discount.discountDate} - 🏷 ${portfolio.status}
                             </button>
                         </h2>
                         <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#discountsAccordion">
                             <div class="accordion-body">
                                 <p><strong>Nombre de Cartera:</strong> ${portfolio.portfolioName}</p>
-                                <p><strong>TCEA del Descuento:</strong> ${discount.tcea ? (discount.tcea * 100).toFixed(2) + "%" : "No disponible"}</p>
                                 <p><strong>Banco:</strong> ${discount.bank}</p>
+                                <p><strong>Intereses totales asumidos:</strong> S/ ${discount.interestAmount.toFixed(2)}</p>
+                                <p><strong>Costos totales asumidos:</strong> S/ ${discount.totalDiscountAmount.toFixed(2)}</p>
+                                <p><strong>TCEA ponderada de la cartera:</strong> ${discount.tcea ? (discount.tcea * 100).toFixed(2) + "%" : "No disponible"}</p>
                                 
                                 <h5 class="mt-3">📄 Documentos Asociados</h5>
                                 <div class="documents-container">
@@ -121,4 +123,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar descuentos al iniciar
     loadDiscounts();
+});
+
+// 📌 Buscador en vivo por nombre de cartera
+document.getElementById("discountSearch").addEventListener("keyup", function () {
+    let filter = this.value.toLowerCase();
+    let items = document.querySelectorAll(".accordion-item");
+
+    items.forEach(item => {
+        let portfolioName = item.getAttribute("data-portfolio-name");
+        if (portfolioName.includes(filter)) {
+            item.style.display = "block";
+        } else {
+            item.style.display = "none";
+        }
+    });
+});
+
+// 📌 Botón para limpiar la búsqueda
+document.getElementById("clearSearch").addEventListener("click", function () {
+    document.getElementById("discountSearch").value = "";
+    let items = document.querySelectorAll(".accordion-item");
+    items.forEach(item => item.style.display = "block");
 });

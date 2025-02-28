@@ -833,29 +833,5 @@
         <!-- /#page-content-wrapper -->
     </div>
 
-<!-- JavaScript para el buscador en vivo y limpiar búsqueda -->
-<script>
-    document.getElementById("discountSearch").addEventListener("keyup", function() {
-        let filter = this.value.toLowerCase();
-        let cards = document.querySelectorAll(".discount-card");
-    
-        cards.forEach(card => {
-            let name = card.getAttribute("data-name").toLowerCase();
-            if (name.includes(filter)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-    });
-    
-    // Botón para limpiar la búsqueda
-    document.getElementById("clearSearch").addEventListener("click", function() {
-        document.getElementById("discountSearch").value = "";
-        let cards = document.querySelectorAll(".discount-card");
-        cards.forEach(card => card.style.display = "block");
-    });
-</script>
-
 </body>
 </html>
