@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 carteraForm.reset();
 
                 // Actualizar la lista de carteras en la UI
-                actualizarTablaCarteras();
+                actualizarTablaCarteras();       
 
             } catch (error) {
                 console.error("❌ Error al registrar la cartera:", error);

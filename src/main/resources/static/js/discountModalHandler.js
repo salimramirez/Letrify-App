@@ -111,6 +111,14 @@ async function enviarDescuentoAlBackend(discountData) {
 
         if (response.ok) {
             console.log("✅ Éxito enviando descuento:", responseData);
+
+            // 🔄 ACTUALIZAR LISTA DE DESCUENTOS SIN RECARGAR LA PÁGINA
+            if (typeof loadDiscounts === "function") {
+                console.log("🔄 Actualizando lista de descuentos...");
+                loadDiscounts(); // Llama a la función que recarga el acordeón
+            } else {
+                console.warn("⚠️ loadDiscounts() no está definida en este contexto.");
+            }
         } else {
             console.error("⚠️ Error desde servidor:", responseData);
         }

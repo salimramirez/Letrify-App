@@ -58,6 +58,14 @@ document.addEventListener("DOMContentLoaded", function () {
     
             // Actualizar la UI de carteras
             actualizarTablaCarteras();
+
+            // Actualizar la lista de carteras en el select del formulario de descuento
+            if (typeof cargarCarteras === "function") {
+                console.log("🔄 Actualizando lista de carteras en el formulario de descuentos...");
+                cargarCarteras(); // Llama a la función ya existente en discountFormHandler.js
+            } else {
+                console.warn("⚠️ cargarCarteras() no está definida en este contexto.");
+            }         
     
         } catch (error) {
             console.error("❌ Error al actualizar documentos de la cartera:", error);

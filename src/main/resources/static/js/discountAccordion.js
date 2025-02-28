@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // 📌 Hacer que `loadDiscounts()` esté disponible globalmente
+    window.loadDiscounts = loadDiscounts;
+
     // 📌 Función para generar la vista de documentos (tabla o lista según el tamaño de pantalla)
     function generateDocumentsView(documents) {
         return window.innerWidth < 768 ? generateDocumentsList(documents) : generateDocumentsTable(documents);
