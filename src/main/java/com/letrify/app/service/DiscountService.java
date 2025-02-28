@@ -161,6 +161,16 @@ public class DiscountService {
             documentDiscount.setNominalValue(document.getAmount()); // Monto original del documento
 
             // Calcular discount_rate con `discountDays`
+            // ⚠️ Verificar si discountDays es null y volver a asignarlo si es necesario
+            if (document.getDiscountDays() == null) {
+                int recalculatedDiscountDays = (int) ChronoUnit.DAYS.between(discount.getDiscountDate(), document.getDueDate());
+                document.setDiscountDays(recalculatedDiscountDays);
+                System.out.println("📢 WARNING: Discount Days era NULL, se recalculó a: " + recalculatedDiscountDays);
+            }
+
+            // Imprimir antes de calcular la tasa
+            System.out.println("📢 Documento ID: " + document.getId() + " | Discount Days antes de calcular tasa: " + document.getDiscountDays());
+
             BigDecimal discountRateCalculated = calculateDiscountRate(discount, document.getDiscountDays());
             documentDiscount.setDiscountRate(discountRateCalculated);
             
@@ -255,6 +265,82 @@ public class DiscountService {
 
             documentDiscounts.add(documentDiscount);
         }
+
+        // Calcular la TCEA Ponderada por Valor Nominal
+        BigDecimal totalWeightedTcea = BigDecimal.ZERO;
+        BigDecimal totalNominalValue = BigDecimal.ZERO;
+
+        for (DocumentDiscount docDiscount : documentDiscounts) {
+            if (docDiscount.getTcea() != null) {
+                // Multiplicar la TCEA del documento por su Valor Nominal
+                BigDecimal weightedTcea = docDiscount.getTcea().multiply(docDiscount.getNominalValue());
+                totalWeightedTcea = totalWeightedTcea.add(weightedTcea);
+                totalNominalValue = totalNominalValue.add(docDiscount.getNominalValue());
+            }
+        }
+
+        // Verificar si hay documentos válidos para calcular la TCEA Ponderada
+        BigDecimal calculatedTcea = BigDecimal.ZERO;
+        if (totalNominalValue.compareTo(BigDecimal.ZERO) > 0) {
+            calculatedTcea = totalWeightedTcea.divide(totalNominalValue, 9, RoundingMode.HALF_UP);
+        }
+
+        // Calcular el total de intereses descontados (interest_amount)
+        BigDecimal totalInterestAmount = BigDecimal.ZERO;
+
+        for (DocumentDiscount docDiscount : documentDiscounts) {
+            totalInterestAmount = totalInterestAmount.add(docDiscount.getInterestAmount());
+        }
+
+        // Asignar el monto total de intereses al descuento
+        discount.setInterestAmount(totalInterestAmount);
+        System.out.println("📢 Interest Amount Total Calculado: " + totalInterestAmount);
+
+
+        // 1️⃣ Calcular el monto total descontado (sin incluir la retención)
+        BigDecimal totalInitialCosts = BigDecimal.ZERO;
+        BigDecimal totalFinalCosts = BigDecimal.ZERO;
+
+        // ➤ Recorrer todos los documentos y sumar los costos iniciales y finales
+        for (DocumentDiscount docDiscount : documentDiscounts) {
+            // Sumar los costos iniciales
+            List<DiscountFee> initialFees = discountFeeRepository.findByDiscount_IdAndFeeTiming(discountId, DiscountFee.FeeTiming.INICIAL);
+            for (DiscountFee fee : initialFees) {
+                if (fee.getFeeType() == DiscountFee.FeeType.FIJO) {
+                    totalInitialCosts = totalInitialCosts.add(fee.getFeeAmount());
+                } else if (fee.getFeeType() == DiscountFee.FeeType.PORCENTUAL) {
+                    BigDecimal percentageCost = docDiscount.getNominalValue()
+                            .multiply(fee.getFeeAmount()).setScale(2, RoundingMode.HALF_UP);
+                    totalInitialCosts = totalInitialCosts.add(percentageCost);
+                }
+            }
+
+            // Sumar los costos finales
+            List<DiscountFee> finalFees = discountFeeRepository.findByDiscount_IdAndFeeTiming(discountId, DiscountFee.FeeTiming.FINAL);
+            for (DiscountFee fee : finalFees) {
+                if (fee.getFeeType() == DiscountFee.FeeType.FIJO) {
+                    totalFinalCosts = totalFinalCosts.add(fee.getFeeAmount());
+                } else if (fee.getFeeType() == DiscountFee.FeeType.PORCENTUAL) {
+                    BigDecimal percentageCost = docDiscount.getNominalValue()
+                            .multiply(fee.getFeeAmount()).setScale(2, RoundingMode.HALF_UP);
+                    totalFinalCosts = totalFinalCosts.add(percentageCost);
+                }
+            }
+        }
+
+        // ➤ Ahora podemos calcular el total_discount_amount después de recorrer todos los documentos
+        BigDecimal totalDiscountAmount = totalInterestAmount.add(totalInitialCosts).add(totalFinalCosts);
+
+        // 2️⃣ Asignar el monto total descontado al descuento
+        discount.setTotalDiscountAmount(totalDiscountAmount);
+        System.out.println("📢 Total Discount Amount Calculado: " + totalDiscountAmount);
+
+        
+        // Asignar la TCEA calculada al descuento y guardarlo en la base de datos
+        discount.setTcea(calculatedTcea);
+        discountRepository.save(discount);
+
+        System.out.println("📢 TCEA Ponderada de la cartera calculada: " + calculatedTcea);
 
         // 1️⃣1️⃣ Guardar las relaciones en la base de datos
         documentDiscountRepository.saveAll(documentDiscounts);
