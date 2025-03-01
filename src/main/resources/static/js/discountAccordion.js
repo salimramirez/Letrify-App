@@ -61,8 +61,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <th>Cliente</th>
                         <th>Valor Nominal</th>
                         <th>Intereses</th>
-                        <th>Valor Recibido</th>
-                        <th>Valor Entregado</th>
+                        <th>Valor Neto</th>
+                        <th>Recibido</th>
+                        <th>Entregado</th>
                         <th>TCEA</th>
                     </tr>
                 </thead>
@@ -76,6 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td>${doc.customer}</td>
                     <td>S/ ${doc.nominalValue.toFixed(2)}</td>
                     <td>S/ ${doc.interestAmount.toFixed(2)}</td>
+                    <td>S/ ${doc.netValue.toFixed(2)}</td>
                     <td>S/ ${doc.receivedValue.toFixed(2)}</td>
                     <td>S/ ${doc.deliveredValue.toFixed(2)}</td>
                     <td>${doc.tcea ? (doc.tcea * 100).toFixed(2) + "%" : "N/A"}</td>
@@ -97,6 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     Cliente: ${doc.customer} <br>
                     Valor Nominal: S/ ${doc.nominalValue.toFixed(2)} <br>
                     Intereses: S/ ${doc.interestAmount.toFixed(2)} <br>
+                    Valor Neto: S/ ${doc.netValue.toFixed(2)} <br>
                     Valor Recibido: S/ ${doc.receivedValue.toFixed(2)} <br>
                     Valor Entregado: S/ ${doc.deliveredValue.toFixed(2)} <br>
                     TCEA: ${doc.tcea ? (doc.tcea * 100).toFixed(2) + "%" : "N/A"}

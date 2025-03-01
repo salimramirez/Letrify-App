@@ -75,6 +75,7 @@ public class DiscountController {
                 docData.put("customer", docDiscount.getDocument().getCustomer());
                 docData.put("nominalValue", docDiscount.getNominalValue());
                 docData.put("interestAmount", docDiscount.getInterestAmount());
+                docData.put("netValue", docDiscount.getNetValue());
                 docData.put("receivedValue", docDiscount.getReceivedValue());
                 docData.put("deliveredValue", docDiscount.getDeliveredValue());
                 docData.put("tcea", docDiscount.getTcea());
