@@ -77,12 +77,13 @@ public class ReportService {
      */
     private void generatePdf(String portfolioSnapshot, String pdfPath) throws Exception {
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+        writer.setPageEvent(new HeaderFooterPageEvent()); // 📌 Agrega el evento de paginación        
         document.open();
     
         // Agregar título principal
         Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-        Paragraph title = new Paragraph("Reporte de Estado de Carteras", titleFont);
+        Paragraph title = new Paragraph("Letrify - Reporte de Estado de Carteras", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
         document.add(new Paragraph("\n"));
@@ -115,8 +116,9 @@ public class ReportService {
     
                 // Agregar detalles del descuento si existen
                 agregarDetallesDescuento(document, portfolio);
-    
-                document.add(new Paragraph("------------------------------------------------------------"));
+
+                // Agregar una nueva página después de cada cartera
+                document.newPage();
             }
         } catch (Exception e) {
             document.add(new Paragraph("Error al procesar la información del reporte."));
@@ -137,7 +139,7 @@ public class ReportService {
     }
 
     private void agregarDatosCartera(Document document, JsonObject portfolio) throws DocumentException {
-        Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+        Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
         Font textFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
     
         String portfolioName = portfolio.has("portfolioName") ? portfolio.get("portfolioName").getAsString() : "Sin nombre";
@@ -157,10 +159,11 @@ public class ReportService {
             JsonArray documents = portfolio.getAsJsonArray("documents");
 
             if (documents.size() > 0) {
-                Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                // Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                Font tableHeaderFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.WHITE);
                 Font textFont = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
 
-                document.add(new Paragraph("  📄 Documentos Asociados", subtitleFont));
+                document.add(new Paragraph("Documentos Asociados", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
                 document.add(new Paragraph("\n"));
 
                 // Crear tabla con columnas
@@ -168,12 +171,15 @@ public class ReportService {
                 table.setWidthPercentage(100);
                 table.setSpacingBefore(5);
                 table.setSpacingAfter(10);
+                table.setHeaderRows(1);
+
+                BaseColor headerColor = new BaseColor(0, 102, 204);
 
                 // Definir encabezados
-                String[] headers = {"N° Documento", "Tipo", "Cliente", "Monto", "F. Emisión", "F. Vencimiento"};
+                String[] headers = {"N° Doc", "Tipo", "Cliente", "Monto", "F. Emisión", "F. Vencimiento"};
                 for (String header : headers) {
-                    PdfPCell headerCell = new PdfPCell(new Phrase(header, subtitleFont));
-                    headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    PdfPCell headerCell = new PdfPCell(new Phrase(header, tableHeaderFont));
+                    headerCell.setBackgroundColor(headerColor);
                     headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(headerCell);
                 }
@@ -183,23 +189,25 @@ public class ReportService {
                     if (!docElement.isJsonObject()) continue;
                     JsonObject doc = docElement.getAsJsonObject();
 
-                    table.addCell(new PdfPCell(new Phrase(doc.has("documentNumber") ? doc.get("documentNumber").getAsString() : "N/A", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(doc.has("documentType") ? doc.get("documentType").getAsString() : "N/A", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(doc.has("customer") ? doc.get("customer").getAsString() : "N/A", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(doc.has("amount") ? "S/ " + doc.get("amount").getAsDouble() : "0.00", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(doc.has("issueDate") ? doc.get("issueDate").getAsString() : "N/A", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(doc.has("dueDate") ? doc.get("dueDate").getAsString() : "N/A", textFont)));
+                    table.addCell(new PdfPCell(new Phrase(doc.get("documentNumber").getAsString(), textFont)));
+                    table.addCell(new PdfPCell(new Phrase(doc.get("documentType").getAsString(), textFont)));
+                    table.addCell(new PdfPCell(new Phrase(doc.get("customer").getAsString(), textFont)));
+                    table.addCell(new PdfPCell(new Phrase("S/ " + String.format("%.2f", doc.get("amount").getAsDouble()), textFont)));
+                    table.addCell(new PdfPCell(new Phrase(doc.get("issueDate").getAsString(), textFont)));
+                    table.addCell(new PdfPCell(new Phrase(doc.get("dueDate").getAsString(), textFont)));
                 }
-
                 document.add(table);
             } else {
-                document.add(new Paragraph("  ❌ No hay documentos en esta cartera.\n"));
+                Font noDocumentsFont = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, BaseColor.GRAY);
+                document.add(new Paragraph("No hay documentos en esta cartera.\n", noDocumentsFont));
             }
         }
     }
 
     private void agregarDetallesDescuento(Document document, JsonObject portfolio) throws DocumentException {
+        Font headerFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
         Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+        Font tableHeaderFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.WHITE);
         Font textFont = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
     
         if (portfolio.has("discount") && portfolio.get("discount").isJsonObject()) {
@@ -211,30 +219,33 @@ public class ReportService {
             double interestAmount = discount.has("interest_amount") && !discount.get("interest_amount").isJsonNull() ? discount.get("interest_amount").getAsDouble() : 0.0;
             double totalCost = discount.has("total_cost") && !discount.get("total_cost").isJsonNull() ? discount.get("total_cost").getAsDouble() : 0.0;
     
-            document.add(new Paragraph("  🔹 Descuento Aplicado", subtitleFont));
-            document.add(new Paragraph("    Banco: " + bank, textFont));
-            document.add(new Paragraph("    Fecha de Descuento: " + discountDate, textFont));
-            document.add(new Paragraph("    TCEA: " + String.format("%.6f", tcea) + "%", textFont));
-            document.add(new Paragraph("    Intereses totales: S/ " + String.format("%.2f", interestAmount), textFont));
-            document.add(new Paragraph("    Costos totales: S/ " + String.format("%.2f", totalCost), textFont));
+            document.add(new Paragraph("Detalles del Descuento", headerFont));
+            document.add(new Paragraph("Banco: " + bank, textFont));
+            document.add(new Paragraph("Fecha de Descuento: " + discountDate, textFont));
+            document.add(new Paragraph("TCEA: " + String.format("%.6f", tcea) + "%", textFont));
+            document.add(new Paragraph("Intereses totales: S/ " + String.format("%.2f", interestAmount), textFont));
+            document.add(new Paragraph("Costos totales: S/ " + String.format("%.2f", totalCost), textFont));
             document.add(new Paragraph("\n"));
-
+    
             if (discount.has("document_discounts") && discount.get("document_discounts").isJsonArray() && discount.getAsJsonArray("document_discounts").size() > 0) {
                 JsonArray documentDiscounts = discount.getAsJsonArray("document_discounts");
     
-                document.add(new Paragraph("  📄 Descuentos por Documento", subtitleFont));
+                document.add(new Paragraph("Descuentos por Documento", subtitleFont));
                 document.add(new Paragraph("\n"));
     
                 PdfPTable table = new PdfPTable(7); // 7 columnas
                 table.setWidthPercentage(100);
                 table.setSpacingBefore(5);
                 table.setSpacingAfter(10);
+                table.setHeaderRows(1); // Fijar la primera fila como encabezado
     
+                BaseColor discountHeaderColor = new BaseColor(0, 153, 51);
+
                 // Definir encabezados
                 String[] headers = {"N° Doc", "Valor Nominal", "Tasa Desc.", "Intereses", "Valor Neto", "Valor Recibido", "TCEA"};
                 for (String header : headers) {
-                    PdfPCell headerCell = new PdfPCell(new Phrase(header, subtitleFont));
-                    headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    PdfPCell headerCell = new PdfPCell(new Phrase(header, tableHeaderFont));
+                    headerCell.setBackgroundColor(discountHeaderColor);
                     headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(headerCell);
                 }
@@ -244,13 +255,40 @@ public class ReportService {
                     if (!docDiscountElement.isJsonObject()) continue;
                     JsonObject docDiscount = docDiscountElement.getAsJsonObject();
     
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("document_number") && !docDiscount.get("document_number").isJsonNull() ? docDiscount.get("document_number").getAsString() : "N/A", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("nominal_value") && !docDiscount.get("nominal_value").isJsonNull() ? "S/ " + String.format("%.2f", docDiscount.get("nominal_value").getAsDouble()) : "0.00", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("discount_rate") && !docDiscount.get("discount_rate").isJsonNull() ? String.format("%.6f", docDiscount.get("discount_rate").getAsDouble() * 100) + "%" : "0.000000%", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("interest_amount") && !docDiscount.get("interest_amount").isJsonNull() ? "S/ " + String.format("%.2f", docDiscount.get("interest_amount").getAsDouble()) : "0.00", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("net_value") && !docDiscount.get("net_value").isJsonNull() ? "S/ " + String.format("%.2f", docDiscount.get("net_value").getAsDouble()) : "0.00", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("received_value") && !docDiscount.get("received_value").isJsonNull() ? "S/ " + String.format("%.2f", docDiscount.get("received_value").getAsDouble()) : "0.00", textFont)));
-                    table.addCell(new PdfPCell(new Phrase(docDiscount.has("tcea") && !docDiscount.get("tcea").isJsonNull() ? String.format("%.6f", docDiscount.get("tcea").getAsDouble() * 100) + "%" : "0.000000%", textFont)));
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("document_number") && !docDiscount.get("document_number").isJsonNull()
+                            ? docDiscount.get("document_number").getAsString()
+                            : "N/A", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("nominal_value") && !docDiscount.get("nominal_value").isJsonNull()
+                            ? "S/ " + String.format("%.2f", docDiscount.get("nominal_value").getAsDouble())
+                            : "0.00", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("discount_rate") && !docDiscount.get("discount_rate").isJsonNull()
+                            ? String.format("%.6f", docDiscount.get("discount_rate").getAsDouble() * 100) + "%"
+                            : "0.000000%", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("interest_amount") && !docDiscount.get("interest_amount").isJsonNull()
+                            ? "S/ " + String.format("%.2f", docDiscount.get("interest_amount").getAsDouble())
+                            : "0.00", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("net_value") && !docDiscount.get("net_value").isJsonNull()
+                            ? "S/ " + String.format("%.2f", docDiscount.get("net_value").getAsDouble())
+                            : "0.00", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("received_value") && !docDiscount.get("received_value").isJsonNull()
+                            ? "S/ " + String.format("%.2f", docDiscount.get("received_value").getAsDouble())
+                            : "0.00", textFont)));
+    
+                    table.addCell(new PdfPCell(new Phrase(
+                        docDiscount.has("tcea") && !docDiscount.get("tcea").isJsonNull()
+                            ? String.format("%.6f", docDiscount.get("tcea").getAsDouble() * 100) + "%"
+                            : "0.000000%", textFont)));
                 }
     
                 document.add(table);
@@ -259,7 +297,7 @@ public class ReportService {
         else {
             // 📌 Si la cartera no tiene descuento, agregar mensaje claro
             Font noDiscountFont = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, BaseColor.GRAY);
-            document.add(new Paragraph("🔸 Esta cartera aún no ha sido descontada.\n", noDiscountFont));
+            document.add(new Paragraph("Esta cartera aún no ha sido descontada.\n", noDiscountFont));
         }
     }
 

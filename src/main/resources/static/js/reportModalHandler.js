@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     card.innerHTML = `
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Reporte ${reporte.id}</h5>
+                                <h5 class="card-title">Reporte N° ${reporte.id}</h5>
                                 <p class="card-text">Fecha: ${new Date(reporte.reportDate).toLocaleString()}</p>
                                 <p class="card-text">Estado: <strong>${reporte.reportStatus}</strong></p>
                                 <a href="/api/reports/view/${fileName}" target="_blank" class="btn btn-secondary">Abrir PDF</a>
