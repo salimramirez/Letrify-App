@@ -26,6 +26,7 @@
     <script src="js/discountFormHandler.js" defer></script>
     <script src="js/discountModalHandler.js" defer></script>
     <script src="js/discountAccordion.js" defer></script>
+    <script src="js/reportModalHandler.js" defer></script>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -814,13 +815,39 @@
 
                 </div>
 
-                <!-- Reportes -->
+                <!-- Sección de Reportes -->
                 <div id="reportes" class="content-section">
-                    <h2>Reportes</h2>
+                    <h2>Gestión de Reportes</h2>
+                    
+                    <!-- Botón para generar un nuevo reporte -->
                     <div class="mb-3">
-                        <button class="btn btn-success">Generar Reporte PDF</button>
-                        <button class="btn btn-secondary">Exportar a Excel</button>
+                        <button id="generarReporteBtn" class="btn btn-primary">Generar Reporte</button>
                     </div>
+
+                    <!-- Contenedor donde se mostrarán los reportes generados -->
+                    <div id="reportesContainer" class="row">
+                        <!-- Aquí se agregarán las cards dinámicamente -->
+                    </div>
+
+                    <!-- Modal de Confirmación -->
+                    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="reportModalLabel">Confirmar Generación de Reporte</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ¿Estás seguro de que deseas generar un nuevo reporte? Esto tomará una "foto" del estado actual de las carteras.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button id="confirmarReporteBtn" class="btn btn-primary">Generar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Configuración -->

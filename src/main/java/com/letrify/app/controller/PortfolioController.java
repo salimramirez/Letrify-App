@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import java.util.NoSuchElementException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +26,13 @@ public class PortfolioController {
     @GetMapping
     public ResponseEntity<List<Portfolio>> getAllPortfolios() {
         List<Portfolio> portfolios = portfolioService.getAllPortfolios();
+        return ResponseEntity.ok(portfolios);
+    }
+
+    // Obtener todas las carteras con detalles de descuento
+    @GetMapping("/with-discounts")
+    public ResponseEntity<List<Map<String, Object>>> getAllPortfoliosWithDiscounts() {
+        List<Map<String, Object>> portfolios = portfolioService.getAllPortfoliosWithDiscounts();
         return ResponseEntity.ok(portfolios);
     }
 

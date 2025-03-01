@@ -34,4 +34,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     // Buscar todos los descuentos asociados a un tipo de cambio específico
     List<Discount> findByExchangeRate_Id(Long exchangeRateId);
 
+    Discount findTopByPortfolio_IdOrderByDiscountDateDesc(Long portfolioId);
+
 }

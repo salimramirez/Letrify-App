@@ -2,66 +2,98 @@ package com.letrify.app.controller;
 
 import com.letrify.app.model.Report;
 import com.letrify.app.service.ReportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.time.LocalDateTime;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/discounts/{discountId}/reports")
+@RequestMapping("/api/reports")
 public class ReportController {
 
-    private final ReportService reportService;
+    @Autowired
+    private ReportService reportService;
 
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
-
-    // Obtener todos los reportes de un descuento
+    /**
+     * Obtiene todos los reportes generados en orden descendente.
+     *
+     * @return Lista de reportes generados.
+     */
     @GetMapping
-    public ResponseEntity<List<Report>> getReportsByDiscountId(@PathVariable Long discountId) {
-        List<Report> reports = reportService.getReportsByDiscountId(discountId);
+    public ResponseEntity<List<Report>> getAllReports() {
+        List<Report> reports = reportService.getAllReports();
         return ResponseEntity.ok(reports);
     }
 
-    // Obtener un reporte específico por su ID
+    /**
+     * Obtiene un reporte específico por su ID.
+     *
+     * @param id ID del reporte.
+     * @return El reporte si existe, o código 404 si no se encuentra.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportById(@PathVariable Long discountId, @PathVariable Long id) {
+    public ResponseEntity<Report> getReportById(@PathVariable Long id) {
         Report report = reportService.getReportById(id);
-        return ResponseEntity.ok(report);
+        return report != null ? ResponseEntity.ok(report) : ResponseEntity.notFound().build();
     }
 
-    // Crear un nuevo reporte para un descuento
-    @PostMapping
-    public ResponseEntity<Report> createReport(@PathVariable Long discountId, @RequestBody Report report) {
-        report.getDiscount().setId(discountId);  // Asociar el reporte al descuento correspondiente
-        Report createdReport = reportService.createReport(report);
-        return ResponseEntity.ok(createdReport);
+    /**
+     * Genera un nuevo reporte y lo guarda en la base de datos.
+     *
+     * @param request Objeto con el snapshot de las carteras en formato JSON.
+     * @return El reporte generado con la ruta del PDF.
+     */
+    @PostMapping("/generate")
+    public ResponseEntity<Report> generateReport(@RequestBody ReportRequest request) {
+        Report newReport = reportService.generateAndSaveReport(request.getPortfolioSnapshot());
+        return newReport != null ? ResponseEntity.ok(newReport) : ResponseEntity.status(500).build();
     }
 
-    // Actualizar un reporte existente
-    @PutMapping("/{id}")
-    public ResponseEntity<Report> updateReport(@PathVariable Long discountId, @PathVariable Long id, @RequestBody Report report) {
-        Report updatedReport = reportService.updateReport(id, report);
-        return ResponseEntity.ok(updatedReport);
+    /**
+     * Endpoint para servir los archivos PDF de los reportes almacenados en la carpeta 'reports/'.
+     *
+     * @param fileName Nombre del archivo PDF.
+     * @return El archivo PDF si existe, o un código 404 si no se encuentra.
+     */
+    @GetMapping("/view/{fileName}")
+    public ResponseEntity<Resource> viewReport(@PathVariable String fileName) {
+        try {
+            // Ruta absoluta del archivo PDF
+            Path filePath = Paths.get("reports/" + fileName).toAbsolutePath().normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    // Eliminar un reporte
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReport(@PathVariable Long discountId, @PathVariable Long id) {
-        reportService.deleteReport(id);
-        return ResponseEntity.noContent().build();
-    }
+    /**
+     * Clase interna para recibir la solicitud de generación de reportes.
+     */
+    public static class ReportRequest {
+        private String portfolioSnapshot;
 
-    // Obtener reportes generados en un rango de fechas
-    @GetMapping("/date-range")
-    public ResponseEntity<List<Report>> getReportsByDateRange(
-            @PathVariable Long discountId,
-            @RequestParam LocalDateTime startDate,
-            @RequestParam LocalDateTime endDate) {
-        List<Report> reports = reportService.getReportsByDateRange(startDate, endDate);
-        return ResponseEntity.ok(reports);
+        public String getPortfolioSnapshot() {
+            return portfolioSnapshot;
+        }
+
+        public void setPortfolioSnapshot(String portfolioSnapshot) {
+            this.portfolioSnapshot = portfolioSnapshot;
+        }
     }
 }
