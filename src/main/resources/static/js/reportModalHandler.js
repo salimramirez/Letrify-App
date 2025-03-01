@@ -65,12 +65,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Extraer solo el nombre del archivo desde reportPdfPath
                     const fileName = reporte.reportPdfPath.split("/").pop();
 
+                    // Convertir la fecha en un identificador amigable
+                    const reportDate = new Date(reporte.reportDate);
+                    const formattedDate = reportDate.getFullYear() +
+                        String(reportDate.getMonth() + 1).padStart(2, '0') +
+                        String(reportDate.getDate()).padStart(2, '0') +
+                        String(reportDate.getHours()).padStart(2, '0') +
+                        String(reportDate.getMinutes()).padStart(2, '0') +
+                        String(reportDate.getSeconds()).padStart(2, '0');
+
+                    // Nombre del reporte en formato "Reporte-YYYYMMDDHHMMSS"
+                    const reportName = `Reporte-${formattedDate}`;
+
                     const card = document.createElement("div");
                     card.className = "col-md-4 mb-3";
                     card.innerHTML = `
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Reporte N° ${reporte.id}</h5>
+                                <h5 class="card-title">${reportName}</h5>
                                 <p class="card-text">Fecha: ${new Date(reporte.reportDate).toLocaleString()}</p>
                                 <p class="card-text">Estado: <strong>${reporte.reportStatus}</strong></p>
                                 <a href="/api/reports/view/${fileName}" target="_blank" class="btn btn-secondary">Abrir PDF</a>
